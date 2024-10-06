@@ -18,6 +18,7 @@ public class Product {
     @Column(name = "nome", nullable = false)
     private String nome;
 
+    @Column(columnDefinition = "TEXT")
     private String descricao;
 
     private Integer estoque;

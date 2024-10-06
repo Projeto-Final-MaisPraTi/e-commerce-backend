@@ -71,6 +71,7 @@ public class ProductService {
         productDTO.setNota(product.getNota());
         productDTO.setPreco(product.getPreco().toString());
         productDTO.setCor(product.getCor());
+        productDTO.setImages(product.getImages().stream().map(image -> image.getImagem()).toList());
 
         return productDTO;
     }
