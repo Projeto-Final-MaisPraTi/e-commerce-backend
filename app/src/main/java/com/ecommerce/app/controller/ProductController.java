@@ -17,31 +17,31 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
-    public List<ProductDTO> getAllProducts(){
+    public List<ProductDTO> getAllProducts() {
         return productService.getAllProducts();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getProductById(@PathVariable int id){
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable int id) {
         ProductDTO productDTO = productService.getProductById(id);
 
         return productDTO != null ? ResponseEntity.ok(productDTO) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public ProductDTO createProduct(@RequestBody ProductDTO productDTO){
+    public ProductDTO createProduct(@RequestBody ProductDTO productDTO) {
         return productService.createProduct(productDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductDTO> updateProduct(@PathVariable int id, @RequestBody ProductDTO productDTO){
+    public ResponseEntity<ProductDTO> updateProduct(@PathVariable int id, @RequestBody ProductDTO productDTO) {
         ProductDTO updateProduct = productService.updateProduct(id, productDTO);
 
         return updateProduct != null ? ResponseEntity.ok(updateProduct) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable int id){
+    public ResponseEntity<Void> deleteProduct(@PathVariable int id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }

@@ -38,7 +38,7 @@ public class Product {
 
     public void addImages(List<String> urls) {
         if (urls == null)
-            return ;
+            return;
         for (String url : urls) {
             ImageProduct imageProduct = new ImageProduct();
             imageProduct.setImagem(url);
