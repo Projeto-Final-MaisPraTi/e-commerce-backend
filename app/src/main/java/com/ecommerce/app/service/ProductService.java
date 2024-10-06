@@ -32,9 +32,13 @@ public class ProductService {
     public ProductDTO createProduct(ProductDTO productDTO){
         Product product = new Product();
         product.setNome(productDTO.getNome());
+        product.setDescricao(productDTO.getDescricao());
+        product.setEstoque(productDTO.getEstoque());
+        product.setCategoria(productDTO.getCategoria());
         product.setNota(productDTO.getNota());
-        product.setPreco(productDTO.getPreco());
+        product.setPreco(Double.parseDouble(productDTO.getPreco()));
         product.setCor(productDTO.getCor());
+        product.addImages(productDTO.getImages());
         productRepository.save(product);
 
         return convertToDTO(product);
@@ -46,8 +50,7 @@ public class ProductService {
             Product product = productOptional.get();
             product.setNome(productDTO.getNome());
             product.setNota(productDTO.getNota());
-            product.setPreco(productDTO.getPreco());
-            product.setPreco(productDTO.getPreco());
+            product.setPreco(Double.parseDouble(productDTO.getPreco()));
 
             productRepository.save(product);
 
@@ -66,7 +69,7 @@ public class ProductService {
         productDTO.setId(product.getId());
         productDTO.setNome(product.getNome());
         productDTO.setNota(product.getNota());
-        productDTO.setPreco(product.getPreco());
+        productDTO.setPreco(product.getPreco().toString());
         productDTO.setCor(product.getCor());
 
         return productDTO;
