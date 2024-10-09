@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.ecommerce.app.service.UserService;
-import com.ecommerce.app.dto.UserDTO;
+import com.ecommerce.app.dto.produtos.UserDTO;
 
 import java.util.List;
 

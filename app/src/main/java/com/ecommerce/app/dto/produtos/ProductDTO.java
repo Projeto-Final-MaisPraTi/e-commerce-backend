@@ -1,6 +1,5 @@
-package com.ecommerce.app.dto;
+package com.ecommerce.app.dto.produtos;
 
-import jakarta.persistence.Column;
 import lombok.Data;
 
 import java.util.List;

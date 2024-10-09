@@ -1,9 +1,10 @@
 package com.ecommerce.app.service;
 
+import com.ecommerce.app.dto.produtos.SimpleProductDTO;
 import com.ecommerce.app.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ecommerce.app.dto.ProductDTO;
+import com.ecommerce.app.dto.produtos.ProductDTO;
 import com.ecommerce.app.model.Product;
 
 import java.util.List;
@@ -27,6 +28,23 @@ public class ProductService {
     public ProductDTO getProductById(int id){
         Optional<Product> product = productRepository.findById(id);
         return product.map(this::convertToDTO).orElse(null);
+    }
+
+    public SimpleProductDTO getProductById2(int id){
+        Optional<Product> product = productRepository.findById(id);
+        if (!product.isPresent()) {
+            return null;
+        }
+        Product result = product.get();
+        return new SimpleProductDTO(result);
+    }
+
+    public List<SimpleProductDTO> getProductByName(String name){
+        List<Product> product = productRepository.findByNome(name);
+        if (product == null || product.size() == 0) {
+            return null;
+        }
+        return product.stream().map(p -> new SimpleProductDTO(p)).collect(Collectors.toList());
     }
 
     public ProductDTO createProduct(ProductDTO productDTO){

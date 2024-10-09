@@ -1,6 +1,6 @@
 package com.ecommerce.app.service;
 
-import com.ecommerce.app.dto.UserDTO;
+import com.ecommerce.app.dto.produtos.UserDTO;
 import com.ecommerce.app.model.User;
 import com.ecommerce.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
