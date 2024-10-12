@@ -86,6 +86,9 @@ public class ProductService {
         ProductDTO productDTO = new ProductDTO();
         productDTO.setId(product.getId());
         productDTO.setNome(product.getNome());
+        productDTO.setDescricao(product.getDescricao());
+        productDTO.setCategoria(product.getCategoria());
+        productDTO.setEstoque(product.getEstoque());
         productDTO.setNota(product.getNota());
         productDTO.setPreco(product.getPreco().toString());
         productDTO.setCor(product.getCor());
