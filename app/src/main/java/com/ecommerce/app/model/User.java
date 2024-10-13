@@ -1,12 +1,22 @@
 package com.ecommerce.app.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-@Entity
+import java.util.Collection;
+import java.util.List;
+
 @Data
 @Table(name = "usuarios")
-public class User {
+@Entity(name = "usuarios")
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -23,4 +33,22 @@ public class User {
     @Column(name = "telefone")
     private String telefone;
 
+    @Column(name = "cargo")
+    private UserRole cargo;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if(this.cargo == UserRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_CLIENT"));
+        else return List.of(new SimpleGrantedAuthority("ROLE_CLIENT"));
+    }
+
+    @Override
+    public String getPassword() {
+        return senha;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
 }

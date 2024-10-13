@@ -1,4 +1,4 @@
-package com.ecommerce.app.controller;
+package com.ecommerce.app.controller.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +10,7 @@ import com.ecommerce.app.dto.UserDTO;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 public class UserController {
 
     @Autowired

@@ -61,7 +61,7 @@ public class UserService implements UserDetailsService {
             User user = userOptional.get();
             user.setNome(userDTO.getNome());
             user.setEmail(userDTO.getEmail());
-            if (userDTO.getSenha() != null && !userDTO.getSenha().isEmpty()) {
+            if (!userDTO.getSenha().isEmpty()) {
                 user.setSenha(passwordEncoder.encode(userDTO.getSenha()));
             }
             user.setTelefone(userDTO.getTelefone());

@@ -1,0 +1,12 @@
+package com.ecommerce.app.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.ecommerce.app.model.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Integer>, UserDetailsService {
+    UserDetails findByEmail(String email);
+}

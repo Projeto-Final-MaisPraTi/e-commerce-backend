@@ -18,10 +18,13 @@ public class Product {
     @Column(name = "nome", nullable = false)
     private String nome;
 
+    @Column(name = "descricao", length = 700, nullable = false)
     private String descricao;
 
+    @Column(name = "estoque", nullable = false)
     private Integer estoque;
 
+    @Column(name = "categoria", nullable = false)
     private String categoria;
 
     @Column(name = "nota", nullable = false)

@@ -1,19 +1,28 @@
 package com.ecommerce.app.dto;
 
-import jakarta.persistence.Column;
 import lombok.Data;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
 @Data
+@Validated
 public class ProductDTO {
     private int id;
+
     private String nome;
+
     private int nota;
-    private String preco;
-    private String descricao;
-    public String categoria;
-    private Integer estoque;
+
+    private Double preco;
+
     private String cor;
+
+    private String descricao;
+
+    private int estoque;
+
+    private String categoria;
+
     private List<String> images;
 }
