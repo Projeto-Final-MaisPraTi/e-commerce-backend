@@ -4,6 +4,7 @@ import com.ecommerce.app.dto.UserDTO;
 import com.ecommerce.app.model.User;
 import com.ecommerce.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,10 +31,10 @@ public class UserService {
 
     public UserDTO createUser(UserDTO userDTO){
         User user = new User();
-        user.setNome(userDTO.getNome());
+        user.setUsername(userDTO.getUsername());
         user.setEmail(userDTO.getEmail());
-        user.setSenha(userDTO.getSenha());
-        user.setTelefone(userDTO.getTelefone());
+        user.setPassword(new BCryptPasswordEncoder().encode(userDTO.getPassword()));
+        user.setPhone(userDTO.getPhone());
         userRepository.save(user);
 
         return convertToDTO(user);
@@ -43,10 +44,10 @@ public class UserService {
         Optional<User> userOptional = userRepository.findById(id);
         if(userOptional.isPresent()){
             User user = userOptional.get();
-            user.setNome(userDTO.getNome());
+            user.setUsername(userDTO.getUsername());
             user.setEmail(userDTO.getEmail());
-            user.setSenha(userDTO.getSenha());
-            user.setTelefone(userDTO.getTelefone());
+            user.setPassword(userDTO.getPassword());
+            user.setPhone(userDTO.getPhone());
             userRepository.save(user);
 
             return convertToDTO(user);
@@ -62,10 +63,10 @@ public class UserService {
     private UserDTO convertToDTO(User user){
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
-        userDTO.setNome(user.getNome());
+        userDTO.setUsername(user.getUsername());
         userDTO.setEmail(user.getEmail());
-        userDTO.setSenha(user.getSenha());
-        userDTO.setTelefone(user.getTelefone().isEmpty() ? "" : user.getTelefone());
+        userDTO.setPassword(user.getPassword());
+        userDTO.setPhone(user.getPhone());
 
         return userDTO;
     }
