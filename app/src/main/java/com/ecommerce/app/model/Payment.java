@@ -15,7 +15,7 @@ public class Payment {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
 	
 	@Column(name = "tipo")
 	private String tipo; // "DINHEIRO", "CARTÃO"
