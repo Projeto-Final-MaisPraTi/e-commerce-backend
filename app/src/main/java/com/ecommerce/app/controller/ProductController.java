@@ -1,5 +1,6 @@
 package com.ecommerce.app.controller;
 
+import com.ecommerce.app.dto.produtos.ProductUpdateDTO;
 import com.ecommerce.app.dto.produtos.SimpleProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -54,9 +55,9 @@ public class ProductController {
         return productService.createProduct(productDTO);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProductDTO> updateProduct(@PathVariable int id, @RequestBody ProductDTO productDTO){
-        ProductDTO updateProduct = productService.updateProduct(id, productDTO);
+    @PutMapping("/update")
+    public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductUpdateDTO product){
+        ProductDTO updateProduct = productService.updateProduct(product);
 
         return updateProduct != null ? ResponseEntity.ok(updateProduct) : ResponseEntity.notFound().build();
     }

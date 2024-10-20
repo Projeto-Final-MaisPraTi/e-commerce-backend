@@ -1,5 +1,6 @@
 package com.ecommerce.app.service;
 
+import com.ecommerce.app.dto.produtos.ProductUpdateDTO;
 import com.ecommerce.app.dto.produtos.SimpleProductDTO;
 import com.ecommerce.app.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ public class ProductService {
 
     @Autowired // faz injeção de dependência automática
     private ProductRepository productRepository;
+
     public List<ProductDTO> getAllProducts(){
         // retorna a lista de produtos convertidos e coletados
         return productRepository
@@ -57,19 +59,17 @@ public class ProductService {
         product.setPreco(Double.parseDouble(productDTO.getPreco()));
         product.setCor(productDTO.getCor());
         product.addImages(productDTO.getImages());
+        product.getImages().get(0).setCapaProduto(true);
         productRepository.save(product);
 
         return convertToDTO(product);
     }
 
-    public ProductDTO updateProduct(int id, ProductDTO productDTO){
-        Optional<Product> productOptional = productRepository.findById(id);
+    public ProductDTO updateProduct(ProductUpdateDTO productDTO){
+        Optional<Product> productOptional = productRepository.findById(productDTO.id());
         if(productOptional.isPresent()){
             Product product = productOptional.get();
-            product.setNome(productDTO.getNome());
-            product.setNota(productDTO.getNota());
-            product.setPreco(Double.parseDouble(productDTO.getPreco()));
-
+            product.update(productDTO);
             productRepository.save(product);
 
             return convertToDTO(product);

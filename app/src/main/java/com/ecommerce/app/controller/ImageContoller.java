@@ -14,7 +14,7 @@ public class ImageContoller {
     private ImageProductService imageProductService;
 
     @DeleteMapping("/delete-image")
-    public ResponseEntity<Void> deleteImage(@RequestParam String imageUrl) {
+    public ResponseEntity<Void> deleteImage(@RequestBody String imageUrl) {
         imageProductService.deleteImageByUrl(imageUrl);
         return ResponseEntity.noContent().build();
     }

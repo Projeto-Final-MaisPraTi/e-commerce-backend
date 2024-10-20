@@ -19,4 +19,16 @@ public class ImageProduct {
     @ManyToOne()
     @JoinColumn(name = "id_produto")
     private Product product;
+
+    @Setter
+    @Column(name = "capa_produto")
+    private Boolean capaProduto;
+
+    public ImageProduct() {};
+
+    public ImageProduct(String imagem, Product product, Boolean capaProduto) {
+        this.imagem = imagem;
+        this.product = product;
+        this.capaProduto = capaProduto;
+    }
 }

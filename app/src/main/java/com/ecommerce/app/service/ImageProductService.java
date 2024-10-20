@@ -4,6 +4,7 @@ import com.ecommerce.app.model.ImageProduct;
 import com.ecommerce.app.model.Product;
 import com.ecommerce.app.repository.ImageRepository;
 import com.ecommerce.app.repository.ProductRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,12 @@ public class ImageProductService {
 
     @Transactional
     public void deleteImageByUrl(String imageUrl) {
-        imageRepository.deleteByImagem(imageUrl);
+        Optional<ImageProduct> imagem = imageRepository.findByImagem(imageUrl);
+        if (imagem.isPresent()) {
+            imageRepository.deleteById(imagem.get().getId());
+        } else {
+            throw new EntityNotFoundException("Erro ao buscar imagem " + imageUrl);
+        }
     }
 
     @Transactional

@@ -1,5 +1,6 @@
 package com.ecommerce.app.model;
 
+import com.ecommerce.app.dto.produtos.ProductUpdateDTO;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -44,7 +45,43 @@ public class Product {
             ImageProduct imageProduct = new ImageProduct();
             imageProduct.setImagem(url);
             imageProduct.setProduct(this);
+            imageProduct.setCapaProduto(false);
             images.add(imageProduct);
+        }
+    }
+
+    public void update(ProductUpdateDTO productDTO) {
+        if (productDTO.nome() != null) {
+            this.nome = productDTO.nome();
+        }
+        if (productDTO.descricao() != null) {
+            this.descricao = productDTO.descricao();
+        }
+        if (productDTO.estoque() != null) {
+            this.estoque = productDTO.estoque();
+        }
+        if (productDTO.categoria() != null) {
+            this.categoria = productDTO.categoria();
+        }
+        if (productDTO.preco() != null) {
+            this.preco = productDTO.preco();
+        }
+        if (productDTO.cor() != null) {
+            this.cor = productDTO.cor();
+        }
+        if (productDTO.cover() != null) {
+            ImageProduct newCover = new ImageProduct();
+            newCover.setCapaProduto(true);
+            newCover.setProduct(this);
+            newCover.setImagem(productDTO.cover());
+            images.add(newCover);
+        }
+        if (productDTO.images() != null) {
+            if (!productDTO.images().isEmpty()){
+                productDTO.images().stream().forEach(img ->
+                        images.add(new ImageProduct(img, this, false))
+                );
+            }
         }
     }
 }
