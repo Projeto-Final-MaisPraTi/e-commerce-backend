@@ -13,9 +13,11 @@ public class ImageContoller {
     @Autowired
     private ImageProductService imageProductService;
 
+    public record ImageUrlRequest(String imageUrl) {}
+
     @DeleteMapping("/delete-image")
-    public ResponseEntity<Void> deleteImage(@RequestBody String imageUrl) {
-        imageProductService.deleteImageByUrl(imageUrl);
+    public ResponseEntity<Void> deleteImage(@RequestBody ImageUrlRequest request) {
+        imageProductService.deleteImageByUrl(request.imageUrl());
         return ResponseEntity.noContent().build();
     }
 

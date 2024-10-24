@@ -2,6 +2,7 @@ package com.ecommerce.app.controller;
 
 import com.ecommerce.app.dto.produtos.ProductUpdateDTO;
 import com.ecommerce.app.dto.produtos.SimpleProductDTO;
+import com.ecommerce.app.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -66,5 +67,12 @@ public class ProductController {
     public ResponseEntity<Void> deleteProduct(@PathVariable int id){
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/update")
+    public ResponseEntity<ProductUpdateDTO> getProductUpdateById(@PathVariable int id){
+        ProductUpdateDTO product = productService.getProductUpdateById(id);
+
+        return product != null ? ResponseEntity.ok(product) : ResponseEntity.notFound().build();
     }
 }

@@ -2,6 +2,7 @@ package com.ecommerce.app.service;
 
 import com.ecommerce.app.dto.produtos.ProductUpdateDTO;
 import com.ecommerce.app.dto.produtos.SimpleProductDTO;
+import com.ecommerce.app.repository.ImageRepository;
 import com.ecommerce.app.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,9 @@ public class ProductService {
 
     @Autowired // faz injeção de dependência automática
     private ProductRepository productRepository;
+
+    @Autowired
+    private ImageProductService imageProductService;
 
     public List<ProductDTO> getAllProducts(){
         // retorna a lista de produtos convertidos e coletados
@@ -76,6 +80,15 @@ public class ProductService {
         }
 
         return null;
+    }
+
+    public ProductUpdateDTO getProductUpdateById(int id){
+        Optional<Product> product = productRepository.findById(id);
+        String cover = imageProductService.getCoverByProductId(id);
+
+        List<String> images = imageProductService.getImagesByProductId(id);
+        ProductUpdateDTO updateDTO = new ProductUpdateDTO(product.get(), cover, images);
+        return updateDTO;
     }
 
     public void deleteProduct(int id){
