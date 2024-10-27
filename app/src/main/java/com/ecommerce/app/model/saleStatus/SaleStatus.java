@@ -1,11 +1,7 @@
 package com.ecommerce.app.model.saleStatus;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.ecommerce.app.infra.enums.TypeSaleStatus;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -16,8 +12,10 @@ public class SaleStatus {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	@Column(nullable = false, unique = true)
-	private String estado; // "FINALIZADO", "ENVIANDO", "CANCELADO", "PENDENTE"
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "estado", nullable = false, unique = true)
+	//private String estado; // "FINALIZADO", "ENVIANDO", "CANCELADO", "PENDENTE"
+	private TypeSaleStatus estado;
 	
 }

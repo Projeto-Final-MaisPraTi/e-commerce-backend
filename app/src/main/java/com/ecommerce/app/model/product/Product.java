@@ -23,7 +23,7 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @Column(name = "nome", nullable = false)
     private String nome;
@@ -46,7 +46,7 @@ public class Product {
     @Column(name = "categoria", nullable = false)
     private String categoria;
     
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImages> imagens;
     
     @OneToMany(mappedBy = "product")

@@ -37,13 +37,13 @@ public class ItemCartController {
     }
 
     @PutMapping("/{id}")
-    public ItemCartDTO updateCartItem(@PathVariable Long id, @RequestBody ItemCartDTO itemCartDTO) {
-        return itemCartService.updateCartItem(id, itemCartDTO);
+    public ItemCartDTO updateItemCart(@PathVariable Long id, @RequestBody ItemCartDTO itemCartDTO) {
+        return itemCartService.updateItemCart(id, itemCartDTO);
     }
 
     @DeleteMapping("/{id}")
-    public void removeCartItem(@PathVariable Long id) {
-        itemCartService.removeCartItem(id);
+    public void deleteItemCart(@PathVariable Long id) {
+        itemCartService.deleteItemCart(id);
     }
 
 }

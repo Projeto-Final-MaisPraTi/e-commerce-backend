@@ -25,7 +25,7 @@ public class UserService {
                 .collect(Collectors.toList()); // coleta os dados convertidos e transforma em uma lista
     }
 
-    public UserDTO getUserById(int id){
+    public UserDTO getUserById(Long id){
         Optional<User> user = userRepository.findById(id);
         return user.map(this::convertToDTO).orElse(null);
     }
@@ -41,7 +41,7 @@ public class UserService {
         return convertToDTO(user);
     }
 
-    public UserDTO updateUser(int id, UserDTO userDTO){
+    public UserDTO updateUser(Long id, UserDTO userDTO){
         Optional<User> userOptional = userRepository.findById(id);
         if(userOptional.isPresent()){
             User user = userOptional.get();
@@ -57,7 +57,7 @@ public class UserService {
         return null;
     }
 
-    public void deleteUser(int id){
+    public void deleteUser(Long id){
         userRepository.deleteById(id);
     }
 

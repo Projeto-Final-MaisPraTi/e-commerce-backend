@@ -4,6 +4,7 @@ import com.ecommerce.app.dto.product.ProductDTO;
 import com.ecommerce.app.dto.productImage.ProductImagesDTO;
 import com.ecommerce.app.model.product.Product;
 import com.ecommerce.app.model.productImages.ProductImages;
+import com.ecommerce.app.repository.product.ProductRepository;
 import com.ecommerce.app.repository.productImages.ProductImagesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 public class ProductImagesService {
 
     private final ProductImagesRepository productImagesRepository;
+    private final ProductRepository productRepository;
 
     public List<ProductImagesDTO> getAllProductImages() {
         return productImagesRepository
@@ -27,62 +29,48 @@ public class ProductImagesService {
     }
 
     public ProductImagesDTO getProductImagesById(Long id) {
-        Optional<ProductImages> payment = ProductImagesRepository.findById(id);
+        Optional<ProductImages> productImages= productImagesRepository.findById(id);
 
-        return payment.map(this::convertToDTO).orElseThrow(() -> new RuntimeException("Imagem do produto não encontrada!"));
+        return productImages.map(this::convertToDTO).orElseThrow(() -> new RuntimeException("Imagem do produto não encontrada!"));
     }
 
-    public ProductImagesDTO createProductImages(ProductImagesDTO productImagesDTO) {
+    public ProductImagesDTO createProductImages(ProductImagesDTO productImagesDTO, Product product) {
+        Product prod = productRepository.findById(productImagesDTO.getId_produto())
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+
         ProductImages productImages = new ProductImages();
         productImages.setImagem(productImagesDTO.getImagem());
-        productImages.setProduct(productImagesDTO.getId_produto());
 
-        paymentRepository.save(payment);
+        // Associa a entidade Product diretamente
+        productImages.setProduct(product);
 
-        return convertToDTO(payment);
+        productImagesRepository.save(productImages);
+
+        return convertToDTO(productImages);
     }
 
-    public PaymentDTO updateProductImages(Long id, PaymentDTO paymentDTO) {
-        Payment payment = paymentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tipo de pagamento não encontrado!"));
+    public ProductImagesDTO updateProductImages(Long id, ProductImagesDTO productImagesDTO, Product product) {
+        ProductImages productImages = productImagesRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Imagem do produto não encontrada!"));
 
-        payment.setTipo(paymentDTO.getTipo());
-        paymentRepository.save(payment);
+        productImages.setImagem(productImagesDTO.getImagem());
+        productImages.setProduct(product);
+        productImagesRepository.save(productImages);
 
-        return convertToDTO(payment);
+        return convertToDTO(productImages);
     }
 
     public void deleteProductImages(Long id) {
-        paymentRepository.deleteById(id);
+        productImagesRepository.deleteById(id);
     }
 
-    private PaymentDTO convertToDTO(Payment payment) {
-        PaymentDTO paymentDTO = new PaymentDTO();
-        paymentDTO.setId(payment.getId());
-        paymentDTO.setTipo(payment.getTipo());
-
-        return paymentDTO;
-    }
-
-    private ProductImagesDTO convertToProductImagesDTO(ProductImages productImages) {
+    private ProductImagesDTO convertToDTO(ProductImages productImages) {
         return ProductImagesDTO.builder()
                 .id(productImages.getId())
                 .imagem(productImages.getImagem())
-                .id_produto(productImages.getId())
+                .id_produto(
+                        productImages.getProduct() != null ? productImages.getProduct().getId() : null) // Pegando o ID do produto
                 .build();
-    }
-
-
-    private Product convertToProductImagesEntity(ProductDTO productDTO) {
-        Product product = new Product();
-        product.setId(productDTO.getId());
-        product.setNome(productDTO.getNome());
-        product.setPreco(productDTO.getPreco());
-        product.setCategoria(productDTO.getCategoria());
-        product.setNota(productDTO.getNota());
-        product.setCor(productDTO.getCor());
-        product.setEstoque(Integer.parseInt(productDTO.getEstoque()));  // Converter para int
-        return product;
     }
 
 }

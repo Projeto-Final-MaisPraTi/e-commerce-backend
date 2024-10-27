@@ -6,6 +6,6 @@ import com.ecommerce.app.model.reviews.Reviews;
 
 public interface ReviewsRepository extends JpaRepository<Reviews, Long>{
 
-	Reviews findByReviews(String reviews);
+	Reviews findByAvaliacao(Integer avaliacao);
 	
 }

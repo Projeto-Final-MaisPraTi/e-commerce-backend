@@ -1,14 +1,10 @@
 package com.ecommerce.app.controller.productImages;
 
 import java.util.List;
+
+import com.ecommerce.app.model.product.Product;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.ecommerce.app.dto.productImage.ProductImagesDTO;
 import com.ecommerce.app.service.productImages.ProductImagesService;
@@ -21,23 +17,28 @@ public class ProductImagesController {
     private ProductImagesService productImagesService;
 
     @GetMapping
-    public List<ProductImagesDTO> getAllImages() {
-        return productImagesService.getAllImages();
+    public List<ProductImagesDTO> getAllProductImages() {
+        return productImagesService.getAllProductImages();
     }
 
     @GetMapping("/{id}")
     public ProductImagesDTO getImageById(@PathVariable Long id) {
-        return productImagesService.getImageById(id);
+        return productImagesService.getProductImagesById(id);
     }
 
     @PostMapping
-    public ProductImagesDTO createImage(@RequestBody ProductImagesDTO productImagesDTO) {
-        return productImagesService.createImage(productImagesDTO);
+    public ProductImagesDTO createProductImages(@RequestBody ProductImagesDTO productImagesDTO, Product product) {
+        return productImagesService.createProductImages(productImagesDTO, product);
+    }
+
+    @PutMapping("/{id}")
+    public ProductImagesDTO updateProductImages(@PathVariable Long id, @RequestBody ProductImagesDTO productImagesDTO, Product product) {
+        return productImagesService.updateProductImages(id, productImagesDTO, product);
     }
 
     @DeleteMapping("/{id}")
     public void deleteImage(@PathVariable Long id) {
-        productImagesService.deleteImage(id);
+        productImagesService.deleteProductImages(id);
     }
 
 }

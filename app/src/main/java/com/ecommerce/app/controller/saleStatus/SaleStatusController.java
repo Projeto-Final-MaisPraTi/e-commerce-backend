@@ -29,7 +29,7 @@ public class SaleStatusController {
 
     @GetMapping
     public List<SaleStatusDTO> getAllSaleStatuses() {
-        return saleStatusService.getAllSaleStatuses();
+        return saleStatusService.getAllSalesStatus();
     }
 
     @GetMapping("/{id}")

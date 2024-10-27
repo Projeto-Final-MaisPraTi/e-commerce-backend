@@ -33,24 +33,24 @@ public class SalesController {
 
     @GetMapping("/{id}")
     public ResponseEntity<SalesDTO> getSalesById(@PathVariable Long id) {
-        return ResponseEntity.ok(salesService.getSalesById(id));
+        return ResponseEntity.ok(salesService.getSaleById(id));
     }
 
     @PostMapping
     public ResponseEntity<SalesDTO> createSales(@RequestBody SalesDTO salesDTO) {
-        SalesDTO newSales = salesService.createSales(salesDTO);
+        SalesDTO newSales = salesService.createSale(salesDTO);
         return ResponseEntity.status(201).body(newSales);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<SalesDTO> updateSales(
             @PathVariable Long id, @RequestBody SalesDTO salesDTO) {
-        return ResponseEntity.ok(salesService.updateSales(id, salesDTO));
+        return ResponseEntity.ok(salesService.updateSale(id, salesDTO));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSales(@PathVariable Long id) {
-        salesService.deleteSales(id);
+        salesService.deleteSale(id);
         return ResponseEntity.noContent().build();
     }
 
