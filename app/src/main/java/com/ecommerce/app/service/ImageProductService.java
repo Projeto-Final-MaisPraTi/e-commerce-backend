@@ -1,5 +1,7 @@
 package com.ecommerce.app.service;
 
+import com.ecommerce.app.exception.DatabaseOperationException;
+import com.ecommerce.app.exception.ResourceNotFoundException;
 import com.ecommerce.app.model.ImageProduct;
 import com.ecommerce.app.model.Product;
 import com.ecommerce.app.repository.ImageRepository;
@@ -28,44 +30,43 @@ public class ImageProductService {
         if (imagem.isPresent()) {
             Product product = imagem.get().getProduct();
             product.getImages().remove(imagem.get());
+            try{
             imageRepository.delete(imagem.get());
+            } catch (Exception e) { throw new DatabaseOperationException("Error deleting image"); }
         } else {
-            throw new EntityNotFoundException("Erro ao buscar imagem " + imageUrl);
+            throw new ResourceNotFoundException("Image not found with URL: " + imageUrl);
         }
     }
 
     @Transactional
     public void addImageCover(Integer id, String imageUrl) {
-        Optional <Product> optionalProduct = productRepository.findById(id);
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
-        if (optionalProduct.isPresent()) {
-
-            Product product = optionalProduct.get();
             ImageProduct image = new ImageProduct();
 
             image.setImagem(imageUrl);
             image.setProduct(product);
             product.getImages().add(0, image);
-            imageRepository.save(image);
-            productRepository.save(product);
-
-        } else {
-            throw new RuntimeException("Product not found");
-        }
+            try {
+                imageRepository.save(image);
+                productRepository.save(product);
+            } catch (Exception e) {
+                throw new DatabaseOperationException("Error adding image cover");
+            }
     }
 
     public String getCoverByProductId(Integer id) {
-        Optional<ImageProduct> img = imageRepository.getCoverByProductId(id);
-        String cover = null;
-        if (img.isPresent()) {
-            cover = img.get().getImagem();
-        }
-        return cover;
+        return imageRepository.getCoverByProductId(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cover image not found for product ID: " + id))
+                .getImagem();
     }
 
     public List<String> getImagesByProductId(Integer id) {
+        try{
         List<ImageProduct> images = imageRepository.getImagesByProductId(id);
         return images.stream().map(ImageProduct::getImagem)
                 .collect(Collectors.toList());
+        } catch (Exception e) { throw new DatabaseOperationException("Error retrieving images by product ID: " + id); }
     }
 }
