@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.ecommerce.app.model.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +41,12 @@ public class AddressService {
         address.setCidade(address.getCidade());
         address.setUf(address.getUf());
         address.setCep(address.getCep());
+        address.setEndereco_padrao(addressDTO.getEndereco_padrao());
+
+        User user = new User();
+        user.setId(addressDTO.getId());
+        address.setUser(user);
+
         addressRepository.save(address);
 
         return convertToDTO(address);
@@ -50,6 +57,16 @@ public class AddressService {
         if(addressOptional.isPresent()){
             Address address = addressOptional.get();
             address.setId(address.getId());
+            address.setEndereco(address.getEndereco());
+            address.setCidade(address.getCidade());
+            address.setUf(address.getUf());
+            address.setCep(address.getCep());
+            address.setEndereco_padrao(addressDTO.getEndereco_padrao());
+
+            User user = new User();
+            user.setId(addressDTO.getId());
+            address.setUser(user);
+
             addressRepository.save(address);
 
             return convertToDTO(address);
@@ -63,8 +80,15 @@ public class AddressService {
     }
 
     private AddressDTO convertToDTO(Address address){
-        AddressDTO addressDTO = new AddressDTO();
+        AddressDTO addressDTO = new AddressDTO(address);
         addressDTO.setId(address.getId());
+        addressDTO.setEndereco(address.getEndereco());
+        addressDTO.setNumero(address.getNumero());
+        addressDTO.setCidade(address.getCidade());
+        addressDTO.setUf(address.getUf());
+        addressDTO.setCep(address.getCep());
+        addressDTO.setEndereco_padrao(address.isEndereco_padrao());
+        addressDTO.setUser(address.getUser());
 
         return addressDTO;
     }

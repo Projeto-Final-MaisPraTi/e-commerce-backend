@@ -2,14 +2,18 @@ package com.ecommerce.app.infra.cors;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -22,7 +26,7 @@ public class SecurityConfig {
 
 	private final JwtAuthenticationFilter jwtAuthFilter;
 	private final CustomUserDetailsService customUserDetailsService;
-	
+
 	public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, CustomUserDetailsService customUserDetailsService) {
 		this.jwtAuthFilter = jwtAuthFilter;
 		this.customUserDetailsService = customUserDetailsService;
@@ -50,13 +54,42 @@ public class SecurityConfig {
 	
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-		return http.csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/auth/**").permitAll()
-						.requestMatchers("/api/**").permitAll()
-						.anyRequest().authenticated()
-				).authenticationProvider(authenticationProvider())
+		return http
+				.csrf(csrf -> csrf.disable())
+//				.authorizeHttpRequests(auth -> auth
+//						.requestMatchers("/auth/**").permitAll()
+//						.requestMatchers("/api/**").authenticated()
+//						.anyRequest().authenticated()
+//				)
+//				.formLogin(form -> form
+//						.loginPage("/auth/login")
+//						.permitAll())
+//				.logout(logout -> logout.permitAll())
+				//.oauth2Login(Customizer.withDefaults())
+//				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt
+//						.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+				.authorizeHttpRequests(auth -> {
+					auth.requestMatchers(HttpMethod.POST, "/api/users").permitAll();
+					auth.requestMatchers("/api/sales").authenticated();
+					auth.requestMatchers("/api/cart-items").authenticated();
+					auth.requestMatchers("/api/product").hasRole("ADMIN");
+					auth.anyRequest().authenticated();
+				})
+				.formLogin(Customizer.withDefaults())
+				.authenticationProvider(authenticationProvider())
 				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class).build();
+	}
+
+	@Bean
+	public JwtAuthenticationConverter jwtAuthenticationConverter(){
+		JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+		grantedAuthoritiesConverter.setAuthoritiesClaimName("role");
+		grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+
+		JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+
+		return jwtAuthenticationConverter;
 	}
 	
 }

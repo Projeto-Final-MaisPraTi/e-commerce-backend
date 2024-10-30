@@ -33,8 +33,8 @@ public class ReviewsController {
     }
 
     @PutMapping("/{id}")
-    public ReviewsDTO createReview(@PathVariable Long id, @RequestBody ReviewsDTO reviewsDTO, Product product, User user) {
-        return reviewsService.createReview(reviewsDTO, product, user);
+    public ReviewsDTO updateReview(@PathVariable Long id, @RequestBody ReviewsDTO reviewsDTO, Product product, User user) {
+        return reviewsService.updateReview(id, reviewsDTO, product, user);
     }
 
     @DeleteMapping("/{id}")

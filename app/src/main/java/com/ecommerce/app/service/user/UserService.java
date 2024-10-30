@@ -1,10 +1,14 @@
 package com.ecommerce.app.service.user;
 
 import com.ecommerce.app.dto.user.UserDTO;
+import com.ecommerce.app.model.address.Address;
 import com.ecommerce.app.model.user.User;
 import com.ecommerce.app.repository.user.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +17,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     @Autowired // faz injeção de dependência automática
     private UserRepository userRepository;
+
     public List<UserDTO> getAllUsers(){
         // retorna a lista de usuários convertidos e coletados
         return userRepository
@@ -34,8 +39,12 @@ public class UserService {
         User user = new User();
         user.setUsername(userDTO.getUsername());
         user.setEmail(userDTO.getEmail());
-        user.setPassword(new BCryptPasswordEncoder().encode(userDTO.getPassword()));
-        user.setPhone(userDTO.getPhone());
+        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        user.setPhone(user.getPhone());
+        user.setRole(user.getRole());
+        user.setAddress(user.getAddress());
+        user.setSales(user.getSales());
+        user.setItemCart(user.getItemCart());
         userRepository.save(user);
 
         return convertToDTO(user);
@@ -47,8 +56,12 @@ public class UserService {
             User user = userOptional.get();
             user.setUsername(userDTO.getUsername());
             user.setEmail(userDTO.getEmail());
-            user.setPassword(userDTO.getPassword());
-            user.setPhone(userDTO.getPhone());
+            user.setPassword(user.getPassword());
+            user.setPhone(user.getPhone());
+            user.setRole(user.getRole());
+            user.setAddress(user.getAddress());
+            user.setSales(user.getSales());
+            user.setItemCart(user.getItemCart());
             userRepository.save(user);
 
             return convertToDTO(user);
@@ -66,9 +79,19 @@ public class UserService {
         userDTO.setId(user.getId());
         userDTO.setUsername(user.getUsername());
         userDTO.setEmail(user.getEmail());
-        userDTO.setPassword(user.getPassword());
-        userDTO.setPhone(user.getPhone());
+        user.setPassword(user.getPassword());
+        user.setPhone(user.getPhone());
+        user.setRole(user.getRole());
+        user.setAddress(user.getAddress());
+        user.setSales(user.getSales());
+        user.setItemCart(user.getItemCart());
 
         return userDTO;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + username));
     }
 }

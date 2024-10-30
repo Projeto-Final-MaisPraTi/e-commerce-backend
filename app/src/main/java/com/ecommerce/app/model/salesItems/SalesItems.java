@@ -33,7 +33,7 @@ public class SalesItems {
 	@Column(name = "quantidade")
 	private Integer quantidade;
 	
-	@Column(name = "total_item")
-	private Double total_item;
+	@Column(name = "preco")
+	private Double preco;
 	
 }

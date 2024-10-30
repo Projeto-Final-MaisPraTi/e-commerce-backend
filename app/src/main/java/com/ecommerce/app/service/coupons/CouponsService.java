@@ -37,7 +37,6 @@ public class CouponsService {
         Coupons coupon = new Coupons();
         coupon.setCodigo(couponsDTO.getCodigo());
         coupon.setDesconto_porcentagem(couponsDTO.getDesconto());
-        // coupon.setData_inicial(couponsDTO.getData_inicial());
         coupon.setData_inicial(LocalDate.now());
         coupon.setData_final(LocalDate.now().plusDays(30)); // cupom válido por 30 dias
         coupon.setExpiracao(false);

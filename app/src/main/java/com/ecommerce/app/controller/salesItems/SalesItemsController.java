@@ -2,6 +2,7 @@ package com.ecommerce.app.controller.salesItems;
 
 import java.util.List;
 
+import com.ecommerce.app.model.product.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,15 +39,14 @@ public class SalesItemsController {
     }
 
     @PostMapping
-    public ResponseEntity<SalesItemsDTO> createSalesItem(@RequestBody SalesItemsDTO salesItemsDTO) {
-        SalesItemsDTO newSalesItem = salesItemsService.createSalesItem(salesItemsDTO);
-        return ResponseEntity.status(201).body(newSalesItem);
+    public ResponseEntity<SalesItemsDTO> createSalesItem(@RequestBody SalesItemsDTO salesItemsDTO, Product product) {
+        return ResponseEntity.ok(salesItemsService.createSalesItem(salesItemsDTO, product));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<SalesItemsDTO> updateSalesItem(
-            @PathVariable Long id, @RequestBody SalesItemsDTO salesItemsDTO) {
-        return ResponseEntity.ok(salesItemsService.updateSalesItem(id, salesItemsDTO));
+            @PathVariable Long id, @RequestBody SalesItemsDTO salesItemsDTO, Product product) {
+        return ResponseEntity.ok(salesItemsService.updateSalesItem(id, salesItemsDTO, product));
     }
 
     @DeleteMapping("/{id}")
