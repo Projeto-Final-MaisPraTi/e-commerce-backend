@@ -27,6 +27,7 @@ public class JwtTokenProvider {
 	public JwtTokenProvider(@Value("${jwt.secret}") String secret) {
 		if (secret.length() < 32) {
 			throw new IllegalArgumentException("Chave secreta JWT deve ter pelo menos 256 bits (32 caracteres)");
+//			Chave secreta deve ter pelo menos 256 bits (32 caracteres)
 		}
 		this.secretKey = Keys.hmacShaKeyFor(secret.getBytes()); // Garante a segurança com 256 bits
 	}
