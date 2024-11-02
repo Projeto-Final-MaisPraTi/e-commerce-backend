@@ -12,6 +12,7 @@ import com.ecommerce.app.dto.produtos.ProductDTO;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/product")
@@ -21,7 +22,7 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
-    public List<ProductDTO> getAllProducts(){
+    public List<SimpleProductDTO> getAllProducts(){
         return productService.getAllProducts();
     }
 
@@ -32,21 +33,28 @@ public class ProductController {
         return productDTO != null ? ResponseEntity.ok(productDTO) : ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/{id}/details")
+    public ResponseEntity<ProductDTO> getProductDetailsById(@PathVariable int id){
+        ProductDTO productDTO = productService.getProductById(id);
+
+        return productDTO != null ? ResponseEntity.ok(productDTO) : ResponseEntity.notFound().build();
+    }
+
         // simpleProduct pega somente alguns dados do produto para a visualização no product card
         //search — Nenhum parâmetro passado.
         //search?name=John — Apenas o nome foi passado.
         //search?id=10 — Apenas o id foi passado.
         //search?name=John&id=10 — Ambos foram passados.
-    @GetMapping("/search")
-    public ResponseEntity<List<SimpleProductDTO>> getProduct(@RequestParam(value = "id", required = false) String id,
-                                                       @RequestParam(value = "name", required = false) String name){
-        if (id != null && id.length() > 0) {
-            Integer key = Integer.parseInt(id);
-            SimpleProductDTO simple = productService.getProductById2(key);
-            return ResponseEntity.ok(List.of(simple));
-        } else if (name != null && name.length() > 0) {
-            List<SimpleProductDTO> simple = productService.getProductByName(name);
-            return ResponseEntity.ok(simple);
+    @GetMapping("/busca")
+    public ResponseEntity<List<SimpleProductDTO>> getProduct(@RequestParam Map<String, String> filters){
+        // se estiver vazio
+        if (filters.isEmpty()) {
+            List<SimpleProductDTO> productDTOS = productService.getAllProducts();
+            return productDTOS != null ? ResponseEntity.ok(productDTOS) : ResponseEntity.notFound().build();
+        }
+        if (!filters.isEmpty()) {
+            List<SimpleProductDTO> productDTOS = productService.buildFilteredProducts(filters);
+            return productDTOS != null ? ResponseEntity.ok(productDTOS) : ResponseEntity.notFound().build();
         }
         return ResponseEntity.notFound().build();
     }
@@ -71,7 +79,7 @@ public class ProductController {
 
     @GetMapping("/{id}/update")
     public ResponseEntity<ProductUpdateDTO> getProductUpdateById(@PathVariable int id){
-        ProductUpdateDTO product = productService.getProductUpdateById(id);
+        ProductUpdateDTO product = productService.productUpdateById(id);
 
         return product != null ? ResponseEntity.ok(product) : ResponseEntity.notFound().build();
     }

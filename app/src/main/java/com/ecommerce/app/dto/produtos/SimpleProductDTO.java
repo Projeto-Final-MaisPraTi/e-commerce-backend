@@ -7,9 +7,10 @@ public record SimpleProductDTO(
         String nome,
         int nota,
         Double preco,
+        String descricao,
         String images
 ) {
-    public SimpleProductDTO(Product product) {
-        this(product.getId(), product.getNome(), product.getNota(), product.getPreco(), product.getImages().get(0).getImagem());
+    public SimpleProductDTO(Product product, String cover) {
+        this(product.getId(), product.getNome(), product.getNota(), product.getPreco(), product.getDescricao(),cover);
     }
 }
