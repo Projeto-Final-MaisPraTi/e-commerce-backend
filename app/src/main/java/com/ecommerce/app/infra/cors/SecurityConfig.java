@@ -70,6 +70,8 @@ public class SecurityConfig {
 //						.jwtAuthenticationConverter(jwtAuthenticationConverter())))
 				.authorizeHttpRequests(auth -> {
 					auth.requestMatchers(HttpMethod.POST, "/api/users").permitAll();
+					auth.requestMatchers(HttpMethod.POST, "/auth/**").permitAll();
+					auth.requestMatchers(HttpMethod.POST, "/").permitAll();
 					auth.requestMatchers("/api/sales").authenticated();
 					auth.requestMatchers("/api/cart-items").authenticated();
 					auth.requestMatchers("/api/product").hasRole("ADMIN");

@@ -20,6 +20,9 @@ public class JwtTokenProvider {
 	@Value("${jwt.secret}")
 	private String secretKey;
 
+	@Value("${jwt.expirationMs}")
+	private Long jwtExpirationMs;
+
 	public String extractUsername(String token) {
 		
 		return extractClaim(token, Claims::getSubject);
@@ -34,19 +37,21 @@ public class JwtTokenProvider {
 	public Claims extractAllClaims(String token) {
 		return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
 	}
-	
+
 	public String generateToken(UserDetails userDetails) {
+		if (userDetails == null || userDetails.getUsername() == null) {
+			return null; // Verificação de segurança adicional
+		}
 		Map<String, Object> claims = new HashMap<>();
-		
 		return createToken(claims, userDetails.getUsername());
 	}
-	
+
 	private String createToken(Map<String, Object> claims, String subject) {
 		return Jwts.builder()
 				.setClaims(claims)
 				.setSubject(subject)
 				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+				.setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
 				.signWith(SignatureAlgorithm.HS256, secretKey)
 				.compact();
 	}

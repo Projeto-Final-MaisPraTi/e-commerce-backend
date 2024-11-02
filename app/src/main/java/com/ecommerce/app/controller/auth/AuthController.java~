@@ -1,5 +1,6 @@
 package com.ecommerce.app.controller.auth;
 
+import com.ecommerce.app.dto.user.UserDTO;
 import com.ecommerce.app.model.user.User;
 import com.ecommerce.app.service.user.UserService;
 import org.springframework.dao.DataIntegrityViolationException;

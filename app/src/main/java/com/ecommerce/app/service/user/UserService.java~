@@ -33,9 +33,6 @@ public class UserService implements UserDetailsService {
 
     public User createUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setAddress(user.getAddress());
-        user.setSales(user.getSales());
-        user.setItemCart(user.getItemCart());
         return userRepository.save(user);
     }
 
