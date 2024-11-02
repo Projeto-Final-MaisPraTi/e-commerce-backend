@@ -30,7 +30,7 @@ public class SalesService {
                 .collect(Collectors.toList());
     }
 
-    public SalesDTO getSaleById(Long id){
+    public SalesDTO getSaleById(Integer id){
         Optional<Sales> sale = salesRepository.findById(id);
 
         return sale.map(this::convertToDTO).orElseThrow(() -> new RuntimeException("Venda não encontrada!"));
@@ -53,7 +53,7 @@ public class SalesService {
         return convertToDTO(sales);
     }
 
-    public SalesDTO updateSale(Long id, SalesDTO salesDTO, User user, Payment payment, Coupons coupons, SalesItemsDTO salesItemsDTO) {
+    public SalesDTO updateSale(Integer id, SalesDTO salesDTO, User user, Payment payment, Coupons coupons, SalesItemsDTO salesItemsDTO) {
         Sales sales = salesRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Venda não encontrada!"));
 
@@ -72,7 +72,7 @@ public class SalesService {
         return convertToDTO(sales);
     }
 
-    public void deleteSale(Long id) {
+    public void deleteSale(Integer id) {
         Sales sales = salesRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Venda não encontrada!"));
 
@@ -101,7 +101,7 @@ public class SalesService {
     }
 
 
-    public void updatedSaleStatus(Long id, TypeSaleStatus typeSaleStatus) {
+    public void updatedSaleStatus(Integer id, TypeSaleStatus typeSaleStatus) {
         salesRepository
                 .findById(id)
                 .map(sale -> {

@@ -23,7 +23,7 @@ public class ReviewsController {
     }
 
     @GetMapping("/{id}")
-    public ReviewsDTO getReviewById(@PathVariable Long id) {
+    public ReviewsDTO getReviewById(@PathVariable Integer id) {
         return reviewsService.getReviewById(id);
     }
 
@@ -33,12 +33,12 @@ public class ReviewsController {
     }
 
     @PutMapping("/{id}")
-    public ReviewsDTO updateReview(@PathVariable Long id, @RequestBody ReviewsDTO reviewsDTO, Product product, User user) {
+    public ReviewsDTO updateReview(@PathVariable Integer id, @RequestBody ReviewsDTO reviewsDTO, Product product, User user) {
         return reviewsService.updateReview(id, reviewsDTO, product, user);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteReviews(@PathVariable Long id) {
+    public void deleteReviews(@PathVariable Integer id) {
         reviewsService.deleteReview(id);
     }
 

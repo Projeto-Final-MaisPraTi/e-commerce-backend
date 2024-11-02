@@ -25,7 +25,7 @@ public class ProductService {
                 .collect(Collectors.toList()); // coleta os dados convertidos e transforma em uma lista
     }
 
-    public ProductDTO getProductById(Long id){
+    public ProductDTO getProductById(Integer id){
         Optional<Product> product = productRepository.findById(id);
         return product.map(this::convertToDTO).orElse(null);
     }
@@ -41,7 +41,7 @@ public class ProductService {
         return convertToDTO(product);
     }
 
-    public ProductDTO updateProduct(Long id, ProductDTO productDTO){
+    public ProductDTO updateProduct(Integer id, ProductDTO productDTO){
         Optional<Product> productOptional = productRepository.findById(id);
         if(productOptional.isPresent()){
             Product product = productOptional.get();
@@ -58,7 +58,7 @@ public class ProductService {
         return null;
     }
 
-    public void deleteProduct(Long id){
+    public void deleteProduct(Integer id){
         productRepository.deleteById(id);
     }
 

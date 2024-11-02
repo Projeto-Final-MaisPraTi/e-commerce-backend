@@ -1,5 +1,6 @@
 package com.ecommerce.app.service.user;
 
+import com.ecommerce.app.dto.user.RegisterRequest;
 import com.ecommerce.app.model.user.User;
 import com.ecommerce.app.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,28 +28,32 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-    public Optional<User> getUserById(Long id) {
+    public Optional<User> getUserById(Integer id) {
         return userRepository.findById(id);
     }
 
-    public User createUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setAddress(user.getAddress());
-        user.setSales(user.getSales());
-        user.setItemCart(user.getItemCart());
+    public User createUser(RegisterRequest registerRequest) {
+        User user = new User();
+        user.setUsername(registerRequest.getUsername());
+        user.setEmail(registerRequest.getEmail());
+        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+//        registerRequest.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+//        user.setAddress(user.getAddress());
+//        user.setSales(user.getSales());
+//        user.setItemCart(user.getItemCart());
         return userRepository.save(user);
     }
 
-    public Optional<User> updateUser(Long id, User userData) {
+    public Optional<User> updateUser(Integer id, User userData) {
         Optional<User> existingUser = userRepository.findById(id);
         if (existingUser.isPresent()) {
             User user = existingUser.get();
-            user.setName(userData.getName());
+            user.setUsername(userData.getUsername());
             user.setEmail(userData.getEmail());
             user.setPassword(passwordEncoder.encode(userData.getPassword()));
-            user.setAddress(userData.getAddress());
-            user.setSales(userData.getSales());
-            user.setItemCart(userData.getItemCart());
+//            user.setAddress(userData.getAddress());
+//            user.setSales(userData.getSales());
+//            user.setItemCart(userData.getItemCart());
 
             userRepository.save(user);
             return Optional.of(user);
@@ -56,7 +61,7 @@ public class UserService implements UserDetailsService {
         return Optional.empty();
     }
 
-    public void deleteUser(Long id) {
+    public void deleteUser(Integer id) {
         userRepository.deleteById(id);
     }
 

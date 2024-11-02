@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SalesItemsDTO {
-    private Long id;
+    private Integer id;
     private ProductDTO productDTO;
     private Integer quantidade;
     private Double preco;

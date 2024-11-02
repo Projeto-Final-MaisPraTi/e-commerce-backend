@@ -1,5 +1,6 @@
 package com.ecommerce.app.controller.auth;
 
+import com.ecommerce.app.dto.user.RegisterRequest;
 import com.ecommerce.app.model.user.User;
 import com.ecommerce.app.service.user.UserService;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -53,9 +54,9 @@ public class AuthController {
 	}
 
 	@PostMapping("/register")
-	public ResponseEntity<?> register(@RequestBody @Valid User user) {
+	public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest registerRequest) {
 		try {
-			userService.createUser(user);
+			userService.createUser(registerRequest);
 			return ResponseEntity.ok("Usuário registrado com sucesso!");
 		} catch (DataIntegrityViolationException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("E-mail já cadastrado.");

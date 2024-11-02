@@ -10,14 +10,14 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "pagamento")
+@Table(name = "payment")
 public class Payment {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Integer id;
 	
-	@Column(name = "tipo")
+	@Column(name = "type")
 	private String tipo; // "DINHEIRO", "CARTÃO"
 	
 }

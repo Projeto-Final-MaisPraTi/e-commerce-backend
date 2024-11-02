@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentDTO {
-    private Long id;
+    private Integer id;
     private String tipo; // "DINHEIRO", "CARTÃO"
 }

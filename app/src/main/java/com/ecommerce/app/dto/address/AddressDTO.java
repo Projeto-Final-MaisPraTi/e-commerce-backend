@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AddressDTO {
 
-	private Long id;
+	private Integer id;
 	
 	private String endereco;
 
@@ -28,7 +28,7 @@ public class AddressDTO {
 
 	private User user;
 
-	public AddressDTO(Long id, String endereco, int numero, String cidade, String uf, String cep, Boolean endereco_padrao, User user) {
+	public AddressDTO(Integer id, String endereco, int numero, String cidade, String uf, String cep, Boolean endereco_padrao, User user) {
 		this.id = id;
 		this.endereco = endereco;
 		this.numero = numero;

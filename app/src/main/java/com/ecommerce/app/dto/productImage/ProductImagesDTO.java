@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 public class ProductImagesDTO {
-    private Long id;
+    private Integer id;
     private String imagem;
-    private Long id_produto;
+    private Integer id_produto;
 }

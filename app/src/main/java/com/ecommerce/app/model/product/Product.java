@@ -19,32 +19,32 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "produtos")
+@Table(name = "products")
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
-    @Column(name = "nome", nullable = false)
+    @Column(name = "name", nullable = false)
     private String nome;
 
-    @Column(name = "nota", nullable = false)
+    @Column(name = "score", nullable = false)
     private int nota;
 
-    @Column(name = "preco", nullable = false)
+    @Column(name = "price", nullable = false)
     private double preco;
 
-    @Column(name = "cor", nullable = false)
+    @Column(name = "color", nullable = false)
     private String cor;
     
-    @Column(name = "descricao", columnDefinition = "TEXT", nullable = false)
+    @Column(name = "description", columnDefinition = "TEXT", nullable = false)
     private String descricao;
     
-    @Column(name = "estoque", nullable = false)
+    @Column(name = "stock", nullable = false)
     private int estoque;
     
-    @Column(name = "categoria", nullable = false)
+    @Column(name = "category", nullable = false)
     private String categoria;
     
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)

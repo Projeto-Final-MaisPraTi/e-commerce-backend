@@ -15,25 +15,25 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "itens_vendas")
+@Table(name = "sales_itens")
 public class SalesItems {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Integer id;
 	
 	@ManyToOne
-	@JoinColumn(name = "id_venda")
+	@JoinColumn(name = "sale_id")
 	private Sales sales;
 	
 	@ManyToOne
-	@JoinColumn(name = "id_produto")
+	@JoinColumn(name = "product_id")
 	private Product product;
 	
-	@Column(name = "quantidade")
+	@Column(name = "quantity")
 	private Integer quantidade;
 	
-	@Column(name = "preco")
+	@Column(name = "price")
 	private Double preco;
 	
 }

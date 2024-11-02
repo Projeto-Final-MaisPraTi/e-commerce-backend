@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemCartDTO {
-    private Long id;
+    private Integer id;
     private ProductDTO productDTO;
     private Integer quantidade;
     private Double preco; // Valor total do produto multiplicado pela quantidade

@@ -27,7 +27,7 @@ public class CouponsService {
             .collect(Collectors.toList());
     }
 
-    public CouponsDTO getCouponById(Long id) {
+    public CouponsDTO getCouponById(Integer id) {
         Optional<Coupons> coupon = couponsRepository.findById(id);
 
         return coupon.map(this::convertToDTO).orElseThrow(() -> new RuntimeException("Cupom não encontrado!"));
@@ -46,7 +46,7 @@ public class CouponsService {
         return convertToDTO(coupon);
     }
 
-    public CouponsDTO updateCoupon(Long id, CouponsDTO couponsDTO) {
+    public CouponsDTO updateCoupon(Integer id, CouponsDTO couponsDTO) {
         //Optional<Coupons> couponOptional = couponsRepository.findById(id);
         Coupons coupons = couponsRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Cupom não encontrado!"));
@@ -61,7 +61,7 @@ public class CouponsService {
         return convertToDTO(coupons);
     }
 
-    public void deleteCoupon(Long id) {
+    public void deleteCoupon(Integer id) {
         couponsRepository.deleteById(id);
     }
 

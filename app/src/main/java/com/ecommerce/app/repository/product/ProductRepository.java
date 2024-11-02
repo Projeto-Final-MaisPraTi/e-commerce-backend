@@ -11,8 +11,8 @@ import org.springframework.stereotype.Repository;
 import com.ecommerce.app.model.product.Product;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long>{
-	Optional<Product> findById(Long id);
+public interface ProductRepository extends JpaRepository<Product, Integer>{
+	Optional<Product> findById(Integer id);
 	List<Product> findByNome(String nome);
 	List<Product> findByCategoria(String categoria);
 

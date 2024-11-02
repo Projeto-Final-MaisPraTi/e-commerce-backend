@@ -12,26 +12,26 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "cupons")
+@Table(name = "coupons")
 public class Coupons {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Integer id;
 	
-	@Column(name = "codigo", nullable = false)
+	@Column(name = "code", nullable = false)
 	private String codigo;
 	
-	@Column(name = "desconto_porcentagem", nullable = false)
+	@Column(name = "discount_percentage", nullable = false)
 	private Double desconto_porcentagem;
 	
-	@Column(name = "data_inicial")
+	@Column(name = "initial_date")
 	private LocalDate data_inicial;
 	
-	@Column(name = "data_final")
+	@Column(name = "final_date")
 	private LocalDate data_final;
 	
-	@Column(name = "expiracao")
+	@Column(name = "expiration")
 	private Boolean expiracao;
 	
 }

@@ -30,7 +30,7 @@ public class ItemCartService {
                 .collect(Collectors.toList());
     }
 
-    public ItemCartDTO getCartItemById(Long id) {
+    public ItemCartDTO getCartItemById(Integer id) {
         ItemCart itemCart = itemCartRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item de carrinho não encontrado"));
         return convertToDTO(itemCart);
@@ -54,7 +54,7 @@ public class ItemCartService {
         return convertToDTO(itemCart);
     }
 
-    public ItemCartDTO updateItemCart(Long id, ItemCartDTO itemCartDTO) {
+    public ItemCartDTO updateItemCart(Integer id, ItemCartDTO itemCartDTO) {
         ItemCart itemCart = itemCartRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item de carrinho não encontrado!"));
 
@@ -67,7 +67,7 @@ public class ItemCartService {
         return convertToDTO(itemCart);
     }
 
-    public void deleteItemCart(Long id) {
+    public void deleteItemCart(Integer id) {
         itemCartRepository.deleteById(id);
     }
 

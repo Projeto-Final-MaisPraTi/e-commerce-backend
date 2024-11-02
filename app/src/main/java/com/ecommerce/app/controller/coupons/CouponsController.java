@@ -28,7 +28,7 @@ public class CouponsController {
     }
 
     @GetMapping("/{id}")
-    public CouponsDTO getCouponById(@PathVariable Long id) {
+    public CouponsDTO getCouponById(@PathVariable Integer id) {
         return couponsService.getCouponById(id);
     }
 
@@ -38,12 +38,12 @@ public class CouponsController {
     }
 
     @PutMapping("/{id}")
-    public CouponsDTO updateCoupon(@PathVariable Long id, @RequestBody CouponsDTO couponsDTO) {
+    public CouponsDTO updateCoupon(@PathVariable Integer id, @RequestBody CouponsDTO couponsDTO) {
         return couponsService.updateCoupon(id, couponsDTO);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCoupon(@PathVariable Long id) {
+    public void deleteCoupon(@PathVariable Integer id) {
         couponsService.deleteCoupon(id);
     }
 

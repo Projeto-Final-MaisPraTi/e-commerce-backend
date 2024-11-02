@@ -20,17 +20,17 @@ public class Reviews {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Integer id;
 	
-	@Column(name = "avaliacao")
+	@Column(name = "evaluation")
 	private Integer avaliacao;
 	
 	@ManyToOne
-	@JoinColumn(name = "id_produto")
+	@JoinColumn(name = "product_id")
 	private Product product;
 	
 	@ManyToOne
-	@JoinColumn(name = "id_usuario")
+	@JoinColumn(name = "user_id")
 	private User user;
 	
 }

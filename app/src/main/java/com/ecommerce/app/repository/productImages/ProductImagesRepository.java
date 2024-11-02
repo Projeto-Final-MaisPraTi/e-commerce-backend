@@ -7,7 +7,7 @@ import com.ecommerce.app.model.productImages.ProductImages;
 
 import java.util.List;
 
-public interface ProductImagesRepository extends JpaRepository<ProductImages, Long>{
+public interface ProductImagesRepository extends JpaRepository<ProductImages, Integer>{
 
 	ProductImages findByImagem(String imagem);
 //	List<ProductImages> findByProduct(Product product); // obtém todas as imagens relacionadas a um produto

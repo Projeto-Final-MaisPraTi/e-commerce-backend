@@ -28,7 +28,7 @@ public class ProductImagesService {
                 .collect(Collectors.toList());
     }
 
-    public ProductImagesDTO getProductImagesById(Long id) {
+    public ProductImagesDTO getProductImagesById(Integer id) {
         Optional<ProductImages> productImages= productImagesRepository.findById(id);
 
         return productImages.map(this::convertToDTO).orElseThrow(() -> new RuntimeException("Imagem do produto não encontrada!"));
@@ -49,7 +49,7 @@ public class ProductImagesService {
         return convertToDTO(productImages);
     }
 
-    public ProductImagesDTO updateProductImages(Long id, ProductImagesDTO productImagesDTO, Product product) {
+    public ProductImagesDTO updateProductImages(Integer id, ProductImagesDTO productImagesDTO, Product product) {
         ProductImages productImages = productImagesRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Imagem do produto não encontrada!"));
 
@@ -60,7 +60,7 @@ public class ProductImagesService {
         return convertToDTO(productImages);
     }
 
-    public void deleteProductImages(Long id) {
+    public void deleteProductImages(Integer id) {
         productImagesRepository.deleteById(id);
     }
 
@@ -68,8 +68,7 @@ public class ProductImagesService {
         return ProductImagesDTO.builder()
                 .id(productImages.getId())
                 .imagem(productImages.getImagem())
-                .id_produto(
-                        productImages.getProduct() != null ? productImages.getProduct().getId() : null) // Pegando o ID do produto
+                .id_produto(productImages.getProduct() != null ? productImages.getProduct().getId() : null) // Pegando o ID do produto
                 .build();
     }
 

@@ -14,16 +14,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 @Data
 @Entity
-@Table(name = "usuarios")
+@Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "username", nullable = false)
-    private String name;
+    private String username;
 
     @Column(name = "email", nullable = false, unique = true)
     private String email;
@@ -53,6 +53,6 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.name;
+        return this.username;
     }
 }

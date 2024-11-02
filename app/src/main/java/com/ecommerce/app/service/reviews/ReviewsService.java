@@ -28,7 +28,7 @@ public class ReviewsService {
                 .collect(Collectors.toList());
     }
 
-    public ReviewsDTO getReviewById(Long id) {
+    public ReviewsDTO getReviewById(Integer id) {
         Optional<Reviews> reviews = reviewsRepository.findById(id);
 
         return reviews.map(this::convertToDTO).orElseThrow(() -> new RuntimeException("Review não encontrada!"));
@@ -48,7 +48,7 @@ public class ReviewsService {
         return convertToDTO(reviews);
     }
 
-    public ReviewsDTO updateReview(Long id, ReviewsDTO reviewsDTO, Product product, User user) {
+    public ReviewsDTO updateReview(Integer id, ReviewsDTO reviewsDTO, Product product, User user) {
         Reviews reviews = reviewsRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Review não encontrada!"));
 
@@ -61,7 +61,7 @@ public class ReviewsService {
         return convertToDTO(reviews);
     }
 
-    public void deleteReview(Long id) {
+    public void deleteReview(Integer id) {
         Reviews reviews = reviewsRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Review não encontrada!"));
 
