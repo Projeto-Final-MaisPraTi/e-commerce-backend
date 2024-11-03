@@ -13,14 +13,15 @@ import java.util.List;
 @AllArgsConstructor
 public class ProductDetailsDTO {
     private int id;
-    private String nome;
-    private int nota;
-    private String preco;
+    private String name;
+    private int rating;
+    private String price;
+    private String priceDiscount;
     public String categoria;
-    private String descricao;
+    private String description;
     private Integer estoque;
-    private Integer desconto;
+    private Integer discount;
     private Boolean flashSale;
-    private String cor;
+    private String color;
     private List<String> images;
 }

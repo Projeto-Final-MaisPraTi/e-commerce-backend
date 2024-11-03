@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.ecommerce.app.dto.product.ProductDetailsDTO;
 import com.ecommerce.app.model.product.Product;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -84,13 +85,13 @@ public class ProductService {
 
     public ProductDetailsDTO createProduct(ProductDetailsDTO productDTO){
         Product product = new Product();
-        product.setNome(productDTO.getNome());
-        product.setDescricao(productDTO.getDescricao());
+        product.setNome(productDTO.getName());
+        product.setDescricao(productDTO.getDescription());
         product.setEstoque(productDTO.getEstoque());
         product.setCategoria(productDTO.getCategoria());
-        product.setNota(productDTO.getNota());
-        product.setPreco(Double.parseDouble(productDTO.getPreco()));
-        product.setCor(productDTO.getCor());
+        product.setNota(productDTO.getRating());
+        product.setPreco(Double.parseDouble(productDTO.getPrice()));
+        product.setCor(productDTO.getColor());
         product.addImages(productDTO.getImages());
         product.getImages().get(0).setCapaProduto(true);
         productRepository.save(product);
@@ -129,13 +130,19 @@ public class ProductService {
     private ProductDetailsDTO convertToDTO(Product product){
         ProductDetailsDTO productDTO = new ProductDetailsDTO();
         productDTO.setId(product.getId());
-        productDTO.setNome(product.getNome());
-        productDTO.setDescricao(product.getDescricao());
+        productDTO.setName(product.getNome());
+        productDTO.setDescription(product.getDescricao());
         productDTO.setCategoria(product.getCategoria());
         productDTO.setEstoque(product.getEstoque());
-        productDTO.setNota(product.getNota());
-        productDTO.setPreco(product.getPreco().toString());
-        productDTO.setCor(product.getCor());
+        productDTO.setRating(product.getNota());
+        productDTO.setDiscount(product.getDiscount());
+        NumberFormat currency = NumberFormat.getCurrencyInstance();
+        productDTO.setPrice(currency.format(product.getPreco()));
+        if (product.getDiscount() != 0) {
+            Double value = product.getPreco() - (product.getPreco() / 100) * product.getDiscount();
+            productDTO.setPriceDiscount(currency.format(value));
+        }
+        productDTO.setColor(product.getCor());
         productDTO.setImages(product.getImages().stream().map(image -> image.getImagem()).toList());
 
         return productDTO;
@@ -163,7 +170,7 @@ public class ProductService {
             specification = specification.and(ProductSpecifications
                     .hasName(filters.get("nome")));
         }
-        if (filters.containsKey("categoria")) {
+            if (filters.containsKey("categoria")) {
             specification = specification.and(ProductSpecifications
                     .hasCategory(filters.get("categoria")));
         }
@@ -187,14 +194,14 @@ public class ProductService {
         List<ProductDTO> simpleProduct = new ArrayList<>();
         for (ProductDetailsDTO productDTO : productDTOs) {
             Product product = new Product();
-            product.setNome(productDTO.getNome());
-            product.setDescricao(productDTO.getDescricao());
-            product.setPreco(Double.parseDouble(productDTO.getPreco()));
-            product.setNota(productDTO.getNota());
+            product.setNome(productDTO.getName());
+            product.setDescricao(productDTO.getDescription());
+            product.setPreco(Double.parseDouble(productDTO.getPrice()));
+            product.setNota(productDTO.getRating());
             product.setEstoque(productDTO.getEstoque());
-            product.setCor(productDTO.getCor());
+            product.setCor(productDTO.getColor());
             product.setCategoria(productDTO.getCategoria());
-            product.setDiscount(productDTO.getDesconto());
+            product.setDiscount(productDTO.getDiscount());
             product.setFlashSale(productDTO.getFlashSale());
             ProductDTO simple = new ProductDTO(product);
             simpleProduct.add(simple);

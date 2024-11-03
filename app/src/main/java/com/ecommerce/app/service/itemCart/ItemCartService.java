@@ -84,11 +84,11 @@ public class ItemCartService {
     private ProductDetailsDTO convertToProductDTO(Product product) {
         return ProductDetailsDTO.builder()
                 .id(product.getId())
-                .nome(product.getNome())
-                .preco(product.getPreco().toString())
+                .name(product.getNome())
+                .price(product.getPreco().toString())
                 .categoria(product.getCategoria())
-                .nota(product.getNota())
-                .cor(product.getCor())
+                .rating(product.getNota())
+                .color(product.getCor())
                 .estoque(product.getEstoque())  // Converte estoque para String
                 .build();
     }
@@ -97,11 +97,11 @@ public class ItemCartService {
     private Product convertToProductEntity(ProductDetailsDTO productDetailsDTO) {
         Product product = new Product();
         product.setId(productDetailsDTO.getId());
-        product.setNome(productDetailsDTO.getNome());
-        product.setPreco(Double.parseDouble(productDetailsDTO.getPreco()));
+        product.setNome(productDetailsDTO.getName());
+        product.setPreco(Double.parseDouble(productDetailsDTO.getPrice()));
         product.setCategoria(productDetailsDTO.getCategoria());
-        product.setNota(productDetailsDTO.getNota());
-        product.setCor(productDetailsDTO.getCor());
+        product.setNota(productDetailsDTO.getRating());
+        product.setCor(productDetailsDTO.getColor());
         product.setEstoque(productDetailsDTO.getEstoque());  // Converte para int
         return product;
     }
