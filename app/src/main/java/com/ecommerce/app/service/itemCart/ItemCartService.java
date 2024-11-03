@@ -1,7 +1,6 @@
 package com.ecommerce.app.service.itemCart;
 
 import com.ecommerce.app.dto.itemCart.ItemCartDTO;
-import com.ecommerce.app.dto.ProductDetailsDTO;
 import com.ecommerce.app.dto.product.ProductDetailsDTO;
 import com.ecommerce.app.dto.user.UserDTO;
 import com.ecommerce.app.model.itemCart.ItemCart;
