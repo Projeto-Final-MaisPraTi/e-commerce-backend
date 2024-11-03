@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductImagesRepository extends JpaRepository<ProductImages, Integer> {
-    @Query("SELECT i FROM ImageProduct i WHERE i.imagem = :imagem")
+    @Query("SELECT i FROM ProductImages i WHERE i.imagem = :imagem")
     Optional<ProductImages> findByImagem(@Param("imagem") String imagem);
 
-    @Query("select i from ImageProduct i where i.product.id = :id and i.capaProduto = true")
+    @Query("select i from ProductImages i where i.product.id = :id and i.capaProduto = true")
     Optional<ProductImages> getCoverByProductId(@Param("id") Integer id);
 
-    @Query("select i from ImageProduct i where i.product.id = :id and i.capaProduto = false")
+    @Query("select i from ProductImages i where i.product.id = :id and i.capaProduto = false")
     List<ProductImages> getImagesByProductId(@Param("id") Integer id);
 }

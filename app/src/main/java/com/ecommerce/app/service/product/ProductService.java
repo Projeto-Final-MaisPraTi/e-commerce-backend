@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.ecommerce.app.dto.product.ProductDetailsDTO;
 import com.ecommerce.app.model.product.Product;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -182,4 +183,23 @@ public class ProductService {
         return productRepository.findAll(specification);
     }
 
+    public List<ProductDTO> createProducts(List<ProductDetailsDTO> productDTOs) {
+        List<ProductDTO> simpleProduct = new ArrayList<>();
+        for (ProductDetailsDTO productDTO : productDTOs) {
+            Product product = new Product();
+            product.setNome(productDTO.getNome());
+            product.setDescricao(productDTO.getDescricao());
+            product.setPreco(Double.parseDouble(productDTO.getPreco()));
+            product.setNota(productDTO.getNota());
+            product.setEstoque(productDTO.getEstoque());
+            product.setCor(productDTO.getCor());
+            product.setCategoria(productDTO.getCategoria());
+            product.setDiscount(productDTO.getDesconto());
+            product.setFlashSale(productDTO.getFlashSale());
+            ProductDTO simple = new ProductDTO(product);
+            simpleProduct.add(simple);
+            productRepository.save(product);
+        }
+        return simpleProduct;
+    }
 }

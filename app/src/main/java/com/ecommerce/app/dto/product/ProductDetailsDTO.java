@@ -15,10 +15,12 @@ public class ProductDetailsDTO {
     private int id;
     private String nome;
     private int nota;
-    private Double preco;
+    private String preco;
     public String categoria;
     private String descricao;
     private Integer estoque;
+    private Integer desconto;
+    private Boolean flashSale;
     private String cor;
     private List<String> images;
 }

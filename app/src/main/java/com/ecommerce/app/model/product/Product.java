@@ -40,6 +40,12 @@ public class Product {
     @Column(name = "category")
     private String categoria;
 
+    @Column
+    private Integer discount;
+
+    @Column
+    private Boolean flashSale;
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ProductImages> images = new ArrayList<>();
 

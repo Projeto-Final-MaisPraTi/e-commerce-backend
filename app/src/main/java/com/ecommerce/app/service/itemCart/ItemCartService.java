@@ -85,7 +85,7 @@ public class ItemCartService {
         return ProductDetailsDTO.builder()
                 .id(product.getId())
                 .nome(product.getNome())
-                .preco(product.getPreco())
+                .preco(product.getPreco().toString())
                 .categoria(product.getCategoria())
                 .nota(product.getNota())
                 .cor(product.getCor())
@@ -98,7 +98,7 @@ public class ItemCartService {
         Product product = new Product();
         product.setId(productDetailsDTO.getId());
         product.setNome(productDetailsDTO.getNome());
-        product.setPreco(productDetailsDTO.getPreco());
+        product.setPreco(Double.parseDouble(productDetailsDTO.getPreco()));
         product.setCategoria(productDetailsDTO.getCategoria());
         product.setNota(productDetailsDTO.getNota());
         product.setCor(productDetailsDTO.getCor());

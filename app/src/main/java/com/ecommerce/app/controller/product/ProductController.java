@@ -14,7 +14,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/product")
-
 public class ProductController {
     @Autowired
     private ProductService productService;
@@ -60,6 +59,12 @@ public class ProductController {
     @PostMapping
     public ProductDetailsDTO createProduct(@RequestBody ProductDetailsDTO productDTO){
         return productService.createProduct(productDTO);
+    }
+
+    @PostMapping("/import")
+    public List<ProductDTO> createProducts(@RequestBody List<ProductDetailsDTO> productDTO){
+        List<ProductDTO> productDTOS =  productService.createProducts(productDTO);
+        return productDTOS;
     }
 
     @PutMapping("/update")

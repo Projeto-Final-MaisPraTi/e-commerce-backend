@@ -3,7 +3,7 @@ package com.ecommerce.app.dto.product;
 import com.ecommerce.app.model.product.Product;
 
 public record ProductDTO(
-        int id,
+        Integer id,
         String nome,
         int nota,
         Double preco,
@@ -12,5 +12,9 @@ public record ProductDTO(
 ) {
     public ProductDTO(Product product, String cover) {
         this(product.getId(), product.getNome(), product.getNota(), product.getPreco(), product.getDescricao(),cover);
+    }
+
+    public ProductDTO(Product product) {
+        this(product.getId(), product.getNome(), product.getNota(), product.getPreco(), product.getDescricao(), null);
     }
 }
