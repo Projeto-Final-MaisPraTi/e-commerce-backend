@@ -42,11 +42,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String username = jwtTokenProvider.extractUsername(jwt);
+        String email = jwtTokenProvider.extractUsername(jwt); // Agora isso extrai o email
         UserDetails userDetails = null;
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            userDetails = customUserDetailsService.loadUserByUsername(username);
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            userDetails = customUserDetailsService.loadUserByUsername(email); // Aqui usamos email
         }
 
         if (jwtTokenProvider.isTokenValid(jwt, userDetails)) {

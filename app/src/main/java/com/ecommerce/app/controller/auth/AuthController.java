@@ -1,5 +1,6 @@
 package com.ecommerce.app.controller.auth;
 
+import com.ecommerce.app.dto.user.AuthResponse;
 import com.ecommerce.app.dto.user.RegisterRequest;
 import com.ecommerce.app.model.user.User;
 import com.ecommerce.app.service.user.UserService;
@@ -37,19 +38,21 @@ public class AuthController {
 		this.customUserDetailsService = customUserDetailsService;
         this.userService = userService;
     }
-	
+
 	@PostMapping("/login")
-	public String Login(@RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
 		try {
 			Authentication authentication = authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
 			);
-			
+
+			// Aqui garantimos que estamos lidando com UserDetails
 			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-			
-			return jwtTokenProvider.generateToken(userDetails);
-		}catch(AuthenticationException error) {
-			throw new RuntimeException("Invalid Credentials");
+			String token = jwtTokenProvider.generateToken(userDetails);
+
+			return ResponseEntity.ok(new AuthResponse(token));
+		} catch (AuthenticationException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
 		}
 	}
 
@@ -64,13 +67,4 @@ public class AuthController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Falha ao tentar registrar usuário.");
 		}
 	}
-
-//	@Controller
-//	public class LoginController {
-//		@GetMapping("/login")
-//		public String login() {
-//			return "login";  // Nome do arquivo HTML na pasta templates (Thymeleaf, por exemplo)
-//		}
-//	}
-	
 }

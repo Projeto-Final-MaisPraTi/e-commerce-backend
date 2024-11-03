@@ -53,6 +53,6 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.username;
+        return this.email; // Retorna o email como username
     }
 }

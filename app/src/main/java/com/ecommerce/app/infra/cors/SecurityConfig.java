@@ -73,17 +73,17 @@ public class SecurityConfig {
 //				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt
 //						.jwtAuthenticationConverter(jwtAuthenticationConverter())))
 //				.authorizeHttpRequests(auth -> {
-//					auth.requestMatchers(HttpMethod.POST, "/api/users").permitAll();
-//					auth.requestMatchers(HttpMethod.POST, "/auth/**").permitAll();
-//					auth.requestMatchers(HttpMethod.GET, "/").permitAll();
-//					auth.requestMatchers("/api/sales").authenticated();
-//					auth.requestMatchers("/api/cart-items").authenticated();
-//					auth.requestMatchers("/api/product").hasRole("ADMIN");
-//					auth.anyRequest().authenticated();
+//					auth.requestMatchers(HttpMethod.POST, "/auth/login").permitAll(); // Permite login sem autenticação
+//					auth.requestMatchers(HttpMethod.POST, "/auth/register").permitAll(); // Permite registro sem autenticação
+//					auth.requestMatchers(HttpMethod.GET, "/").permitAll(); // Permite acesso ao endpoint root
+//					auth.requestMatchers("/api/sales").authenticated(); // Requer autenticação
+//					auth.requestMatchers("/api/cart-items").authenticated(); // Requer autenticação
+//					auth.requestMatchers("/api/product").hasRole("ADMIN"); // Acesso apenas para admins
+//					auth.anyRequest().authenticated(); // Qualquer outro endpoint requer autenticação
 //				})
-//				.formLogin(Customizer.withDefaults())
 //				.authenticationProvider(authenticationProvider())
-//				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class).build();
+//				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+//				.build();
 	}
 
 	@Bean
