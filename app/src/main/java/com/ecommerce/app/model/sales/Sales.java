@@ -16,18 +16,18 @@ import lombok.RequiredArgsConstructor;
 
 @Entity
 @Data
-@Table(name = "vendas")
+@Table(name = "sales")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Sales {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
+	private Integer id;
+
 	@Column(name = "total", nullable = false)
 	private Double total;
-	
+
 //	@ManyToOne
 //	@JoinColumn(name = "id_estado", nullable = false)
 //	private SaleStatus saleStatus; // "FINALIZADO", "ENVIANDO", "CANCELADO", "PENDENTE"
@@ -35,19 +35,19 @@ public class Sales {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "typeSaleStatus", nullable = false)
 	private TypeSaleStatus typeSaleStatus; // "FINALIZADO", "ENVIANDO", "CANCELADO", "PENDENTE"
-	
+
 	@ManyToOne
-	@JoinColumn(name = "id_usuario")
+	@JoinColumn(name = "user_id")
 	private User user;
-	
+
 	@ManyToOne
-	@JoinColumn(name = "id_pagamento", nullable = false)
+	@JoinColumn(name = "payment_id", nullable = false)
 	private Payment payment; // "DINHEIRO", "CARTÃO"
-	
+
 	@ManyToOne
-	@JoinColumn(name = "id_codigo")
+	@JoinColumn(name = "code_id")
 	private Coupons coupons;
-	
+
 	@OneToMany(mappedBy = "sales", cascade = CascadeType.ALL)
 	private List<SalesItems> salesItems;
 

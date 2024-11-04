@@ -10,27 +10,19 @@ import com.ecommerce.app.model.user.User;
 import com.ecommerce.app.repository.user.UserRepository;
 
 @Service
-public class CustomUserDetailsService implements UserDetailsService{
+public class CustomUserDetailsService implements UserDetailsService {
 
-	private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
-	public CustomUserDetailsService(UserRepository userRepository) {
-		this.userRepository = userRepository;
-	}
+    public CustomUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
-		
-//		User user = userRepository.findByUsername(username);
-		
-//		if(user == null) {
-//			throw new UsernameNotFoundException("Usuário " + username + " não encontrado!");
-//		}
-//
-//		return (UserDetails) user;
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email) // Mudou para buscar por email
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + email));
 
-		return (UserDetails) userRepository.findByUsername(username)
-				.orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + username));
-	}
-
+        return user; // Retorna a instância de User, que implementa UserDetails
+    }
 }

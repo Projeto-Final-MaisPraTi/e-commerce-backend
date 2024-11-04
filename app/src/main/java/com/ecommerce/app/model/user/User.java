@@ -32,10 +32,8 @@ public class User implements UserDetails {
     @Column(name = "phone")
     private String phone;
     
-//    @Column(name = "role", nullable = false)
-//    private String role;
-    @Transient
-    private List<String> role; // referente às roles
+    @Column(name = "role", nullable = false)
+    private String role;
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Address> address;

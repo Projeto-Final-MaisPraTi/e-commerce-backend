@@ -1,6 +1,5 @@
 package com.ecommerce.app.service.salesItems;
 
-import com.ecommerce.app.dto.product.ProductDTO;
 import com.ecommerce.app.dto.salesItems.SalesItemsDTO;
 import com.ecommerce.app.model.product.Product;
 import com.ecommerce.app.model.salesItems.SalesItems;
@@ -26,7 +25,7 @@ public class SalesItemsService {
                 .collect(Collectors.toList());
     }
 
-    public SalesItemsDTO getSalesItemById(Long id){
+    public SalesItemsDTO getSalesItemById(Integer id){
         Optional<SalesItems> saleItem = salesItemsRepository.findById(id);
 
         return saleItem.map(this::convertToDTO).orElseThrow(() -> new RuntimeException("Item de venda não encontrado!"));
@@ -43,7 +42,7 @@ public class SalesItemsService {
         return convertToDTO(salesItems);
     }
 
-    public SalesItemsDTO updateSalesItem(Long id, SalesItemsDTO salesItemsDTO, Product product) {
+    public SalesItemsDTO updateSalesItem(Integer id, SalesItemsDTO salesItemsDTO, Product product) {
         SalesItems salesItems = salesItemsRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item de venda não encontrado!"));
 
@@ -56,7 +55,7 @@ public class SalesItemsService {
         return convertToDTO(salesItems);
     }
 
-    public void deleteSalesItem(Long id) {
+    public void deleteSalesItem(Integer id) {
         SalesItems salesItems = salesItemsRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item de venda não encontrado!"));
 

@@ -34,7 +34,7 @@ public class SalesItemsController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SalesItemsDTO> getSalesItemById(@PathVariable Long id) {
+    public ResponseEntity<SalesItemsDTO> getSalesItemById(@PathVariable Integer id) {
         return ResponseEntity.ok(salesItemsService.getSalesItemById(id));
     }
 
@@ -45,12 +45,12 @@ public class SalesItemsController {
 
     @PutMapping("/{id}")
     public ResponseEntity<SalesItemsDTO> updateSalesItem(
-            @PathVariable Long id, @RequestBody SalesItemsDTO salesItemsDTO, Product product) {
+            @PathVariable Integer id, @RequestBody SalesItemsDTO salesItemsDTO, Product product) {
         return ResponseEntity.ok(salesItemsService.updateSalesItem(id, salesItemsDTO, product));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSalesItem(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteSalesItem(@PathVariable Integer id) {
         salesItemsService.deleteSalesItem(id);
         return ResponseEntity.noContent().build();
     }

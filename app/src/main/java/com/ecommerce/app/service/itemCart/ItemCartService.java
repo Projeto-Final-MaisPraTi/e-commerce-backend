@@ -1,7 +1,7 @@
 package com.ecommerce.app.service.itemCart;
 
 import com.ecommerce.app.dto.itemCart.ItemCartDTO;
-import com.ecommerce.app.dto.product.ProductDTO;
+import com.ecommerce.app.dto.product.ProductDetailsDTO;
 import com.ecommerce.app.dto.user.UserDTO;
 import com.ecommerce.app.model.itemCart.ItemCart;
 import com.ecommerce.app.model.product.Product;
@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,7 +29,7 @@ public class ItemCartService {
                 .collect(Collectors.toList());
     }
 
-    public ItemCartDTO getCartItemById(Long id) {
+    public ItemCartDTO getCartItemById(Integer id) {
         ItemCart itemCart = itemCartRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item de carrinho não encontrado"));
         return convertToDTO(itemCart);
@@ -41,7 +40,7 @@ public class ItemCartService {
         ItemCart itemCart = new ItemCart();
 
         // Converter ProductDTO para Product
-        Product product = convertToProductEntity(itemCartDTO.getProductDTO());
+        Product product = convertToProductEntity(itemCartDTO.getProductDetailsDTO());
         itemCart.setProduct(product);
         itemCart.setQuantidade(itemCartDTO.getQuantidade());
 
@@ -54,11 +53,11 @@ public class ItemCartService {
         return convertToDTO(itemCart);
     }
 
-    public ItemCartDTO updateItemCart(Long id, ItemCartDTO itemCartDTO) {
+    public ItemCartDTO updateItemCart(Integer id, ItemCartDTO itemCartDTO) {
         ItemCart itemCart = itemCartRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item de carrinho não encontrado!"));
 
-        Product product = convertToProductEntity(itemCartDTO.getProductDTO());
+        Product product = convertToProductEntity(itemCartDTO.getProductDetailsDTO());
         itemCart.setProduct(product);
 
         itemCart.setQuantidade(itemCartDTO.getQuantidade());
@@ -67,14 +66,14 @@ public class ItemCartService {
         return convertToDTO(itemCart);
     }
 
-    public void deleteItemCart(Long id) {
+    public void deleteItemCart(Integer id) {
         itemCartRepository.deleteById(id);
     }
 
     private ItemCartDTO convertToDTO(ItemCart itemCart) {
         return ItemCartDTO.builder()
                 .id(itemCart.getId())
-                .productDTO(convertToProductDTO(itemCart.getProduct())) // Converte Product para ProductDTO
+                .productDetailsDTO(convertToProductDTO(itemCart.getProduct())) // Converte Product para ProductDTO
                 .quantidade(itemCart.getQuantidade())
                 .userDTO(UserDTO.builder()
                         .id(itemCart.getUser().getId())
@@ -82,28 +81,28 @@ public class ItemCartService {
                 .build();
     }
 
-    private ProductDTO convertToProductDTO(Product product) {
-        return ProductDTO.builder()
+    private ProductDetailsDTO convertToProductDTO(Product product) {
+        return ProductDetailsDTO.builder()
                 .id(product.getId())
-                .nome(product.getNome())
-                .preco(product.getPreco())
+                .name(product.getNome())
+                .price(product.getPreco().toString())
                 .categoria(product.getCategoria())
-                .nota(product.getNota())
-                .cor(product.getCor())
-                .estoque(String.valueOf(product.getEstoque()))  // Converte estoque para String
+                .rating(product.getNota())
+                .color(product.getCor())
+                .estoque(product.getEstoque())  // Converte estoque para String
                 .build();
     }
 
 
-    private Product convertToProductEntity(ProductDTO productDTO) {
+    private Product convertToProductEntity(ProductDetailsDTO productDetailsDTO) {
         Product product = new Product();
-        product.setId(productDTO.getId());
-        product.setNome(productDTO.getNome());
-        product.setPreco(productDTO.getPreco());
-        product.setCategoria(productDTO.getCategoria());
-        product.setNota(productDTO.getNota());
-        product.setCor(productDTO.getCor());
-        product.setEstoque(Integer.parseInt(productDTO.getEstoque()));  // Converte para int
+        product.setId(productDetailsDTO.getId());
+        product.setNome(productDetailsDTO.getName());
+        product.setPreco(Double.parseDouble(productDetailsDTO.getPrice()));
+        product.setCategoria(productDetailsDTO.getCategoria());
+        product.setNota(productDetailsDTO.getRating());
+        product.setCor(productDetailsDTO.getColor());
+        product.setEstoque(productDetailsDTO.getEstoque());  // Converte para int
         return product;
     }
 

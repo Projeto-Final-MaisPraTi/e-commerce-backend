@@ -19,8 +19,6 @@ import com.ecommerce.app.service.customUserDetails.CustomUserDetailsService;
 
 import jakarta.validation.Valid;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -54,9 +52,9 @@ public class AuthController {
 	}
 
 	@PostMapping("/register")
-	public String register(@RequestBody @Valid UserDTO userDTO, List<String> groups){
+	public String register(@RequestBody @Valid UserDTO userDTO){
 		try{
-			userService.createUser(userDTO, groups);
+			userService.createUser(userDTO);
 			return "Usuário registrado com sucesso!";
 		}catch (Exception e){
 			throw new RuntimeException("Falha ao tentar registrar usuário: " + e.getMessage());

@@ -1,23 +1,18 @@
 package com.ecommerce.app.repository.product;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
+import com.ecommerce.app.model.product.Product;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.ecommerce.app.model.product.Product;
+import java.util.List;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long>{
-	Optional<Product> findById(Long id);
-	List<Product> findByNome(String nome);
-	List<Product> findByCategoria(String categoria);
+public interface ProductRepository extends JpaRepository<Product, Integer>, JpaSpecificationExecutor<Product> {
+    @Query(value = "SELECT p FROM Product p WHERE p.nome LIKE LOWER(CONCAT('%', :nome, '%'))")
+    List<Product> findByNome(String nome);
 
-	// busca parcialmente por nome
-	//@Query("SELECT p FROM Product p WHERE LOWER(p.nome) LIKE LOWER(CONCAT('%', :nome, '%'))")
-	//List<Product> findByNomeContainingIgnoreCase(@Param("nome") String nome);
-
+    @Query("select p from Product p where p.categoria = :category")
+    List<Product> findByCategory(String category);
 }

@@ -14,33 +14,33 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "endereco")
+@Table(name = "addresses")
 public class Address {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Integer id;
 	
-	@Column(name = "endereco", columnDefinition = "TEXT")
+	@Column(name = "address", columnDefinition = "TEXT")
 	private String endereco;
 	
-	@Column(name = "numero", nullable = false)
+	@Column(name = "numbers", nullable = false)
 	private int numero;
 	
-	@Column(name = "cidade", nullable = false)
+	@Column(name = "city", nullable = false)
 	private String cidade;
 	
 	@Column(name = "uf", nullable = false)
 	private String uf;
 	
-	@Column(name = "cep", nullable = false)
+	@Column(name = "zipcode", nullable = false)
 	private String cep;
 	
-	@Column(name = "endereco_padrao")
+	@Column(name = "default_address")
 	private boolean endereco_padrao;
 	
 	@ManyToOne
-	@JoinColumn(name = "id_usuario", nullable = false)
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 	
 }

@@ -24,7 +24,7 @@ public class PaymentService {
                 .collect(Collectors.toList());
     }
 
-    public PaymentDTO getPaymentById(Long id) {
+    public PaymentDTO getPaymentById(Integer id) {
         Optional<Payment> payment = paymentRepository.findById(id);
 
         return payment.map(this::convertToDTO).orElseThrow(() -> new RuntimeException("Tipo de pagamento não encontrado!"));
@@ -39,7 +39,7 @@ public class PaymentService {
         return convertToDTO(payment);
     }
 
-    public PaymentDTO updatePayment(Long id, PaymentDTO paymentDTO) {
+    public PaymentDTO updatePayment(Integer id, PaymentDTO paymentDTO) {
         Payment payment = paymentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tipo de pagamento não encontrado!"));
 
@@ -49,7 +49,7 @@ public class PaymentService {
         return convertToDTO(payment);
     }
 
-    public void deletePayment(Long id) {
+    public void deletePayment(Integer id) {
         paymentRepository.deleteById(id);
     }
 

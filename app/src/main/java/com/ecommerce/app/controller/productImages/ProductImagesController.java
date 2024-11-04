@@ -22,7 +22,7 @@ public class ProductImagesController {
     }
 
     @GetMapping("/{id}")
-    public ProductImagesDTO getImageById(@PathVariable Long id) {
+    public ProductImagesDTO getImageById(@PathVariable Integer id) {
         return productImagesService.getProductImagesById(id);
     }
 
@@ -32,12 +32,12 @@ public class ProductImagesController {
     }
 
     @PutMapping("/{id}")
-    public ProductImagesDTO updateProductImages(@PathVariable Long id, @RequestBody ProductImagesDTO productImagesDTO, Product product) {
+    public ProductImagesDTO updateProductImages(@PathVariable Integer id, @RequestBody ProductImagesDTO productImagesDTO, Product product) {
         return productImagesService.updateProductImages(id, productImagesDTO, product);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteImage(@PathVariable Long id) {
+    public void deleteImage(@PathVariable Integer id) {
         productImagesService.deleteProductImages(id);
     }
 

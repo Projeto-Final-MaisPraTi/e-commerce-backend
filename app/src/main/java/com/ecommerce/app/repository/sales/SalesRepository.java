@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ecommerce.app.model.sales.Sales;
 
-public interface SalesRepository extends JpaRepository<Sales, Long>{
+public interface SalesRepository extends JpaRepository<Sales, Integer>{
 
 	List<Sales> findByUserId(Integer userId);
 //	List<Sales> findBySaleStatusEstado(String estado); // "FINALIZADO", "ENVIANDO", "CANCELADO", "PENDENTE"

@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SalesDTO {
-    private Long id;
+    private Integer id;
     private Double total;
     private UserDTO user;
     private PaymentDTO payment;

@@ -1,20 +1,21 @@
 package com.ecommerce.app.dto.product;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.ecommerce.app.model.product.Product;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class ProductDTO {
-    private Long id;
-    private String nome;
-    private double preco;
-    private String categoria;
-    private int nota;
-    private String cor;
-    private String estoque;
+public record ProductDTO(
+        Integer id,
+        String name,
+        int nota,
+        Integer discount,
+        Double preco,
+        String descricao,
+        String images
+) {
+    public ProductDTO(Product product, String cover) {
+        this(product.getId(), product.getNome(), product.getNota(), product.getDiscount(), product.getPreco(), product.getDescricao(),cover);
+    }
+
+    public ProductDTO(Product product) {
+        this(product.getId(), product.getNome(), product.getNota(), product.getDiscount(),product.getPreco(), product.getDescricao(), null);
+    }
 }
