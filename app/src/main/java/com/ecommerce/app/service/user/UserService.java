@@ -1,10 +1,14 @@
 package com.ecommerce.app.service.user;
 
 import com.ecommerce.app.dto.user.UserDTO;
-import com.ecommerce.app.model.address.Address;
+import com.ecommerce.app.model.role.Role;
 import com.ecommerce.app.model.user.User;
+import com.ecommerce.app.model.userRole.UserRole;
+import com.ecommerce.app.repository.role.RoleRepository;
 import com.ecommerce.app.repository.user.UserRepository;
 
+import com.ecommerce.app.repository.userGroup.UserRoleRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,9 +21,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     @Autowired // faz injeção de dependência automática
     private UserRepository userRepository;
+    private RoleRepository roleRepository;
+    private UserRoleRepository userRoleRepository;
 
     public List<UserDTO> getAllUsers(){
         // retorna a lista de usuários convertidos e coletados
@@ -35,7 +42,7 @@ public class UserService implements UserDetailsService {
         return user.map(this::convertToDTO).orElse(null);
     }
 
-    public UserDTO createUser(UserDTO userDTO){
+    public UserDTO createUser(UserDTO userDTO, List<String> roles){
         User user = new User();
         user.setUsername(userDTO.getUsername());
         user.setEmail(userDTO.getEmail());
@@ -46,6 +53,18 @@ public class UserService implements UserDetailsService {
         user.setSales(user.getSales());
         user.setItemCart(user.getItemCart());
         userRepository.save(user);
+
+        List<UserRole> userRoleList = roles.stream().map(roleName -> {
+            Optional<Role> possibleRoleName = roleRepository.findByRolename(roleName);
+            if(possibleRoleName.isPresent()){
+                Role role = possibleRoleName.get();
+                return new UserRole(user, role);
+            }
+
+            return null;
+        }).filter(role -> role != null).collect(Collectors.toList());
+
+        userRoleRepository.saveAll(userRoleList);
 
         return convertToDTO(user);
     }
@@ -93,5 +112,19 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + username));
+    }
+
+    public User getUserWithPermissions(String email){
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        if(userOptional.isEmpty()){
+            return null;
+        }
+
+        User user = userOptional.get();
+        List<String> permissions = userRoleRepository.findPermissionsByUser(user);
+        user.setRole(permissions);
+
+        return user;
     }
 }

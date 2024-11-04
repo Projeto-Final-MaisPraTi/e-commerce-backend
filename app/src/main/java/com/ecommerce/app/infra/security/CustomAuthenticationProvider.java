@@ -33,7 +33,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                         user.getId(),
                         user.getUsername(),
                         user.getEmail(),
-                        user.getPermissions()
+                        user.getRole()
                 );
 
                 return new CustomAuthentication(userIdentification);
