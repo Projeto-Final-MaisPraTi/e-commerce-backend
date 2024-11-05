@@ -136,16 +136,27 @@ public class ProductService {
         productDTO.setEstoque(product.getEstoque());
         productDTO.setRating(product.getNota());
         productDTO.setDiscount(product.getDiscount());
-        NumberFormat currency = NumberFormat.getCurrencyInstance();
-        productDTO.setPrice(currency.format(product.getPreco()));
+        productDTO.setPrice(formatValue(product.getPreco()));
         if (product.getDiscount() != 0) {
-            Double value = product.getPreco() - (product.getPreco() / 100) * product.getDiscount();
-            productDTO.setPriceDiscount(currency.format(value));
+            productDTO.setPriceDiscount(calculateDiscount(product.getPreco(), product.getDiscount()));
         }
         productDTO.setColor(product.getCor());
         productDTO.setImages(product.getImages().stream().map(image -> image.getImagem()).toList());
 
         return productDTO;
+    }
+
+    public String formatValue(Double price) {
+        NumberFormat currency = NumberFormat.getCurrencyInstance();
+        return currency.format(price);
+    }
+
+    public String calculateDiscount(Double price, Integer discount) {
+        if (discount == 0) {
+            return null;
+        }
+        Double value = price - (price / 100) * discount;
+        return (formatValue(value));
     }
 
     public List<ProductDTO> buildFilteredProducts(Map<String, String> filters) {
