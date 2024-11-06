@@ -9,6 +9,8 @@ import com.ecommerce.app.model.user.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class AuthService {
 
@@ -23,10 +25,11 @@ public class AuthService {
     }
 
     public AuthResponse register(RegisterRequest registerRequest) {
-        if (userRepository.existsByEmail(registerRequest.getEmail())) {
+        Optional<User> existUser = userRepository.findByEmail(registerRequest.getEmail());
+        if (existUser.isPresent()) {
             throw new IllegalStateException("Email already taken");
         }
-
+        existUser = null;
         User user = new User();
         user.setUsername(registerRequest.getUsername());
         user.setEmail(registerRequest.getEmail());

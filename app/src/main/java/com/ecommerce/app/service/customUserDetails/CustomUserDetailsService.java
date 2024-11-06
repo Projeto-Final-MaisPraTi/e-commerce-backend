@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.ecommerce.app.model.user.User;
 import com.ecommerce.app.repository.user.UserRepository;
 
+import java.util.Optional;
+
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -20,9 +22,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email) // Mudou para buscar por email
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + email));
-
-        return user; // Retorna a instância de User, que implementa UserDetails
+        Optional<User> user = userRepository.findByEmail(email); // Mudou para buscar por email
+        if (user.isEmpty()) {
+            throw new UsernameNotFoundException("Usuário não encontrado: " + email);
+        }
+        return user.get(); // Retorna a instância de User, que implementa UserDetails
     }
 }

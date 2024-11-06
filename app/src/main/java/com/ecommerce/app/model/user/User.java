@@ -8,15 +8,13 @@ import com.ecommerce.app.model.itemCart.ItemCart;
 import com.ecommerce.app.model.sales.Sales;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-@Data
 @Entity
-@Table(name = "users")
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
+@Table(name = "usuarios")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,11 +29,11 @@ public class User implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
-//    @Column(name = "phone")
-//    private String phone;
+    @Column(name = "phone")
+    private String phone;
     
-//    @Column(name = "role", nullable = false)
-//    private String role;
+    @Column(name = "role", nullable = false)
+    private String role;
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Address> address;
@@ -48,11 +46,26 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return List.of(() -> "ROLE_USER");
     }
 
     @Override
-    public String getUsername() {
-        return this.email; // Retorna o email como username
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
     }
 }
