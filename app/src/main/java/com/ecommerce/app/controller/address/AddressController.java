@@ -20,7 +20,7 @@ public class AddressController {
     }
 
     @GetMapping("/{id}")
-    public AddressDTO getAddressById(@PathVariable Integer id) {
+    public AddressDTO getAddressById(@PathVariable Long id) {
         return addressService.getAddressById(id);
     }
 
@@ -30,12 +30,12 @@ public class AddressController {
     }
 
     @PutMapping("/{id}")
-    public AddressDTO updateAddress(@PathVariable Integer id, @RequestBody AddressDTO addressDTO) {
+    public AddressDTO updateAddress(@PathVariable Long id, @RequestBody AddressDTO addressDTO) {
         return addressService.updateAddress(id, addressDTO);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteAddress(@PathVariable Integer id) {
+    public void deleteAddress(@PathVariable Long id) {
         addressService.deleteAddress(id);
     }
 }

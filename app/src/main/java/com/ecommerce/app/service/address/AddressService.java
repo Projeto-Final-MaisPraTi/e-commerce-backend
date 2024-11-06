@@ -26,7 +26,7 @@ public class AddressService {
                 .collect(Collectors.toList());
     }
 
-    public AddressDTO getAddressById(Integer id){
+    public AddressDTO getAddressById(Long id){
 //        Optional<Address> address = addressRepository.findById(id);
 //        return address.map(this::convertToDTO).orElse(null);
     	Address address = addressRepository.findById(id)
@@ -52,7 +52,7 @@ public class AddressService {
         return convertToDTO(address);
     }
 
-    public AddressDTO updateAddress(Integer id, AddressDTO addressDTO){
+    public AddressDTO updateAddress(Long id, AddressDTO addressDTO){
         Optional<Address> addressOptional = addressRepository.findById(id);
         if(addressOptional.isPresent()){
             Address address = addressOptional.get();
@@ -75,7 +75,7 @@ public class AddressService {
         return null;
     }
 
-    public void deleteAddress(Integer id){
+    public void deleteAddress(Long id){
         addressRepository.deleteById(id);
     }
 

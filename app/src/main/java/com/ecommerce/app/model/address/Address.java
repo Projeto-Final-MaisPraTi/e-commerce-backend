@@ -19,7 +19,7 @@ public class Address {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
 	
 	@Column(name = "address", columnDefinition = "TEXT")
 	private String endereco;

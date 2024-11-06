@@ -2,14 +2,18 @@ package com.ecommerce.app.service.user;
 
 import com.ecommerce.app.dto.user.UserDTO;
 import com.ecommerce.app.model.address.Address;
+import com.ecommerce.app.model.role.Role;
 import com.ecommerce.app.model.user.User;
+import com.ecommerce.app.repository.role.RoleRepository;
 import com.ecommerce.app.repository.user.UserRepository;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,9 +21,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
-    @Autowired // faz injeção de dependência automática
-    private UserRepository userRepository;
+    //@Autowired // faz injeção de dependência automática
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public List<UserDTO> getAllUsers(){
         // retorna a lista de usuários convertidos e coletados
@@ -35,16 +42,34 @@ public class UserService implements UserDetailsService {
         return user.map(this::convertToDTO).orElse(null);
     }
 
-    public UserDTO createUser(UserDTO userDTO){
+    public UserDTO createUser(UserDTO userDTO, List<String> roleNames){
         User user = new User();
+        Optional<User> existingUser = userRepository.findByEmail(userDTO.getEmail());
+        if (existingUser.isPresent()){
+            throw new RuntimeException("Email já registrado!");
+        }
+
         user.setUsername(userDTO.getUsername());
         user.setEmail(userDTO.getEmail());
-        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setPhone(user.getPhone());
-        user.setRole(user.getRole());
+//        user.setRole(user.getRole());
         user.setAddress(user.getAddress());
         user.setSales(user.getSales());
         user.setItemCart(user.getItemCart());
+
+        // Buscando ou criando roles
+        List<Role> roles = roleNames.stream()
+            .map(roleName -> roleRepository.findByName(roleName)
+            .orElseGet(() -> {
+                Role newRole = new Role();
+                newRole.setName(roleName);
+                return roleRepository.save(newRole);
+            })
+        ).collect(Collectors.toList());
+
+        user.setRoles(roles);
+
         userRepository.save(user);
 
         return convertToDTO(user);
@@ -58,7 +83,7 @@ public class UserService implements UserDetailsService {
             user.setEmail(userDTO.getEmail());
             user.setPassword(user.getPassword());
             user.setPhone(user.getPhone());
-            user.setRole(user.getRole());
+//            user.setRole(user.getRole());
             user.setAddress(user.getAddress());
             user.setSales(user.getSales());
             user.setItemCart(user.getItemCart());
@@ -74,24 +99,46 @@ public class UserService implements UserDetailsService {
         userRepository.deleteById(id);
     }
 
-    private UserDTO convertToDTO(User user){
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setUsername(user.getUsername());
-        userDTO.setEmail(user.getEmail());
-        user.setPassword(user.getPassword());
-        user.setPhone(user.getPhone());
-        user.setRole(user.getRole());
-        user.setAddress(user.getAddress());
-        user.setSales(user.getSales());
-        user.setItemCart(user.getItemCart());
-
-        return userDTO;
-    }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + username));
+    }
+
+    public User getUserWithPermissions(String email){
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        if(userOptional.isEmpty()){
+            return null;
+        }
+
+        User user = userOptional.get();
+
+        // Obtém as roles diretamente, sem precisar de mapear para String
+        List<Role> roles = user.getRoles();
+
+        user.setRoles(roles);
+
+        return user;
+    }
+
+    private UserDTO convertToDTO(User user){
+//        UserDTO userDTO = new UserDTO();
+//        userDTO.setId(user.getId());
+//        userDTO.setUsername(user.getUsername());
+//        userDTO.setEmail(user.getEmail());
+//        user.setPassword(user.getPassword());
+//        user.setPhone(user.getPhone());
+////        user.setRole(user.getRole());
+//        user.setAddress(user.getAddress());
+//        user.setSales(user.getSales());
+//        user.setItemCart(user.getItemCart());
+//
+//        return userDTO;
+        return new UserDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail()
+        );
     }
 }

@@ -1,5 +1,7 @@
 package com.ecommerce.app.infra.cors;
 
+import com.ecommerce.app.infra.security.JwtTokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -8,8 +10,10 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -22,15 +26,18 @@ import com.ecommerce.app.service.customUserDetails.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
+//@EnableMethodSecurity(securedEnabled = true)
+@RequiredArgsConstructor
 public class SecurityConfig {
 
 	private final JwtAuthenticationFilter jwtAuthFilter;
-	private final CustomUserDetailsService customUserDetailsService;
+//	private final JwtTokenProvider jwtTokenProvider;
+//	private final CustomUserDetailsService customUserDetailsService;
 
-	public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, CustomUserDetailsService customUserDetailsService) {
-		this.jwtAuthFilter = jwtAuthFilter;
-		this.customUserDetailsService = customUserDetailsService;
-	}
+//	public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, CustomUserDetailsService customUserDetailsService) {
+//		this.jwtAuthFilter = jwtAuthFilter;
+//		this.customUserDetailsService = customUserDetailsService;
+//	}
 	
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
@@ -42,42 +49,33 @@ public class SecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 	
-	@Bean
-	public AuthenticationProvider authenticationProvider() {
-		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-		
-		authProvider.setUserDetailsService(customUserDetailsService);
-		authProvider.setPasswordEncoder(passwordEncoder());
-		
-		return authProvider;
-	}
+//	@Bean
+//	public AuthenticationProvider authenticationProvider() {
+//		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+//
+//		authProvider.setUserDetailsService(customUserDetailsService);
+//		authProvider.setPasswordEncoder(passwordEncoder());
+//
+//		return authProvider;
+//	}
 	
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+	public SecurityFilterChain securityFilterChain(
+			HttpSecurity http) throws Exception{
 		return http
-				.csrf(csrf -> csrf.disable())
-//				.authorizeHttpRequests(auth -> auth
-//						.requestMatchers("/auth/**").permitAll()
-//						.requestMatchers("/api/**").authenticated()
-//						.anyRequest().authenticated()
-//				)
-//				.formLogin(form -> form
-//						.loginPage("/auth/login")
-//						.permitAll())
-//				.logout(logout -> logout.permitAll())
-				//.oauth2Login(Customizer.withDefaults())
-//				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt
-//						.jwtAuthenticationConverter(jwtAuthenticationConverter())))
-				.authorizeHttpRequests(auth -> {
-					auth.requestMatchers(HttpMethod.POST, "/api/users").permitAll();
-					auth.requestMatchers("/api/sales").authenticated();
-					auth.requestMatchers("/api/cart-items").authenticated();
-					auth.requestMatchers("/api/product").hasRole("ADMIN");
-					auth.anyRequest().authenticated();
-				})
-				.formLogin(Customizer.withDefaults())
-				.authenticationProvider(authenticationProvider())
-				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class).build();
+			.csrf(AbstractHttpConfigurer::disable)
+			.authorizeHttpRequests(authorize -> authorize
+				.requestMatchers("/auth/**").permitAll() // Permitir acesso a rotas de login, registro, etc.
+				.requestMatchers("/admin/**").hasRole("ADMIN")
+				.requestMatchers("/user/**").hasAnyRole("CLIENT", "ADMIN")
+				.requestMatchers("/products/**").hasRole("ADMIN")
+					.requestMatchers("/sales/**").permitAll()
+				.anyRequest().authenticated()
+			)
+			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+			.formLogin(Customizer.withDefaults())
+			.logout(Customizer.withDefaults())
+			.build();
 	}
 
 	@Bean

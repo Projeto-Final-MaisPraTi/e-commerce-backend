@@ -10,43 +10,45 @@ import java.util.stream.Collectors;
 
 public class CustomAuthentication implements Authentication {
 
-    private final UserIdentification userIdentification;
+    private final String username;
+    private final List<String> permissions;
 
-    public CustomAuthentication(UserIdentification userIdentification) {
-
-        if(userIdentification == null){
-            throw new ExceptionInInitializerError(
-                    "Não é possível criar um customAuthentication sem a identificação do usuário!"
-            );
+    public CustomAuthentication(String username, List<String> permissions) {
+        if(username == null || permissions == null){
+            throw new IllegalArgumentException("Nome de usuário e permissões não podem ser nulos!");
         }
 
-        this.userIdentification = userIdentification;
+        this.username = username;
+        this.permissions = permissions;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.userIdentification
-                .getPermissions()
+        return this.permissions
                 .stream()
-                .map(permission -> new SimpleGrantedAuthority(permission))
+                .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
 
+    // Credenciais no token JWT (não utilizados)
     @Override
     public Object getCredentials() {
         return null;
     }
 
+    // Detalhes adicionais (não utilizados)
     @Override
     public Object getDetails() {
         return null;
     }
 
+    // O principal é o nome de usuário
     @Override
     public Object getPrincipal() {
-        return this.userIdentification;
+        return this.username;
     }
 
+    // A autenticação está sempre verdadeira no caso de um token válido
     @Override
     public boolean isAuthenticated() {
         return true;
@@ -59,6 +61,6 @@ public class CustomAuthentication implements Authentication {
 
     @Override
     public String getName() {
-        return this.userIdentification.getUsername();
+        return this.username;
     }
 }
