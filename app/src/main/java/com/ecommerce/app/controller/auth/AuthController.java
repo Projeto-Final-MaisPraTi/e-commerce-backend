@@ -62,7 +62,7 @@ public class AuthController {
 			userService.createUser(registerRequest);
 			return ResponseEntity.ok("Usuário registrado com sucesso!");
 		} catch (DataIntegrityViolationException e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body("E-mail já cadastrado.");
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("Erro ao cadastrar usuário, verifique as informações.");
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Falha ao tentar registrar usuário.");
 		}
