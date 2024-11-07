@@ -1,5 +1,7 @@
 package com.ecommerce.app.controller.user;
 
+import com.ecommerce.app.dto.user.RegisterRequest;
+import com.ecommerce.app.model.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,26 +24,26 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id){
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Integer id){
         UserDTO userDTO = userService.getUserById(id);
 
         return userDTO != null ? ResponseEntity.ok(userDTO) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public UserDTO createUser(@RequestBody UserDTO userDTO, List<String> roles){
-        return userService.createUser(userDTO, roles);
+    public User createUser(@RequestBody RegisterRequest registerRequest){
+        return userService.createUser(registerRequest);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO){
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Integer id, @RequestBody UserDTO userDTO){
         UserDTO updateUser = userService.updateUser(id, userDTO);
 
         return updateUser != null ? ResponseEntity.ok(updateUser) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id){
+    public ResponseEntity<Void> deleteUser(@PathVariable Integer id){
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }

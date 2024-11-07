@@ -1,10 +1,13 @@
 package com.ecommerce.app.controller.auth;
 
 import com.ecommerce.app.dto.user.LoginRequest;
+import com.ecommerce.app.dto.user.RegisterRequest;
 import com.ecommerce.app.dto.user.UserDTO;
 import com.ecommerce.app.model.user.User;
 import com.ecommerce.app.repository.user.UserRepository;
+import com.ecommerce.app.service.user.AuthService;
 import com.ecommerce.app.service.user.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,13 +32,15 @@ public class AuthController {
 	private final CustomUserDetailsService customUserDetailsService;
 	private final UserService userService;
 	private final UserRepository userRepository;
+	private final AuthService authService;
 
-	public AuthController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, CustomUserDetailsService customUserDetailsService, UserService userService, UserRepository userRepository) {
+	public AuthController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, CustomUserDetailsService customUserDetailsService, UserService userService, UserRepository userRepository, AuthService authService) {
 		this.authenticationManager = authenticationManager;
 		this.jwtTokenProvider = jwtTokenProvider;
 		this.customUserDetailsService = customUserDetailsService;
         this.userService = userService;
         this.userRepository = userRepository;
+        this.authService = authService;
     }
 	
 	@PostMapping("/login")
@@ -55,18 +60,41 @@ public class AuthController {
 	}
 
 	@PostMapping("/register")
-	public String register(@RequestBody @Valid UserDTO userDTO, @RequestParam List<String> roles){
-		try{
-			Optional<User> existingUser = userRepository.findByEmail(userDTO.getEmail());
+	public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest registerRequest){
 
-			if(existingUser.isPresent()){
-				return "Usuário já existe!";
-			}
-			userService.createUser(userDTO, roles);
-			return "Usuário registrado com sucesso!";
-		}catch (Exception e){
+		System.out.println("Teste");
+//		var senha = registerRequest.password;
+//		if (senha.equals("")) {
+//			throw new RuntimeException("rawPassword cannot be null");
+//		}
+		System.out.println("Teste 2");
+
+		// Verifica se o usuário já existe
+		Optional<User> existingUser = userRepository.findByEmail(registerRequest.getEmail());
+		if (existingUser.isPresent()) {
+			return ResponseEntity.badRequest().body("Usuário já existe!");
+		}
+
+		// Cria o usuário apenas se não existir
+		try {
+//			userService.createUser(registerRequest);
+			authService.register(registerRequest);
+			return ResponseEntity.ok("Usuário registrado com sucesso!");
+		} catch (Exception e) {
 			throw new RuntimeException("Falha ao tentar registrar usuário: " + e.getMessage());
 		}
+
+//		try{
+//			Optional<User> existingUser = userRepository.findByEmail(registerRequest.getEmail());
+//
+//			if(existingUser.isPresent()){
+//				return "Usuário já existe!";
+//			}
+//			userService.createUser(registerRequest);
+//			return "Usuário registrado com sucesso!";
+//		}catch (Exception e){
+//			throw new RuntimeException("Falha ao tentar registrar usuário: " + e.getMessage());
+//		}
 	}
 
 	@PostMapping("/logout")

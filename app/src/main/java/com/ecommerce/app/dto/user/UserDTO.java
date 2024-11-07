@@ -1,7 +1,9 @@
 package com.ecommerce.app.dto.user;
 
+import com.ecommerce.app.infra.enums.Roles;
 import com.ecommerce.app.model.address.Address;
 import com.ecommerce.app.model.itemCart.ItemCart;
+//import com.ecommerce.app.model.role.Role;
 import com.ecommerce.app.model.sales.Sales;
 import lombok.*;
 
@@ -12,9 +14,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO {
-    private Long id;
+    private Integer id;
     private String username;
     private String email;
+    private Roles typeRole;
 
 //    public UserDTO(Long id, String username, String email) {
 //        this.id = id;

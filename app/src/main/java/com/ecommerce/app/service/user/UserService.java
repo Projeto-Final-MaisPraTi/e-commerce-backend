@@ -1,10 +1,13 @@
 package com.ecommerce.app.service.user;
 
+import com.ecommerce.app.dto.user.RegisterRequest;
 import com.ecommerce.app.dto.user.UserDTO;
+import com.ecommerce.app.infra.enums.Roles;
+import com.ecommerce.app.infra.enums.TypeSaleStatus;
 import com.ecommerce.app.model.address.Address;
-import com.ecommerce.app.model.role.Role;
+//import com.ecommerce.app.model.role.Role;
 import com.ecommerce.app.model.user.User;
-import com.ecommerce.app.repository.role.RoleRepository;
+//import com.ecommerce.app.repository.role.RoleRepository;
 import com.ecommerce.app.repository.user.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +28,7 @@ import java.util.stream.Collectors;
 public class UserService implements UserDetailsService {
     //@Autowired // faz injeção de dependência automática
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
+//    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     public List<UserDTO> getAllUsers(){
@@ -37,20 +40,20 @@ public class UserService implements UserDetailsService {
                 .collect(Collectors.toList()); // coleta os dados convertidos e transforma em uma lista
     }
 
-    public UserDTO getUserById(Long id){
+    public UserDTO getUserById(Integer id){
         Optional<User> user = userRepository.findById(id);
         return user.map(this::convertToDTO).orElse(null);
     }
 
-    public UserDTO createUser(UserDTO userDTO, List<String> roleNames){
+    public User createUser(RegisterRequest registerRequest){
         User user = new User();
-        Optional<User> existingUser = userRepository.findByEmail(userDTO.getEmail());
+        Optional<User> existingUser = userRepository.findByEmail(registerRequest.getEmail());
         if (existingUser.isPresent()){
             throw new RuntimeException("Email já registrado!");
         }
 
-        user.setUsername(userDTO.getUsername());
-        user.setEmail(userDTO.getEmail());
+        user.setUsername(registerRequest.getUsername());
+        user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setPhone(user.getPhone());
 //        user.setRole(user.getRole());
@@ -59,23 +62,25 @@ public class UserService implements UserDetailsService {
         user.setItemCart(user.getItemCart());
 
         // Buscando ou criando roles
-        List<Role> roles = roleNames.stream()
-            .map(roleName -> roleRepository.findByName(roleName)
-            .orElseGet(() -> {
-                Role newRole = new Role();
-                newRole.setName(roleName);
-                return roleRepository.save(newRole);
-            })
-        ).collect(Collectors.toList());
+//        List<Role> roles = roleNames.stream()
+//            .map(roleName -> roleRepository.findByName(roleName)
+//            .orElseGet(() -> {
+//                Role newRole = new Role();
+//                newRole.setName(roleName);
+//                return roleRepository.save(newRole);
+//            })
+//        ).collect(Collectors.toList());
+//
+//        user.setRoles(roles);
 
-        user.setRoles(roles);
+        user.setTypeRole(Roles.CLIENT);
 
-        userRepository.save(user);
+        return userRepository.save(user);
 
-        return convertToDTO(user);
+//        return convertToDTO(user);
     }
 
-    public UserDTO updateUser(Long id, UserDTO userDTO){
+    public UserDTO updateUser(Integer id, UserDTO userDTO){
         Optional<User> userOptional = userRepository.findById(id);
         if(userOptional.isPresent()){
             User user = userOptional.get();
@@ -95,7 +100,7 @@ public class UserService implements UserDetailsService {
         return null;
     }
 
-    public void deleteUser(Long id){
+    public void deleteUser(Integer id){
         userRepository.deleteById(id);
     }
 
@@ -115,9 +120,9 @@ public class UserService implements UserDetailsService {
         User user = userOptional.get();
 
         // Obtém as roles diretamente, sem precisar de mapear para String
-        List<Role> roles = user.getRoles();
+        Roles roles = user.getTypeRole();
 
-        user.setRoles(roles);
+        user.setTypeRole(roles);
 
         return user;
     }
@@ -138,7 +143,8 @@ public class UserService implements UserDetailsService {
         return new UserDTO(
                 user.getId(),
                 user.getUsername(),
-                user.getEmail()
+                user.getEmail(),
+                user.getTypeRole()
         );
     }
 }

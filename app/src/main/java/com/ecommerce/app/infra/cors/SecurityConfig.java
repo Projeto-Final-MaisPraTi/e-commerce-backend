@@ -32,7 +32,7 @@ public class SecurityConfig {
 
 	private final JwtAuthenticationFilter jwtAuthFilter;
 //	private final JwtTokenProvider jwtTokenProvider;
-//	private final CustomUserDetailsService customUserDetailsService;
+	private final CustomUserDetailsService customUserDetailsService;
 
 //	public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, CustomUserDetailsService customUserDetailsService) {
 //		this.jwtAuthFilter = jwtAuthFilter;
@@ -49,15 +49,15 @@ public class SecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 	
-//	@Bean
-//	public AuthenticationProvider authenticationProvider() {
-//		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-//
-//		authProvider.setUserDetailsService(customUserDetailsService);
-//		authProvider.setPasswordEncoder(passwordEncoder());
-//
-//		return authProvider;
-//	}
+	@Bean
+	public AuthenticationProvider authenticationProvider() {
+		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+
+		authProvider.setUserDetailsService(customUserDetailsService);
+		authProvider.setPasswordEncoder(passwordEncoder());
+
+		return authProvider;
+	}
 	
 	@Bean
 	public SecurityFilterChain securityFilterChain(
@@ -67,13 +67,15 @@ public class SecurityConfig {
 			.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers("/auth/**").permitAll() // Permitir acesso a rotas de login, registro, etc.
 				.requestMatchers("/admin/**").hasRole("ADMIN")
-				.requestMatchers("/user/**").hasAnyRole("CLIENT", "ADMIN")
+//				.requestMatchers("/user/**").hasAnyRole("CLIENT", "ADMIN")
+//				.requestMatchers("/auth/**").hasAnyRole("CLIENT", "ADMIN")
 				.requestMatchers("/products/**").hasRole("ADMIN")
 					.requestMatchers("/sales/**").permitAll()
 				.anyRequest().authenticated()
 			)
 			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-			.formLogin(Customizer.withDefaults())
+			.httpBasic(Customizer.withDefaults())
+//			.formLogin(Customizer.withDefaults())
 			.logout(Customizer.withDefaults())
 			.build();
 	}
