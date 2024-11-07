@@ -86,10 +86,10 @@ public class ItemCartService {
                 .id(product.getId())
                 .name(product.getNome())
                 .price(product.getPreco().toString())
-                .categoria(product.getCategoria())
+                .category(product.getCategoria())
                 .rating(product.getNota())
                 .color(product.getCor())
-                .estoque(product.getEstoque())  // Converte estoque para String
+                .stock(product.getEstoque())  // Converte estoque para String
                 .build();
     }
 
@@ -99,10 +99,10 @@ public class ItemCartService {
         product.setId(productDetailsDTO.getId());
         product.setNome(productDetailsDTO.getName());
         product.setPreco(Double.parseDouble(productDetailsDTO.getPrice()));
-        product.setCategoria(productDetailsDTO.getCategoria());
+        product.setCategoria(productDetailsDTO.getCategory());
         product.setNota(productDetailsDTO.getRating());
         product.setCor(productDetailsDTO.getColor());
-        product.setEstoque(productDetailsDTO.getEstoque());  // Converte para int
+        product.setEstoque(productDetailsDTO.getStock());
         return product;
     }
 

@@ -9,10 +9,10 @@ public record ProductDTO(
         String name,
         int nota,
         Integer discount,
-        String preco,
-        String descricao,
+        String price,
+        String description,
         String priceDiscount,
-        String images
+        String cover
 ) {
     public ProductDTO(Product product, String cover) {
         this(product.getId(),

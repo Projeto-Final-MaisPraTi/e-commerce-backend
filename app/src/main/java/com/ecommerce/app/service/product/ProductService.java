@@ -7,6 +7,8 @@ import com.ecommerce.app.model.productImages.ProductImages;
 import com.ecommerce.app.repository.product.ProductRepository;
 import com.ecommerce.app.service.productImages.ImageProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import com.ecommerce.app.dto.product.ProductDetailsDTO;
@@ -28,11 +30,10 @@ public class ProductService {
     @Autowired
     private ImageProductService imageProductService;
 
-    public List<ProductDTO> getAllProducts(){
+    public Page<ProductDTO> getAllProducts(Pageable pagination){
         // retorna a lista de produtos convertidos e coletados
         return productRepository
-                .findAll() // pega todos os produto do bd
-                .stream()
+                .findAll(pagination) // pega todos os produto do bd
                 .map(product -> {
                             String cover = product.getImages().stream()
                                     .filter(productImages -> Boolean.TRUE.equals(productImages.getCapaProduto()))
@@ -40,15 +41,7 @@ public class ProductService {
                                     .findFirst()
                                     .orElse(null);
                             return new ProductDTO(product, cover);
-                        }).collect(Collectors.toList());
-//                .stream() // os produtos são colocados em uma stream
-//                .map(product -> new SimpleProductDTO(product, product.getImages()
-//                        .stream()
-//                        .filter(image -> Boolean.TRUE.equals(image.getCapaProduto()))
-//                        .map(ImageProduct::getImagem)
-//                        .findFirst()
-//                        .orElse(null))) // cada produto é convertido e abstraído apenas os dados que compõe o DTO
-//                .collect(Collectors.toList()); // coleta os dados convertidos e transforma em uma lista
+                        });
     }
 
     public ProductDetailsDTO getProductById(int id){
@@ -87,11 +80,13 @@ public class ProductService {
         Product product = new Product();
         product.setNome(productDTO.getName());
         product.setDescricao(productDTO.getDescription());
-        product.setEstoque(productDTO.getEstoque());
-        product.setCategoria(productDTO.getCategoria());
+        product.setEstoque(productDTO.getStock());
+        product.setCategoria(productDTO.getCategory());
         product.setNota(productDTO.getRating());
         product.setPreco(Double.parseDouble(productDTO.getPrice()));
         product.setCor(productDTO.getColor());
+        product.setDiscount(0);
+        product.setFlashSale(false);
         product.addImages(productDTO.getImages());
         product.getImages().get(0).setCapaProduto(true);
         productRepository.save(product);
@@ -132,8 +127,8 @@ public class ProductService {
         productDTO.setId(product.getId());
         productDTO.setName(product.getNome());
         productDTO.setDescription(product.getDescricao());
-        productDTO.setCategoria(product.getCategoria());
-        productDTO.setEstoque(product.getEstoque());
+        productDTO.setCategory(product.getCategoria());
+        productDTO.setStock(product.getEstoque());
         productDTO.setRating(product.getNota());
         productDTO.setDiscount(product.getDiscount());
         productDTO.setPrice(formatValue(product.getPreco()));
@@ -159,11 +154,11 @@ public class ProductService {
         return (formatValue(value));
     }
 
-    public List<ProductDTO> buildFilteredProducts(Map<String, String> filters) {
+    public Page<ProductDTO> buildFilteredProducts(Map<String, String> filters, Pageable pagination) {
         // sera que volta nulo ?
-        List<Product> products = getFilteredProducts(filters);
+        Page<Product> products = getFilteredProducts(filters, pagination);
 
-        return products.stream().map(product -> {
+        return products.map(product -> {
             String cover = product.getImages().stream()
                     .filter(productImages -> Boolean.TRUE.equals(productImages.getCapaProduto()))
                     .map(ProductImages::getImagem)
@@ -171,10 +166,10 @@ public class ProductService {
                     .orElse(null);
 
             return new ProductDTO(product, cover);
-        }).collect(Collectors.toList());
+        });
     }
 
-    private List<Product> getFilteredProducts(Map<String, String> filters) {
+    private Page<Product> getFilteredProducts(Map<String, String> filters, Pageable pagination) {
         Specification<Product> specification = Specification.where(null);
 
         if (filters.containsKey("nome")) {
@@ -198,7 +193,7 @@ public class ProductService {
                     colorEqualsTo(filters.get("color")));
         }
 
-        return productRepository.findAll(specification);
+        return productRepository.findAll(specification, pagination);
     }
 
     public List<ProductDTO> createProducts(List<ProductDetailsDTO> productDTOs) {
@@ -209,9 +204,9 @@ public class ProductService {
             product.setDescricao(productDTO.getDescription());
             product.setPreco(Double.parseDouble(productDTO.getPrice()));
             product.setNota(productDTO.getRating());
-            product.setEstoque(productDTO.getEstoque());
+            product.setEstoque(productDTO.getStock());
             product.setCor(productDTO.getColor());
-            product.setCategoria(productDTO.getCategoria());
+            product.setCategoria(productDTO.getCategory());
             product.setDiscount(productDTO.getDiscount());
             product.setFlashSale(productDTO.getFlashSale());
             ProductDTO simple = new ProductDTO(product);
@@ -219,5 +214,16 @@ public class ProductService {
             productRepository.save(product);
         }
         return simpleProduct;
+    }
+
+    public Page<ProductDTO> getProductsInFlashSales(Pageable pagination) {
+        Page<Product> produts = productRepository.getProductsInFlashSales(pagination);
+
+        Page<ProductDTO> productDTOS = produts.map(productDTO -> {
+                String cover = imageProductService.getCoverByProductId(productDTO.getId());
+                return new ProductDTO(productDTO, cover);
+        });
+
+        return productDTOS;
     }
 }
