@@ -5,12 +5,12 @@ import com.ecommerce.app.model.product.Product;
 import java.util.List;
 
 public record ProductUpdateDTO(Integer id,
-                               String nome,
-                               Double preco,
-                               String cor,
-                               String descricao,
-                               Integer estoque,
-                               String categoria,
+                               String name,
+                               Double price,
+                               String color,
+                               String description,
+                               Integer stock,
+                               String category,
                                String cover,
                                List<String> images) {
     public ProductUpdateDTO(Product product, String cover, List<String> images) {

@@ -68,23 +68,23 @@ public class Product {
     }
 
     public void update(ProductUpdateDTO productDTO) {
-        if (productDTO.nome() != null) {
-            this.nome = productDTO.nome();
+        if (productDTO.name() != null) {
+            this.nome = productDTO.name();
         }
-        if (productDTO.descricao() != null) {
-            this.descricao = productDTO.descricao();
+        if (productDTO.description() != null) {
+            this.descricao = productDTO.description();
         }
-        if (productDTO.estoque() != null) {
-            this.estoque = productDTO.estoque();
+        if (productDTO.stock() != null) {
+            this.estoque = productDTO.stock();
         }
-        if (productDTO.categoria() != null) {
-            this.categoria = productDTO.categoria();
+        if (productDTO.category() != null) {
+            this.categoria = productDTO.category();
         }
-        if (productDTO.preco() != null) {
-            this.preco = productDTO.preco();
+        if (productDTO.price() != null) {
+            this.preco = productDTO.price();
         }
-        if (productDTO.cor() != null) {
-            this.cor = productDTO.cor();
+        if (productDTO.color() != null) {
+            this.cor = productDTO.color();
         }
         if (productDTO.cover() != null) {
             ProductImages newCover = new ProductImages();
