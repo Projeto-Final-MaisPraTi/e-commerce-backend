@@ -1,4 +1,4 @@
-package com.ecommerce.app.service;
+package com.ecommerce.app.service.product;
 
 import com.ecommerce.app.dto.product.ProductSpecifications;
 import com.ecommerce.app.dto.product.ProductUpdateDTO;
