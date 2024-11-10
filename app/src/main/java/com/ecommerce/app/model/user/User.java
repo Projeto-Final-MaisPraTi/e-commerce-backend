@@ -2,21 +2,24 @@ package com.ecommerce.app.model.user;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.ecommerce.app.infra.enums.Roles;
+import com.ecommerce.app.infra.enums.TypeSaleStatus;
 import com.ecommerce.app.model.address.Address;
 import com.ecommerce.app.model.itemCart.ItemCart;
+//import com.ecommerce.app.model.role.Role;
 import com.ecommerce.app.model.sales.Sales;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-@Data
 @Entity
-@Table(name = "users")
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
+@Table(name = "usuarios")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,11 +34,12 @@ public class User implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
-//    @Column(name = "phone")
-//    private String phone;
-    
-//    @Column(name = "role", nullable = false)
-//    private String role;
+    @Column(name = "phone")
+    private String phone;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "typeRole", nullable = false)
+    private Roles typeRole; // "CLIENT", "ADMIN"
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Address> address;
@@ -48,11 +52,30 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        //return List.of(() -> "ROLE_USER");
+//        return typeRole.name().stream()
+//                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
+//                .collect(Collectors.toList());
+        return null;
     }
 
     @Override
-    public String getUsername() {
-        return this.email; // Retorna o email como username
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
     }
 }
