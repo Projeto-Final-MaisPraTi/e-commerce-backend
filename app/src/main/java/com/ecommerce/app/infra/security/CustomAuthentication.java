@@ -1,5 +1,6 @@
 package com.ecommerce.app.infra.security;
 
+import jakarta.servlet.Filter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

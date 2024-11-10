@@ -1,4 +1,4 @@
-package com.ecommerce.app.controller;
+package com.ecommerce.app.controller.product;
 
 import com.ecommerce.app.dto.product.ProductUpdateDTO;
 import com.ecommerce.app.dto.product.ProductDTO;
