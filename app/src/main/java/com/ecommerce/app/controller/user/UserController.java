@@ -19,31 +19,31 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public List<UserDTO> getAllUsers(){
+    public List<UserDTO> getAllUsers() {
         return userService.getAllUsers();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable Integer id){
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Integer id) {
         UserDTO userDTO = userService.getUserById(id);
-
         return userDTO != null ? ResponseEntity.ok(userDTO) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public User createUser(@RequestBody RegisterRequest registerRequest){
-        return userService.createUser(registerRequest);
+    public ResponseEntity<UserDTO> createUser(@RequestBody RegisterRequest registerRequest) {
+        User user = userService.createUser(registerRequest);
+        UserDTO userDTO = userService.convertToDTO(user);
+        return ResponseEntity.ok(userDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Integer id, @RequestBody UserDTO userDTO){
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Integer id, @RequestBody UserDTO userDTO) {
         UserDTO updateUser = userService.updateUser(id, userDTO);
-
         return updateUser != null ? ResponseEntity.ok(updateUser) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Integer id){
+    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }

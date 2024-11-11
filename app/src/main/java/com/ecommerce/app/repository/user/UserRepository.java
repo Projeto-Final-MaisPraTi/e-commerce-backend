@@ -1,6 +1,6 @@
 package com.ecommerce.app.repository.user;
 
-import com.ecommerce.app.infra.enums.Roles;
+import com.ecommerce.app.infra.enums.Role;
 import com.ecommerce.app.infra.enums.TypeSaleStatus;
 import com.ecommerce.app.model.sales.Sales;
 import org.springframework.data.jpa.repository.JpaRepository;

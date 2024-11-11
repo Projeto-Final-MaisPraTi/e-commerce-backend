@@ -2,7 +2,7 @@ package com.ecommerce.app.service.user;
 
 //import com.ecommerce.app.model.role.Role;
 //import com.ecommerce.app.repository.role.RoleRepository;
-import com.ecommerce.app.infra.enums.Roles;
+import com.ecommerce.app.infra.enums.Role;
 import com.ecommerce.app.repository.user.UserRepository;
 import com.ecommerce.app.dto.user.LoginRequest;
 import com.ecommerce.app.dto.user.RegisterRequest;
@@ -33,24 +33,14 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest registerRequest) {
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            throw new IllegalStateException("Email already taken");
+            throw new IllegalStateException("Credenciais inválidas.");
         }
 
         User user = new User();
         user.setUsername(registerRequest.getUsername());
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-
-//        List<Role> roles = roleNames.stream()
-//                .map(roleName -> roleRepository.findByName(roleName)
-//                        .orElseGet(() -> {
-//                            Role newRole = new Role();
-//                            newRole.setName(roleName);
-//                            return roleRepository.save(newRole);
-//                        })
-//                ).collect(Collectors.toList());
-
-        user.setRoles(Roles.CLIENT);
+        user.setRoles(Role.CLIENT);
 
         userRepository.save(user);
 

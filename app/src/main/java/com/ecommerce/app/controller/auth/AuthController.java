@@ -1,5 +1,6 @@
 package com.ecommerce.app.controller.auth;
 
+import com.ecommerce.app.dto.user.AuthResponse;
 import com.ecommerce.app.dto.user.LoginRequest;
 import com.ecommerce.app.dto.user.RegisterRequest;
 import com.ecommerce.app.dto.user.UserDTO;
@@ -7,6 +8,7 @@ import com.ecommerce.app.model.user.User;
 import com.ecommerce.app.repository.user.UserRepository;
 import com.ecommerce.app.service.user.AuthService;
 import com.ecommerce.app.service.user.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,71 +44,42 @@ public class AuthController {
         this.userRepository = userRepository;
         this.authService = authService;
     }
-	
+
 	@PostMapping("/login")
-	public String login(@RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
 		try {
 			String username = loginRequest.getEmail();
 			String password = loginRequest.getPassword();
-			
+
 			Authentication authentication = authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(username, password));
-			
+
 			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-			
-			return jwtTokenProvider.generateToken(userDetails);
-		}catch(AuthenticationException error) {
-			throw new RuntimeException("Invalid Credentials");
+
+			String token = jwtTokenProvider.generateToken(userDetails);
+			return ResponseEntity.ok(new AuthResponse(token));
+		} catch(AuthenticationException error) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas!");
 		}
 	}
 
 	@PostMapping("/register")
-	public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest registerRequest){
-
-//		var senha = registerRequest.password;
-//		if (senha.equals("")) {
-//			throw new RuntimeException("Password cannot be null");
-//		}
-
-		// Verifica se o usuário já existe
+	public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest registerRequest) {
 		Optional<User> existingUser = userRepository.findByEmail(registerRequest.getEmail());
 		if (existingUser.isPresent()) {
 			return ResponseEntity.badRequest().body("Usuário já existe!");
 		}
 
-		// Cria o usuário apenas se não existir
 		try {
-//			userService.createUser(registerRequest);
-			authService.register(registerRequest);
-			return ResponseEntity.ok("Usuário registrado com sucesso!");
+			AuthResponse response = authService.register(registerRequest);
+			return ResponseEntity.ok(response);
 		} catch (Exception e) {
-			throw new RuntimeException("Falha ao tentar registrar usuário: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Falha ao tentar registrar usuário: " + e.getMessage());
 		}
-
-//		try{
-//			Optional<User> existingUser = userRepository.findByEmail(registerRequest.getEmail());
-//
-//			if(existingUser.isPresent()){
-//				return "Usuário já existe!";
-//			}
-//			userService.createUser(registerRequest);
-//			return "Usuário registrado com sucesso!";
-//		}catch (Exception e){
-//			throw new RuntimeException("Falha ao tentar registrar usuário: " + e.getMessage());
-//		}
 	}
 
 	@PostMapping("/logout")
 	public String logout(){
 		return "Para logar na sua conta novamente insira seus dados!";
 	}
-
-//	@Controller
-//	public class LoginController {
-//		@GetMapping("/login")
-//		public String login() {
-//			return "login";  // Nome do arquivo HTML na pasta templates (Thymeleaf, por exemplo)
-//		}
-//	}
-	
 }
