@@ -5,8 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6bc105a7-2dd8-48aa-b531-736e7625527c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/resources/application.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.project" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/infra/security/DoFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/controller/auth/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/controller/auth/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/infra/cors/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/infra/cors/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/infra/enums/Roles.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/infra/enums/Roles.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/infra/security/CustomAuthentication.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/infra/security/CustomAuthentication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/infra/security/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/infra/security/JwtAuthenticationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/infra/security/JwtTokenProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/infra/security/JwtTokenProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/model/user/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/model/user/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/repository/user/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/repository/user/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/customUserDetails/CustomUserDetailsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/customUserDetails/CustomUserDetailsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/itemCart/ItemCartService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/itemCart/ItemCartService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/user/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/user/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/user/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/user/UserService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,7 +71,7 @@
     "Application.AppApplication.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "com.codeium.enabled": "true",
-    "git-widget-placeholder": "develop",
+    "git-widget-placeholder": "Merging develop",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "settings.editor.selected.configurable": "preferences.pluginManager",
