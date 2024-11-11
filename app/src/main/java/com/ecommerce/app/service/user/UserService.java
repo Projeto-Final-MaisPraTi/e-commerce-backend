@@ -74,7 +74,7 @@ public class UserService implements UserDetailsService {
 //
 //        user.setRoles(roles);
 
-        user.setTypeRole(Roles.ADMIN);
+        user.setRoles(Roles.ADMIN);
 
         return userRepository.save(user);
 
@@ -127,9 +127,9 @@ public class UserService implements UserDetailsService {
         User user = userOptional.get();
 
         // Obtém as roles diretamente, sem precisar de mapear para String
-        Roles roles = user.getTypeRole();
+        Roles roles = user.getRoles();
 
-        user.setTypeRole(roles);
+        user.setRoles(roles);
 
         return user;
     }
@@ -151,7 +151,12 @@ public class UserService implements UserDetailsService {
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
-                user.getTypeRole()
+                user.getRoles()
         );
+    }
+
+    public User findByEmail(String email){
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Email não encontrado!"));
     }
 }

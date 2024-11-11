@@ -1,12 +1,15 @@
 package com.ecommerce.app.infra.cors;
 
+import com.ecommerce.app.infra.enums.Roles;
 import com.ecommerce.app.infra.security.CustomAuthentication;
 import com.ecommerce.app.infra.security.JwtTokenProvider;
 import com.ecommerce.app.model.user.User;
 import com.ecommerce.app.service.user.UserService;
 import jakarta.servlet.Filter;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -20,13 +23,17 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -36,25 +43,28 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.ecommerce.app.infra.security.JwtAuthenticationFilter;
 import com.ecommerce.app.service.customUserDetails.CustomUserDetailsService;
 
+import java.util.Collections;
 import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-//@EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 
-//	@Autowired
-//	private JwtAuthenticationFilter jwtAuthFilter;
+	@Value("${jwt.secret}")
+	private String secret;
+
+	@Autowired
+	private JwtAuthenticationFilter jwtAuthFilter;
 //	private final JwtTokenProvider jwtTokenProvider;
 
 	@Autowired
 	private CustomUserDetailsService customUserDetailsService;
 
-	@Autowired
-	private CustomAuthentication customAuthentication;
-
 //	@Autowired
-//	private UserService userService;
+//	private CustomAuthentication customAuthentication;
+
+	@Autowired
+	private UserService userService;
 //
 //	@Autowired
 //	private User user;
@@ -103,7 +113,7 @@ public class SecurityConfig {
 //			.authenticationProvider(authenticationProvider())
 //			.logout(Customizer.withDefaults())
 //			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-			.addFilterBefore((Filter) customAuthentication, UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
 			.build();
 	}
 
@@ -137,15 +147,32 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public CustomAuthentication customAuthentication(JwtDecoder jwtDecoder) {
+	public static CustomAuthentication customAuthentication(
+			JwtTokenProvider jwtTokenProvider,
+			UserService userService,
+			HttpServletRequest httpServletRequest) {
 
-		Jwt jwt = jwtDecoder.decode("${jwt.secret}");
+		String token = httpServletRequest.getHeader("Authorization");
+		var cond = token != null  && token.startsWith("Bearer ");
 
-		User user = new User();
+		if(cond){
+			token = token.substring(7);
+		}else{
+			throw new JwtException("Token JWT não encontrado ou expirado!");
+		}
 
-		String username = jwt.getClaim("sub");
-		List<String> permissions = List.of("ROLE_USER");
-		return new CustomAuthentication(username, permissions);
+		String email = jwtTokenProvider.extractUsername(token);
+
+		User user = userService.findByEmail(email);
+
+		if(user == null){
+			throw new UsernameNotFoundException("Email não encontrado: " + email);
+		}
+
+//		List<Roles> roles = List.of(user.getRoles());
+		List<GrantedAuthority> roles = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRoles().name()));
+
+		return new CustomAuthentication(user.getUsername(), roles);
 	}
 
 

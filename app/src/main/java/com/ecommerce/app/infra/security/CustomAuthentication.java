@@ -1,5 +1,6 @@
 package com.ecommerce.app.infra.security;
 
+import com.ecommerce.app.infra.enums.Roles;
 import jakarta.servlet.Filter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,9 +13,11 @@ import java.util.stream.Collectors;
 public class CustomAuthentication implements Authentication {
 
     private final String username;
-    private final List<String> permissions;
+//    private final List<Roles> permissions;
+    private final List<GrantedAuthority> permissions;
 
-    public CustomAuthentication(String username, List<String> permissions) {
+//    public CustomAuthentication(String username, List<Roles> permissions) {
+    public CustomAuthentication(String username, List<GrantedAuthority> permissions) {
         if(username == null || permissions == null){
             throw new IllegalArgumentException("Nome de usuário e permissões não podem ser nulos!");
         }
@@ -25,10 +28,10 @@ public class CustomAuthentication implements Authentication {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.permissions
-                .stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+//        return permissions.stream()
+//                .map(role -> new SimpleGrantedAuthority(role.getAuthority()))
+//                .collect(Collectors.toList());
+        return permissions;
     }
 
     // Credenciais no token JWT (não utilizados)
@@ -40,8 +43,13 @@ public class CustomAuthentication implements Authentication {
     // Detalhes adicionais (não utilizados)
     @Override
     public Object getDetails() {
-        return null;
+        return this.permissions;
     }
+
+    public void setDetails(Object obj) {
+        throw new IllegalArgumentException("Já está autenticado");
+    }
+
 
     // O principal é o nome de usuário
     @Override
@@ -64,4 +72,6 @@ public class CustomAuthentication implements Authentication {
     public String getName() {
         return this.username;
     }
+
+
 }
