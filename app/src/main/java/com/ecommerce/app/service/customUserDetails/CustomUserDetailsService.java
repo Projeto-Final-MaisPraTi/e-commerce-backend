@@ -10,6 +10,7 @@ import com.ecommerce.app.model.user.User;
 import com.ecommerce.app.repository.user.UserRepository;
 
 @Service
+//public class CustomUserDetailsService implements UserDetailsService {
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;

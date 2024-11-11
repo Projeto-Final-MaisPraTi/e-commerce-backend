@@ -3,6 +3,7 @@ package com.ecommerce.app.infra.security;
 import com.ecommerce.app.repository.user.UserRepository;
 import com.ecommerce.app.service.user.UserService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -11,6 +12,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,11 +33,14 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
 public class JwtTokenProvider implements AuthenticationProvider {
 
-	private final UserService userService;
+	@Autowired
+	private UserService userService;
+
+	@Autowired
 	private PasswordEncoder passwordEncoder;
+
 	@Autowired
 	private UserRepository userRepository;
 
@@ -47,7 +52,12 @@ public class JwtTokenProvider implements AuthenticationProvider {
 	@Value("${jwt.secret}")
 	private String secret;
 
-	@PostConstruct
+//	@Autowired
+//    public JwtTokenProvider(UserService userService) {
+//        this.userService = userService;
+//    }
+
+    @PostConstruct
 	public void init() {
 		if (secret.length() < 32) {
 			throw new IllegalArgumentException("Chave secreta JWT deve ter pelo menos 256 bits (32 caracteres)");
@@ -140,16 +150,22 @@ public class JwtTokenProvider implements AuthenticationProvider {
 		}
 
 		// Se o token for inválido, lançar exceção
-		throw new AuthenticationException("Token inválido ou expirado") {};
+//		throw new AuthenticationException("Token inválido ou expirado") {};
+		throw new JwtException("Token inválido ou expirado") {};
 	}
 
 	@Override
 	public boolean supports(Class<?> authentication) {
-		return false;
+		return true;
 	}
 
-	public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
-		return userRepository.findByEmail(email)
-				.orElseThrow(() -> new UsernameNotFoundException("Email não encontrado: " + email));
-	}
+//	public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
+//		return userRepository.findByEmail(email)
+//				.orElseThrow(() -> new UsernameNotFoundException("Email não encontrado: " + email));
+//	}
+
+//	public UserDetails loadUserByUsername(String email) {
+//		return userRepository.findByEmail(email)
+//				.orElseThrow(() -> new UsernameNotFoundException("Email não encontrado: " + email));
+//	}
 }

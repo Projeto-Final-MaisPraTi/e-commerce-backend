@@ -24,12 +24,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     //@Autowired // faz injeção de dependência automática
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 //    private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public List<UserDTO> getAllUsers(){
         // retorna a lista de usuários convertidos e coletados
@@ -54,7 +55,7 @@ public class UserService implements UserDetailsService {
 
         user.setUsername(registerRequest.getUsername());
         user.setEmail(registerRequest.getEmail());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setPhone(user.getPhone());
 //        user.setRole(user.getRole());
         user.setAddress(user.getAddress());
@@ -73,7 +74,7 @@ public class UserService implements UserDetailsService {
 //
 //        user.setRoles(roles);
 
-        user.setTypeRole(Roles.CLIENT);
+        user.setRoles(Roles.ADMIN);
 
         return userRepository.save(user);
 
@@ -104,10 +105,16 @@ public class UserService implements UserDetailsService {
         userRepository.deleteById(id);
     }
 
+//    @Override
+//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//        return userRepository.findByUsername(username)
+//                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + username));
+//    }
+
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + username));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + email));
     }
 
     public User getUserWithPermissions(String email){
@@ -120,9 +127,9 @@ public class UserService implements UserDetailsService {
         User user = userOptional.get();
 
         // Obtém as roles diretamente, sem precisar de mapear para String
-        Roles roles = user.getTypeRole();
+        Roles roles = user.getRoles();
 
-        user.setTypeRole(roles);
+        user.setRoles(roles);
 
         return user;
     }
@@ -144,7 +151,12 @@ public class UserService implements UserDetailsService {
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
-                user.getTypeRole()
+                user.getRoles()
         );
+    }
+
+    public User findByEmail(String email){
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Email não encontrado!"));
     }
 }

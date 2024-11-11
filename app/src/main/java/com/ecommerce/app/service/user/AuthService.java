@@ -50,7 +50,7 @@ public class AuthService {
 //                        })
 //                ).collect(Collectors.toList());
 
-        user.setTypeRole(Roles.CLIENT);
+        user.setRoles(Roles.CLIENT);
 
         userRepository.save(user);
 
