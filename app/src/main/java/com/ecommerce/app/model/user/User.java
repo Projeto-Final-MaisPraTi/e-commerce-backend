@@ -55,6 +55,6 @@ public class User implements UserDetails {
     }
 
     public void setRoles(Role roles) {
-        this.roles = Role.CLIENT;
+        this.roles = roles;
     }
 }

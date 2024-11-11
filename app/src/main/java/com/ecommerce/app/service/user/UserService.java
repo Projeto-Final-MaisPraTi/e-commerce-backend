@@ -49,7 +49,7 @@ public class UserService implements UserDetailsService {
         user.setUsername(registerRequest.getUsername());
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setRoles(registerRequest.getTypeRole());
+        user.setRoles(Role.CLIENT);
 
         // Assuming Address, Sales, and ItemCart are not being set on registration.
         // If required, set them here.
