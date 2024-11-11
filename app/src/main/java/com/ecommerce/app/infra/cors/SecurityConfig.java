@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -62,6 +63,7 @@ public class SecurityConfig {
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers("/auth/**").permitAll()
 						.requestMatchers("/admin/**").hasRole("ADMIN")
+						.requestMatchers(HttpMethod.GET, "/api/product/**").permitAll()
 						.requestMatchers("/api/product/**").hasRole("ADMIN")
 						.requestMatchers("/api/sales/**").permitAll()
 						.anyRequest().authenticated()
