@@ -38,8 +38,8 @@ public class User implements UserDetails {
     private String phone;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "typeRole", nullable = false)
-    private Roles typeRole; // "CLIENT", "ADMIN"
+    @Column(name = "role", nullable = false)
+    private Roles roles; // "CLIENT", "ADMIN"
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Address> address;
@@ -77,5 +77,13 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
+    }
+
+    public Roles getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Roles roles) {
+        this.roles = Roles.CLIENT;
     }
 }

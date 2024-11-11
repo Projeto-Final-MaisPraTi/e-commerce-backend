@@ -1,9 +1,18 @@
 package com.ecommerce.app.infra.cors;
 
+import com.ecommerce.app.infra.enums.Roles;
+import com.ecommerce.app.infra.security.CustomAuthentication;
 import com.ecommerce.app.infra.security.JwtTokenProvider;
+import com.ecommerce.app.model.user.User;
+import com.ecommerce.app.service.user.UserService;
+import jakarta.servlet.Filter;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -14,25 +23,51 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.ecommerce.app.infra.security.JwtAuthenticationFilter;
 import com.ecommerce.app.service.customUserDetails.CustomUserDetailsService;
 
+import java.util.Collections;
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
-//@EnableMethodSecurity(securedEnabled = true)
-@RequiredArgsConstructor
 public class SecurityConfig {
 
-	private final JwtAuthenticationFilter jwtAuthFilter;
+	@Value("${jwt.secret}")
+	private String secret;
+
+	@Autowired
+	private JwtAuthenticationFilter jwtAuthFilter;
 //	private final JwtTokenProvider jwtTokenProvider;
-	private final CustomUserDetailsService customUserDetailsService;
+
+	@Autowired
+	private CustomUserDetailsService customUserDetailsService;
+
+//	@Autowired
+//	private CustomAuthentication customAuthentication;
+
+	@Autowired
+	private UserService userService;
+//
+//	@Autowired
+//	private User user;
 
 //	public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, CustomUserDetailsService customUserDetailsService) {
 //		this.jwtAuthFilter = jwtAuthFilter;
@@ -69,16 +104,35 @@ public class SecurityConfig {
 				.requestMatchers("/admin/**").hasRole("ADMIN")
 //				.requestMatchers("/user/**").hasAnyRole("CLIENT", "ADMIN")
 //				.requestMatchers("/auth/**").hasAnyRole("CLIENT", "ADMIN")
-				.requestMatchers("/products/**").hasRole("ADMIN")
-					.requestMatchers("/sales/**").permitAll()
+				.requestMatchers("/api/product/**").hasRole("ADMIN")
+				.requestMatchers("/api/sales/**").permitAll()
 				.anyRequest().authenticated()
 			)
-			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-			.httpBasic(Customizer.withDefaults())
+//			.httpBasic(Customizer.withDefaults())
 //			.formLogin(Customizer.withDefaults())
-			.logout(Customizer.withDefaults())
+//			.authenticationProvider(authenticationProvider())
+//			.logout(Customizer.withDefaults())
+//			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
 			.build();
 	}
+
+//	@Bean
+//	public UserDetailsService userDetailsService(){
+//		UserDetails commonUser = User.builder()
+//				.username("user")
+//				.password(passwordEncoder().encode("123"))
+//				.roles("CLIENT")
+//				.build();
+//
+//		UserDetails adminUser = User.builder()
+//				.username("admin")
+//				.password(passwordEncoder().encode("admin"))
+//				.roles("CLIENT", "ADMIN")
+//				.build();
+//
+//		return  new InMemoryUserDetailsManager(commonUser, adminUser);
+//	}
 
 	@Bean
 	public JwtAuthenticationConverter jwtAuthenticationConverter(){
@@ -91,5 +145,35 @@ public class SecurityConfig {
 
 		return jwtAuthenticationConverter;
 	}
-	
+
+	@Bean
+	public static CustomAuthentication customAuthentication(
+			JwtTokenProvider jwtTokenProvider,
+			UserService userService,
+			HttpServletRequest httpServletRequest) {
+
+		String token = httpServletRequest.getHeader("Authorization");
+		var cond = token != null  && token.startsWith("Bearer ");
+
+		if(cond){
+			token = token.substring(7);
+		}else{
+			throw new JwtException("Token JWT não encontrado ou expirado!");
+		}
+
+		String email = jwtTokenProvider.extractUsername(token);
+
+		User user = userService.findByEmail(email);
+
+		if(user == null){
+			throw new UsernameNotFoundException("Email não encontrado: " + email);
+		}
+
+//		List<Roles> roles = List.of(user.getRoles());
+		List<GrantedAuthority> roles = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRoles().name()));
+
+		return new CustomAuthentication(user.getUsername(), roles);
+	}
+
+
 }

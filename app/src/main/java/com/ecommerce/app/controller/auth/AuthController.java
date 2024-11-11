@@ -42,17 +42,18 @@ public class AuthController {
         this.userRepository = userRepository;
         this.authService = authService;
     }
-
+	
 	@PostMapping("/login")
-	public String Login(@RequestBody LoginRequest loginRequest) {
+	public String login(@RequestBody LoginRequest loginRequest) {
 		try {
 			String username = loginRequest.getEmail();
 			String password = loginRequest.getPassword();
-
-			Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-
+			
+			Authentication authentication = authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(username, password));
+			
 			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
+			
 			return jwtTokenProvider.generateToken(userDetails);
 		}catch(AuthenticationException error) {
 			throw new RuntimeException("Invalid Credentials");
@@ -62,12 +63,10 @@ public class AuthController {
 	@PostMapping("/register")
 	public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest registerRequest){
 
-		System.out.println("Teste");
 //		var senha = registerRequest.password;
 //		if (senha.equals("")) {
-//			throw new RuntimeException("rawPassword cannot be null");
+//			throw new RuntimeException("Password cannot be null");
 //		}
-		System.out.println("Teste 2");
 
 		// Verifica se o usuário já existe
 		Optional<User> existingUser = userRepository.findByEmail(registerRequest.getEmail());
@@ -109,5 +108,5 @@ public class AuthController {
 //			return "login";  // Nome do arquivo HTML na pasta templates (Thymeleaf, por exemplo)
 //		}
 //	}
-
+	
 }
