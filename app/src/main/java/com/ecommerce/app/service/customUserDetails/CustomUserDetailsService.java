@@ -12,6 +12,7 @@ import com.ecommerce.app.repository.user.UserRepository;
 import java.util.Optional;
 
 @Service
+//public class CustomUserDetailsService implements UserDetailsService {
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;

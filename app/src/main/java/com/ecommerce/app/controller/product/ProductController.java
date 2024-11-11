@@ -1,4 +1,4 @@
-package com.ecommerce.app.controller;
+package com.ecommerce.app.controller.product;
 
 import com.ecommerce.app.dto.product.ProductUpdateDTO;
 import com.ecommerce.app.dto.product.ProductDTO;
@@ -11,7 +11,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.ecommerce.app.service.ProductService;
+import com.ecommerce.app.service.product.ProductService;
 import com.ecommerce.app.dto.product.ProductDetailsDTO;
 
 import java.util.List;

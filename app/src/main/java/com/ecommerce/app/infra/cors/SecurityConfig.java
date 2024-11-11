@@ -1,15 +1,18 @@
 package com.ecommerce.app.infra.cors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -24,66 +27,53 @@ import com.ecommerce.app.service.customUserDetails.CustomUserDetailsService;
 @EnableWebSecurity
 public class SecurityConfig {
 
-	private final JwtAuthenticationFilter jwtAuthFilter;
-	private final CustomUserDetailsService customUserDetailsService;
+	@Value("${jwt.secret}")
+	private String secret;
 
-	public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, CustomUserDetailsService customUserDetailsService) {
-		this.jwtAuthFilter = jwtAuthFilter;
-		this.customUserDetailsService = customUserDetailsService;
-	}
-	
+	@Autowired
+	@Lazy
+	private JwtAuthenticationFilter jwtAuthFilter;
+
+	@Autowired
+	@Lazy
+	private CustomUserDetailsService customUserDetailsService;
+
 	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
 		return config.getAuthenticationManager();
 	}
-	
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
+
 	@Bean
 	public AuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-		
 		authProvider.setUserDetailsService(customUserDetailsService);
 		authProvider.setPasswordEncoder(passwordEncoder());
-		
 		return authProvider;
-	}
-	
-	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-		return http
-				.csrf(csrf -> csrf.disable())
-//				.authorizeHttpRequests(auth -> auth
-//						.requestMatchers("/auth/**").permitAll()
-//						.requestMatchers("/api/**").authenticated()
-//						.anyRequest().authenticated()
-//				)
-//				.formLogin(form -> form
-//						.loginPage("/auth/login")
-//						.permitAll())
-//				.logout(logout -> logout.permitAll())
-				//.oauth2Login(Customizer.withDefaults())
-//				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt
-//						.jwtAuthenticationConverter(jwtAuthenticationConverter())))
-				.authorizeHttpRequests(auth -> {
-					auth.requestMatchers(HttpMethod.POST, "/api/users").permitAll();
-					auth.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
-					auth.requestMatchers("/api/product/**").permitAll();
-					auth.requestMatchers("/api/images/**").permitAll();
-					auth.requestMatchers("/api/sales").authenticated();
-					auth.requestMatchers("/api/cart-items").authenticated();
-					auth.anyRequest().authenticated();
-				})
-//				.formLogin(Customizer.withDefaults())
-				.authenticationProvider(authenticationProvider())
-				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class).build();
 	}
 
 	@Bean
-	public JwtAuthenticationConverter jwtAuthenticationConverter(){
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		return http
+				.csrf(AbstractHttpConfigurer::disable)
+				.authorizeHttpRequests(authorize -> authorize
+						.requestMatchers("/auth/**").permitAll()
+						.requestMatchers("/admin/**").hasRole("ADMIN")
+						.requestMatchers(HttpMethod.GET, "/api/product/**").permitAll()
+						.requestMatchers("/api/product/**").hasRole("ADMIN")
+						.requestMatchers("/api/sales/**").permitAll()
+						.anyRequest().authenticated()
+				)
+				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+				.build();
+	}
+
+	@Bean
+	public JwtAuthenticationConverter jwtAuthenticationConverter() {
 		JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 		grantedAuthoritiesConverter.setAuthoritiesClaimName("role");
 		grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
@@ -93,5 +83,4 @@ public class SecurityConfig {
 
 		return jwtAuthenticationConverter;
 	}
-	
 }

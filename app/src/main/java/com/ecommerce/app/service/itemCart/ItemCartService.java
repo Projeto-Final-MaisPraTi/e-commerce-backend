@@ -43,6 +43,7 @@ public class ItemCartService {
         Product product = convertToProductEntity(itemCartDTO.getProductDetailsDTO());
         itemCart.setProduct(product);
         itemCart.setQuantidade(itemCartDTO.getQuantidade());
+        itemCartDTO.getUserDTO().getId();
 
         // Vincular o item ao usuário
         User user = userRepository.findById(itemCartDTO.getUserDTO().getId())

@@ -1,15 +1,20 @@
 package com.ecommerce.app.service.user;
 
+//import com.ecommerce.app.model.role.Role;
+//import com.ecommerce.app.repository.role.RoleRepository;
+import com.ecommerce.app.infra.enums.Role;
 import com.ecommerce.app.repository.user.UserRepository;
 import com.ecommerce.app.dto.user.LoginRequest;
 import com.ecommerce.app.dto.user.RegisterRequest;
 import com.ecommerce.app.dto.user.AuthResponse;
 import com.ecommerce.app.infra.security.JwtTokenProvider;
 import com.ecommerce.app.model.user.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthService {
@@ -17,23 +22,25 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
+//    private final RoleRepository roleRepository;
 
     public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider tokenProvider) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
+//        this.roleRepository = roleRepository;
     }
 
     public AuthResponse register(RegisterRequest registerRequest) {
-        Optional<User> existUser = userRepository.findByEmail(registerRequest.getEmail());
-        if (existUser.isPresent()) {
-            throw new IllegalStateException("Email already taken");
+        if (userRepository.existsByEmail(registerRequest.getEmail())) {
+            throw new IllegalStateException("Credenciais inválidas.");
         }
-        existUser = null;
+
         User user = new User();
         user.setUsername(registerRequest.getUsername());
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        user.setRoles(Role.CLIENT);
 
         userRepository.save(user);
 

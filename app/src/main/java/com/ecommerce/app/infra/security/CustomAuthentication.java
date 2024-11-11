@@ -2,34 +2,25 @@ package com.ecommerce.app.infra.security;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CustomAuthentication implements Authentication {
 
-    private final UserIdentification userIdentification;
+    private final String username;
+    private final List<GrantedAuthority> permissions;
 
-    public CustomAuthentication(UserIdentification userIdentification) {
-
-        if(userIdentification == null){
-            throw new ExceptionInInitializerError(
-                    "Não é possível criar um customAuthentication sem a identificação do usuário!"
-            );
+    public CustomAuthentication(String username, List<GrantedAuthority> permissions) {
+        if (username == null || permissions == null) {
+            throw new IllegalArgumentException("Nome de usuário e permissões não podem ser nulos!");
         }
-
-        this.userIdentification = userIdentification;
+        this.username = username;
+        this.permissions = permissions;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.userIdentification
-                .getPermissions()
-                .stream()
-                .map(permission -> new SimpleGrantedAuthority(permission))
-                .collect(Collectors.toList());
+        return permissions;
     }
 
     @Override
@@ -39,12 +30,16 @@ public class CustomAuthentication implements Authentication {
 
     @Override
     public Object getDetails() {
-        return null;
+        return this.permissions;
+    }
+
+    public void setDetails(Object obj) {
+        throw new IllegalArgumentException("Já está autenticado");
     }
 
     @Override
     public Object getPrincipal() {
-        return this.userIdentification;
+        return this.username;
     }
 
     @Override
@@ -59,6 +54,6 @@ public class CustomAuthentication implements Authentication {
 
     @Override
     public String getName() {
-        return this.userIdentification.getUsername();
+        return this.username;
     }
 }
