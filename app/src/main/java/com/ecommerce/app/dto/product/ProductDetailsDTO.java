@@ -15,7 +15,7 @@ public class ProductDetailsDTO {
     private int id;
     private String name;
     private int rating;
-    private String price;
+    private Double price; // Alterado para Double
     private String priceDiscount;
     public String categoria;
     private String description;

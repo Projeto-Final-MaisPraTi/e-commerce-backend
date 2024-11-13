@@ -7,6 +7,7 @@ import com.ecommerce.app.model.itemCart.ItemCart;
 import com.ecommerce.app.model.product.Product;
 import com.ecommerce.app.model.user.User;
 import com.ecommerce.app.repository.itemCart.ItemCartRepository;
+import com.ecommerce.app.repository.product.ProductRepository;
 import com.ecommerce.app.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class ItemCartService {
 
     private final ItemCartRepository itemCartRepository;
     private final UserRepository userRepository;
+    private final ProductRepository productRepository;
 
     public List<ItemCartDTO> getAllCartItems() {
         return itemCartRepository
@@ -39,11 +41,13 @@ public class ItemCartService {
     public ItemCartDTO addItemToCart(ItemCartDTO itemCartDTO) {
         ItemCart itemCart = new ItemCart();
 
-        // Converter ProductDTO para Product
-        Product product = convertToProductEntity(itemCartDTO.getProductDetailsDTO());
+        // Buscar e validar o produto
+        Product product = productRepository.findById(itemCartDTO.getProductDetailsDTO().getId())
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
         itemCart.setProduct(product);
+
+        // Validar e definir quantidade
         itemCart.setQuantidade(itemCartDTO.getQuantidade());
-        itemCartDTO.getUserDTO().getId();
 
         // Vincular o item ao usuário
         User user = userRepository.findById(itemCartDTO.getUserDTO().getId())
@@ -58,12 +62,15 @@ public class ItemCartService {
         ItemCart itemCart = itemCartRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item de carrinho não encontrado!"));
 
-        Product product = convertToProductEntity(itemCartDTO.getProductDetailsDTO());
+        // Buscar e validar o produto
+        Product product = productRepository.findById(itemCartDTO.getProductDetailsDTO().getId())
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
         itemCart.setProduct(product);
 
+        // Validar e definir quantidade
         itemCart.setQuantidade(itemCartDTO.getQuantidade());
-        itemCartRepository.save(itemCart);
 
+        itemCartRepository.save(itemCart);
         return convertToDTO(itemCart);
     }
 
@@ -76,6 +83,7 @@ public class ItemCartService {
                 .id(itemCart.getId())
                 .productDetailsDTO(convertToProductDTO(itemCart.getProduct())) // Converte Product para ProductDTO
                 .quantidade(itemCart.getQuantidade())
+                .preco(itemCart.getProduct().getPreco() * itemCart.getQuantidade()) // Calcula o preço total
                 .userDTO(UserDTO.builder()
                         .id(itemCart.getUser().getId())
                         .build())
@@ -86,26 +94,11 @@ public class ItemCartService {
         return ProductDetailsDTO.builder()
                 .id(product.getId())
                 .name(product.getNome())
-                .price(product.getPreco().toString())
+                .price(product.getPreco()) // Certifica-se de que é Double
                 .categoria(product.getCategoria())
                 .rating(product.getNota())
                 .color(product.getCor())
-                .estoque(product.getEstoque())  // Converte estoque para String
+                .estoque(product.getEstoque())
                 .build();
     }
-
-
-    private Product convertToProductEntity(ProductDetailsDTO productDetailsDTO) {
-        Product product = new Product();
-        product.setId(productDetailsDTO.getId());
-        product.setNome(productDetailsDTO.getName());
-        product.setPreco(Double.parseDouble(productDetailsDTO.getPrice()));
-        product.setCategoria(productDetailsDTO.getCategoria());
-        product.setNota(productDetailsDTO.getRating());
-        product.setCor(productDetailsDTO.getColor());
-        product.setEstoque(productDetailsDTO.getEstoque());  // Converte para int
-        return product;
-    }
-
-
 }

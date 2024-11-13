@@ -17,4 +17,8 @@ public class ItemCartDTO {
     private Integer quantidade;
     private Double preco; // Valor total do produto multiplicado pela quantidade
     private UserDTO userDTO;
+
+    public Double getPreco() {
+        return productDetailsDTO.getPrice() * quantidade;
+    }
 }

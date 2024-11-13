@@ -22,41 +22,31 @@ import java.util.stream.Collectors;
 @Service
 public class ProductService {
 
-    @Autowired // faz injeção de dependência automática
+    @Autowired
     private ProductRepository productRepository;
 
     @Autowired
     private ImageProductService imageProductService;
 
-    public List<ProductDTO> getAllProducts(){
-        // retorna a lista de produtos convertidos e coletados
-        return productRepository
-                .findAll() // pega todos os produto do bd
+    public List<ProductDTO> getAllProducts() {
+        return productRepository.findAll()
                 .stream()
                 .map(product -> {
-                            String cover = product.getImages().stream()
-                                    .filter(productImages -> Boolean.TRUE.equals(productImages.getCapaProduto()))
-                                    .map(ProductImages::getImagem)
-                                    .findFirst()
-                                    .orElse(null);
-                            return new ProductDTO(product, cover);
-                        }).collect(Collectors.toList());
-//                .stream() // os produtos são colocados em uma stream
-//                .map(product -> new SimpleProductDTO(product, product.getImages()
-//                        .stream()
-//                        .filter(image -> Boolean.TRUE.equals(image.getCapaProduto()))
-//                        .map(ImageProduct::getImagem)
-//                        .findFirst()
-//                        .orElse(null))) // cada produto é convertido e abstraído apenas os dados que compõe o DTO
-//                .collect(Collectors.toList()); // coleta os dados convertidos e transforma em uma lista
+                    String cover = product.getImages().stream()
+                            .filter(productImages -> Boolean.TRUE.equals(productImages.getCapaProduto()))
+                            .map(ProductImages::getImagem)
+                            .findFirst()
+                            .orElse(null);
+                    return new ProductDTO(product, cover);
+                }).collect(Collectors.toList());
     }
 
-    public ProductDetailsDTO getProductById(int id){
+    public ProductDetailsDTO getProductById(int id) {
         Optional<Product> product = productRepository.findById(id);
         return product.map(this::convertToDTO).orElse(null);
     }
 
-    public ProductDTO getProductById2(int id){
+    public ProductDTO getProductById2(int id) {
         Optional<Product> product = productRepository.findById(id);
         if (!product.isPresent()) {
             return null;
@@ -65,32 +55,32 @@ public class ProductService {
         return new ProductDTO(result, result.getImages().get(0).getImagem());
     }
 
-    public List<ProductDTO> getProductByName(String name){
+    public List<ProductDTO> getProductByName(String name) {
         List<Product> product = productRepository.findByNome(name);
-        if (product == null || product.size() == 0) {
+        if (product == null || product.isEmpty()) {
             return null;
         }
-        return product.stream().map(p -> new ProductDTO(p, imageProductService.getCoverByProductId(p.getId()))).
-                collect(Collectors.toList());
+        return product.stream().map(p -> new ProductDTO(p, imageProductService.getCoverByProductId(p.getId())))
+                .collect(Collectors.toList());
     }
 
     public List<ProductDTO> getProductByCategory(String category) {
         List<Product> product = productRepository.findByCategory(category);
-        if (product == null || product.size() == 0) {
+        if (product == null || product.isEmpty()) {
             return null;
         }
-        return product.stream().map(p -> new ProductDTO(p, imageProductService.getCoverByProductId(p.getId()))).
-                collect(Collectors.toList());
+        return product.stream().map(p -> new ProductDTO(p, imageProductService.getCoverByProductId(p.getId())))
+                .collect(Collectors.toList());
     }
 
-    public ProductDetailsDTO createProduct(ProductDetailsDTO productDTO){
+    public ProductDetailsDTO createProduct(ProductDetailsDTO productDTO) {
         Product product = new Product();
         product.setNome(productDTO.getName());
         product.setDescricao(productDTO.getDescription());
         product.setEstoque(productDTO.getEstoque());
         product.setCategoria(productDTO.getCategoria());
         product.setNota(productDTO.getRating());
-        product.setPreco(Double.parseDouble(productDTO.getPrice()));
+        product.setPreco(productDTO.getPrice());
         product.setCor(productDTO.getColor());
         product.addImages(productDTO.getImages());
         product.getImages().get(0).setCapaProduto(true);
@@ -99,35 +89,30 @@ public class ProductService {
         return convertToDTO(product);
     }
 
-
-
-    public ProductDetailsDTO updateProduct(ProductUpdateDTO productDTO){
+    public ProductDetailsDTO updateProduct(ProductUpdateDTO productDTO) {
         Optional<Product> productOptional = productRepository.findById(productDTO.id());
-        if(productOptional.isPresent()){
+        if (productOptional.isPresent()) {
             Product product = productOptional.get();
             product.update(productDTO);
             productRepository.save(product);
 
             return convertToDTO(product);
         }
-
         return null;
     }
 
-    public ProductUpdateDTO productUpdateById(int id){
+    public ProductUpdateDTO productUpdateById(int id) {
         Optional<Product> product = productRepository.findById(id);
         String cover = imageProductService.getCoverByProductId(id);
-
         List<String> images = imageProductService.getImagesByProductId(id);
-        ProductUpdateDTO updateDTO = new ProductUpdateDTO(product.get(), cover, images);
-        return updateDTO;
+        return product.map(value -> new ProductUpdateDTO(value, cover, images)).orElse(null);
     }
 
-    public void deleteProduct(int id){
+    public void deleteProduct(int id) {
         productRepository.deleteById(id);
     }
 
-    private ProductDetailsDTO convertToDTO(Product product){
+    private ProductDetailsDTO convertToDTO(Product product) {
         ProductDetailsDTO productDTO = new ProductDetailsDTO();
         productDTO.setId(product.getId());
         productDTO.setName(product.getNome());
@@ -136,20 +121,18 @@ public class ProductService {
         productDTO.setEstoque(product.getEstoque());
         productDTO.setRating(product.getNota());
         productDTO.setDiscount(product.getDiscount());
-        NumberFormat currency = NumberFormat.getCurrencyInstance();
-        productDTO.setPrice(currency.format(product.getPreco()));
-        if (product.getDiscount() != 0) {
+        productDTO.setPrice(product.getPreco()); // Certifique-se de que o preço é Double
+        if (product.getDiscount() != null && product.getDiscount() != 0) {
             Double value = product.getPreco() - (product.getPreco() / 100) * product.getDiscount();
-            productDTO.setPriceDiscount(currency.format(value));
+            productDTO.setPriceDiscount(String.valueOf(value)); // Define o desconto
         }
         productDTO.setColor(product.getCor());
-        productDTO.setImages(product.getImages().stream().map(image -> image.getImagem()).toList());
+        productDTO.setImages(product.getImages().stream().map(ProductImages::getImagem).toList());
 
         return productDTO;
     }
 
     public List<ProductDTO> buildFilteredProducts(Map<String, String> filters) {
-        // sera que volta nulo ?
         List<Product> products = getFilteredProducts(filters);
 
         return products.stream().map(product -> {
@@ -158,7 +141,6 @@ public class ProductService {
                     .map(ProductImages::getImagem)
                     .findFirst()
                     .orElse(null);
-
             return new ProductDTO(product, cover);
         }).collect(Collectors.toList());
     }
@@ -167,24 +149,19 @@ public class ProductService {
         Specification<Product> specification = Specification.where(null);
 
         if (filters.containsKey("nome")) {
-            specification = specification.and(ProductSpecifications
-                    .hasName(filters.get("nome")));
+            specification = specification.and(ProductSpecifications.hasName(filters.get("nome")));
         }
-            if (filters.containsKey("categoria")) {
-            specification = specification.and(ProductSpecifications
-                    .hasCategory(filters.get("categoria")));
+        if (filters.containsKey("categoria")) {
+            specification = specification.and(ProductSpecifications.hasCategory(filters.get("categoria")));
         }
         if (filters.containsKey("minPrice")) {
-            specification = specification.and(ProductSpecifications
-                    .priceGreaterThan(Double.parseDouble(filters.get("minPrice"))));
+            specification = specification.and(ProductSpecifications.priceGreaterThan(Double.parseDouble(filters.get("minPrice"))));
         }
         if (filters.containsKey("maxPrice")) {
-            specification = specification.and(ProductSpecifications
-                    .priceLessThan(Double.parseDouble(filters.get("maxPrice"))));
+            specification = specification.and(ProductSpecifications.priceLessThan(Double.parseDouble(filters.get("maxPrice"))));
         }
         if (filters.containsKey("color")) {
-            specification = specification.and(ProductSpecifications.
-                    colorEqualsTo(filters.get("color")));
+            specification = specification.and(ProductSpecifications.colorEqualsTo(filters.get("color")));
         }
 
         return productRepository.findAll(specification);
@@ -196,16 +173,16 @@ public class ProductService {
             Product product = new Product();
             product.setNome(productDTO.getName());
             product.setDescricao(productDTO.getDescription());
-            product.setPreco(Double.parseDouble(productDTO.getPrice()));
+            product.setPreco(productDTO.getPrice());
             product.setNota(productDTO.getRating());
             product.setEstoque(productDTO.getEstoque());
             product.setCor(productDTO.getColor());
             product.setCategoria(productDTO.getCategoria());
             product.setDiscount(productDTO.getDiscount());
             product.setFlashSale(productDTO.getFlashSale());
-            ProductDTO simple = new ProductDTO(product);
-            simpleProduct.add(simple);
+            product.addImages(productDTO.getImages());
             productRepository.save(product);
+            simpleProduct.add(new ProductDTO(product));
         }
         return simpleProduct;
     }
