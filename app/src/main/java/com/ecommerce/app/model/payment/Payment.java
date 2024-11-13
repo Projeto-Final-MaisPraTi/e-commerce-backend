@@ -12,12 +12,16 @@ import lombok.Data;
 @Data
 @Table(name = "payment")
 public class Payment {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	
+
 	@Column(name = "type")
 	private String tipo; // "DINHEIRO", "CARTÃO"
-	
+
+	@Column(name = "payment_amount")
+	private Double valor; // Valor total da compra
+
+	@Column(name = "installment_value") // Tradução: Valor da parcela
+	private Double valorParcela;
 }
