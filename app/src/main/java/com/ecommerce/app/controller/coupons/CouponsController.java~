@@ -32,7 +32,7 @@ public class CouponsController {
         return couponsService.getCouponById(id);
     }
 
-    // Para admin - cria cupom manualmente
+    //    Para admin
     @PostMapping
     public CouponsDTO createCoupon(@RequestBody CouponsDTO couponsDTO) {
         return couponsService.createCoupon(couponsDTO);
@@ -48,15 +48,9 @@ public class CouponsController {
         couponsService.deleteCoupon(id);
     }
 
-    // Verifica a validade de um cupom
+    // Verificar de validade
     @GetMapping("/validate/{codigo}")
     public boolean validateCoupon(@PathVariable String codigo) {
         return couponsService.isCouponValid(codigo);
-    }
-
-    // Marca o cupom como usado após uma compra
-    @PostMapping("/mark-used/{codigo}")
-    public void markCouponAsUsed(@PathVariable String codigo) {
-        couponsService.markCouponAsUsed(codigo);
     }
 }

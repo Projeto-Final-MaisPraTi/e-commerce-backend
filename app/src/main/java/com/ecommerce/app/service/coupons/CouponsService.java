@@ -31,9 +31,9 @@ public class CouponsService {
     }
 
     public CouponsDTO getCouponById(Integer id) {
-        Optional<Coupons> coupon = couponsRepository.findById(id);
-
-        return coupon.map(this::convertToDTO).orElseThrow(() -> new RuntimeException("Cupom não encontrado!"));
+        Coupons coupon = couponsRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cupom não encontrado!"));
+        return convertToDTO(coupon);
     }
 
     public CouponsDTO createCoupon(CouponsDTO couponsDTO) {
@@ -46,39 +46,48 @@ public class CouponsService {
         coupon.setUsado(false);
 
         couponsRepository.save(coupon);
-
         return convertToDTO(coupon);
     }
 
     public CouponsDTO updateCoupon(Integer id, CouponsDTO couponsDTO) {
-        Coupons coupons = couponsRepository.findById(id)
+        Coupons coupon = couponsRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cupom não encontrado!"));
 
-        coupons.setCodigo(couponsDTO.getCodigo());
-        coupons.setDesconto_porcentagem(couponsDTO.getDesconto());
-        couponsRepository.save(coupons);
+        coupon.setCodigo(couponsDTO.getCodigo());
+        coupon.setDesconto_porcentagem(couponsDTO.getDesconto());
+        couponsRepository.save(coupon);
 
-        return convertToDTO(coupons);
+        return convertToDTO(coupon);
     }
 
     public void deleteCoupon(Integer id) {
         couponsRepository.deleteById(id);
     }
 
-    // Verificar validade do cupom
+    // Verifica a validade do cupom
     public boolean isCouponValid(String codigo) {
         Coupons coupon = couponsRepository.findByCodigo(codigo);
         return coupon != null && coupon.getAtivo() && !coupon.getUsado() && coupon.getData_final().isAfter(LocalDate.now());
     }
 
-    // Gerar cupons automaticamente
-    @Scheduled(cron = "0 0 0 */4 * ?")
+    // Marca o cupom como usado após a compra
+    public void markCouponAsUsed(String codigo) {
+        Coupons coupon = couponsRepository.findByCodigo(codigo);
+        if (coupon != null) {
+            coupon.setUsado(true);
+            coupon.setAtivo(false);
+            couponsRepository.save(coupon);
+        }
+    }
+
+    // Geração automática de cupons
+    @Scheduled(cron = "0 0 0 */4 * ?") // Executa a cada 4 dias
     public void generateCouponAutomatically() {
         Coupons coupon = new Coupons();
         coupon.setCodigo("DESCONTO" + UUID.randomUUID().toString().substring(0, 8));
-        coupon.setDesconto_porcentagem((double) (5 + new Random().nextInt(11))); // entre 5% e 15%
+        coupon.setDesconto_porcentagem((double) (5 + new Random().nextInt(11))); // 5% a 15%
         coupon.setData_inicial(LocalDate.now());
-        coupon.setData_final(LocalDate.now().plusDays(2));
+        coupon.setData_final(LocalDate.now().plusDays(2)); // Cupom válido por 2 dias
         coupon.setAtivo(true);
         coupon.setUsado(false);
         couponsRepository.save(coupon);
