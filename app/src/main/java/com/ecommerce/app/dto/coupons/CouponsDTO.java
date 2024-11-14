@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -13,4 +15,7 @@ public class CouponsDTO {
     private Integer id;
     private String codigo;
     private Double desconto;
+    private LocalDate data_inicial;
+    private LocalDate data_final;
+    private Boolean expirado;
 }

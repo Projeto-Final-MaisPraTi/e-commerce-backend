@@ -18,7 +18,7 @@ import com.ecommerce.app.service.coupons.CouponsService;
 @RestController
 @RequestMapping("/api/coupons")
 public class CouponsController {
-    
+
     @Autowired
     private CouponsService couponsService;
 
@@ -47,4 +47,9 @@ public class CouponsController {
         couponsService.deleteCoupon(id);
     }
 
+    // Verificar de validade
+    @GetMapping("/validate/{codigo}")
+    public boolean validateCoupon(@PathVariable String codigo) {
+        return couponsService.isCouponValid(codigo);
+    }
 }
