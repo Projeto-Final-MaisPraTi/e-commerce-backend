@@ -32,6 +32,10 @@ public class PaymentService {
 
     public PaymentDTO processPayment(PaymentDTO paymentDTO) {
         if ("DINHEIRO".equalsIgnoreCase(paymentDTO.getTipo())) {
+            Payment payment = new Payment();
+            payment.setTipo(paymentDTO.getTipo());
+            payment.setValor(paymentDTO.getValor());
+            paymentRepository.save(payment);
             paymentDTO.setStatus("REALIZADO");
             return paymentDTO;
         } else if ("CARTÃO".equalsIgnoreCase(paymentDTO.getTipo())) {

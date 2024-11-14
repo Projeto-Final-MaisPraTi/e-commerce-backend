@@ -16,9 +16,8 @@ import com.ecommerce.app.repository.address.AddressRepository;
 public class AddressService {
     @Autowired
     private AddressRepository addressRepository;
-    
-    public List<AddressDTO> getAllAddresses(){
-    	
+
+    public List<AddressDTO> getAllAddresses() {
         return addressRepository
                 .findAll()
                 .stream()
@@ -26,25 +25,22 @@ public class AddressService {
                 .collect(Collectors.toList());
     }
 
-    public AddressDTO getAddressById(Integer id){
-//        Optional<Address> address = addressRepository.findById(id);
-//        return address.map(this::convertToDTO).orElse(null);
-    	Address address = addressRepository.findById(id)
-    			.orElseThrow(() -> new RuntimeException("Endereço não encontrado!"));
-    	
-    	return new AddressDTO(address);
+    public AddressDTO getAddressById(Integer id) {
+        Address address = addressRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Endereço não encontrado!"));
+        return new AddressDTO(address);
     }
 
-    public AddressDTO createAddress(AddressDTO addressDTO){
+    public AddressDTO createAddress(AddressDTO addressDTO) {
         Address address = new Address();
-        address.setEndereco(address.getEndereco());
-        address.setCidade(address.getCidade());
-        address.setUf(address.getUf());
-        address.setCep(address.getCep());
-        address.setEndereco_padrao(addressDTO.getEndereco_padrao());
+        address.setEndereco(addressDTO.getEndereco());
+        address.setNumero(addressDTO.getNumero());
+        address.setCidade(addressDTO.getCidade());
+        address.setUf(addressDTO.getUf());
+        address.setCep(addressDTO.getCep());
 
         User user = new User();
-        user.setId(addressDTO.getId());
+        user.setId(addressDTO.getUser().getId());
         address.setUser(user);
 
         addressRepository.save(address);
@@ -52,45 +48,30 @@ public class AddressService {
         return convertToDTO(address);
     }
 
-    public AddressDTO updateAddress(Integer id, AddressDTO addressDTO){
-        Optional<Address> addressOptional = addressRepository.findById(id);
-        if(addressOptional.isPresent()){
-            Address address = addressOptional.get();
-            address.setId(address.getId());
-            address.setEndereco(address.getEndereco());
-            address.setCidade(address.getCidade());
-            address.setUf(address.getUf());
-            address.setCep(address.getCep());
-            address.setEndereco_padrao(addressDTO.getEndereco_padrao());
+    public AddressDTO updateAddress(Integer id, AddressDTO addressDTO) {
+        Address address = addressRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Endereço não encontrado!"));
 
-            User user = new User();
-            user.setId(addressDTO.getId());
-            address.setUser(user);
+        address.setEndereco(addressDTO.getEndereco());
+        address.setNumero(addressDTO.getNumero());
+        address.setCidade(addressDTO.getCidade());
+        address.setUf(addressDTO.getUf());
+        address.setCep(addressDTO.getCep());
 
-            addressRepository.save(address);
+        User user = new User();
+        user.setId(addressDTO.getUser().getId());
+        address.setUser(user);
 
-            return convertToDTO(address);
-        }
+        addressRepository.save(address);
 
-        return null;
+        return convertToDTO(address);
     }
 
-    public void deleteAddress(Integer id){
+    public void deleteAddress(Integer id) {
         addressRepository.deleteById(id);
     }
 
-    private AddressDTO convertToDTO(Address address){
-        AddressDTO addressDTO = new AddressDTO(address);
-        addressDTO.setId(address.getId());
-        addressDTO.setEndereco(address.getEndereco());
-        addressDTO.setNumero(address.getNumero());
-        addressDTO.setCidade(address.getCidade());
-        addressDTO.setUf(address.getUf());
-        addressDTO.setCep(address.getCep());
-        addressDTO.setEndereco_padrao(address.isEndereco_padrao());
-        addressDTO.setUser(address.getUser());
-
-        return addressDTO;
+    private AddressDTO convertToDTO(Address address) {
+        return new AddressDTO(address);
     }
 }
-

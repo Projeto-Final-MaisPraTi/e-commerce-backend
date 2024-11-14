@@ -12,12 +12,12 @@ import org.springframework.stereotype.Service;
 import com.ecommerce.app.dto.product.ProductDetailsDTO;
 import com.ecommerce.app.model.product.Product;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import jakarta.validation.Valid;
 
 @Service
 public class ProductService {
@@ -48,7 +48,7 @@ public class ProductService {
 
     public ProductDTO getProductById2(int id) {
         Optional<Product> product = productRepository.findById(id);
-        if (!product.isPresent()) {
+        if (product.isEmpty()) {
             return null;
         }
         Product result = product.get();
@@ -73,7 +73,7 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public ProductDetailsDTO createProduct(ProductDetailsDTO productDTO) {
+    public ProductDetailsDTO createProduct(@Valid ProductDetailsDTO productDTO) {
         Product product = new Product();
         product.setNome(productDTO.getName());
         product.setDescricao(productDTO.getDescription());
@@ -89,7 +89,7 @@ public class ProductService {
         return convertToDTO(product);
     }
 
-    public ProductDetailsDTO updateProduct(ProductUpdateDTO productDTO) {
+    public ProductDetailsDTO updateProduct(@Valid ProductUpdateDTO productDTO) {
         Optional<Product> productOptional = productRepository.findById(productDTO.id());
         if (productOptional.isPresent()) {
             Product product = productOptional.get();
@@ -121,10 +121,10 @@ public class ProductService {
         productDTO.setEstoque(product.getEstoque());
         productDTO.setRating(product.getNota());
         productDTO.setDiscount(product.getDiscount());
-        productDTO.setPrice(product.getPreco()); // Certifique-se de que o preço é Double
+        productDTO.setPrice(product.getPreco());
         if (product.getDiscount() != null && product.getDiscount() != 0) {
             Double value = product.getPreco() - (product.getPreco() / 100) * product.getDiscount();
-            productDTO.setPriceDiscount(String.valueOf(value)); // Define o desconto
+            productDTO.setPriceDiscount(String.valueOf(value));
         }
         productDTO.setColor(product.getCor());
         productDTO.setImages(product.getImages().stream().map(ProductImages::getImagem).toList());
@@ -167,7 +167,7 @@ public class ProductService {
         return productRepository.findAll(specification);
     }
 
-    public List<ProductDTO> createProducts(List<ProductDetailsDTO> productDTOs) {
+    public List<ProductDTO> createProducts(@Valid List<ProductDetailsDTO> productDTOs) {
         List<ProductDTO> simpleProduct = new ArrayList<>();
         for (ProductDetailsDTO productDTO : productDTOs) {
             Product product = new Product();

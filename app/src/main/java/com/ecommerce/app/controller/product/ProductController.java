@@ -12,6 +12,8 @@ import com.ecommerce.app.dto.product.ProductDetailsDTO;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/product")
 public class ProductController {
@@ -37,38 +39,33 @@ public class ProductController {
         return productDTO != null ? ResponseEntity.ok(productDTO) : ResponseEntity.notFound().build();
     }
 
-        // simpleProduct pega somente alguns dados do produto para a visualização no product card
-        //search — Nenhum parâmetro passado.
-        //search?name=John — Apenas o nome foi passado.
-        //search?id=10 — Apenas o id foi passado.
-        //search?name=John&id=10 — Ambos foram passados.
+    // simpleProduct pega somente alguns dados do produto para a visualização no product card
+    //search — Nenhum parâmetro passado.
+    //search?name=John — Apenas o nome foi passado.
+    //search?id=10 — Apenas o id foi passado.
+    //search?name=John&id=10 — Ambos foram passados.
     @GetMapping("/busca")
     public ResponseEntity<List<ProductDTO>> getProduct(@RequestParam Map<String, String> filters){
-        // se estiver vazio
         if (filters.isEmpty()) {
             List<ProductDTO> productDTOS = productService.getAllProducts();
-            return productDTOS != null ? ResponseEntity.ok(productDTOS) : ResponseEntity.notFound().build();
-        }
-        if (!filters.isEmpty()) {
-            List<ProductDTO> productDTOS = productService.buildFilteredProducts(filters);
             return productDTOS != null ? ResponseEntity.ok(productDTOS) : ResponseEntity.notFound().build();
         }
         return ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public ProductDetailsDTO createProduct(@RequestBody ProductDetailsDTO productDTO){
+    public ProductDetailsDTO createProduct(@Valid @RequestBody ProductDetailsDTO productDTO){
         return productService.createProduct(productDTO);
     }
 
     @PostMapping("/import")
-    public List<ProductDTO> createProducts(@RequestBody List<ProductDetailsDTO> productDTO){
+    public List<ProductDTO> createProducts(@Valid @RequestBody List<ProductDetailsDTO> productDTO){
         List<ProductDTO> productDTOS =  productService.createProducts(productDTO);
         return productDTOS;
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ProductDetailsDTO> updateProduct(@RequestBody ProductUpdateDTO product){
+    public ResponseEntity<ProductDetailsDTO> updateProduct(@Valid @RequestBody ProductUpdateDTO product){
         ProductDetailsDTO updateProduct = productService.updateProduct(product);
 
         return updateProduct != null ? ResponseEntity.ok(updateProduct) : ResponseEntity.notFound().build();

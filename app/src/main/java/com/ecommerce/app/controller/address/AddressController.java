@@ -7,11 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/address")
 public class AddressController {
-	@Autowired
+    @Autowired
     private AddressService addressService;
 
     @GetMapping
@@ -25,12 +26,12 @@ public class AddressController {
     }
 
     @PostMapping
-    public AddressDTO createAddress(@RequestBody AddressDTO addressDTO) {
+    public AddressDTO createAddress(@Valid @RequestBody AddressDTO addressDTO) {
         return addressService.createAddress(addressDTO);
     }
 
     @PutMapping("/{id}")
-    public AddressDTO updateAddress(@PathVariable Integer id, @RequestBody AddressDTO addressDTO) {
+    public AddressDTO updateAddress(@PathVariable Integer id, @Valid @RequestBody AddressDTO addressDTO) {
         return addressService.updateAddress(id, addressDTO);
     }
 
