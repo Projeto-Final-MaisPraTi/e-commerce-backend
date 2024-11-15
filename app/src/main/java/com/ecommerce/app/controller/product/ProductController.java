@@ -4,6 +4,7 @@ import com.ecommerce.app.dto.product.ProductUpdateDTO;
 import com.ecommerce.app.dto.product.ProductDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -69,18 +70,18 @@ public class ProductController {
     }
 
     @PostMapping
-    public ProductDetailsDTO createProduct(@RequestBody ProductDetailsDTO productDTO){
+    public ProductDetailsDTO createProduct(@Valid @RequestBody ProductDetailsDTO productDTO){
         return productService.createProduct(productDTO);
     }
 
     @PostMapping("/import")
-    public List<ProductDTO> createProducts(@RequestBody List<ProductDetailsDTO> productDTO){
+    public List<ProductDTO> createProducts(@Valid @RequestBody List<ProductDetailsDTO> productDTO){
         List<ProductDTO> productDTOS =  productService.createProducts(productDTO);
         return productDTOS;
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ProductDetailsDTO> updateProduct(@RequestBody ProductUpdateDTO product){
+    public ResponseEntity<ProductDetailsDTO> updateProduct(@Valid @RequestBody ProductUpdateDTO product){
         ProductDetailsDTO updateProduct = productService.updateProduct(product);
 
         return updateProduct != null ? ResponseEntity.ok(updateProduct) : ResponseEntity.notFound().build();

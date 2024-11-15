@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ecommerce.app.dto.itemCart.ItemCartDTO;
 import com.ecommerce.app.service.itemCart.ItemCartService;
 
+import jakarta.validation.Valid;
+
 @RestController
-@RequestMapping("/api/cart-items")
+@RequestMapping("/api/itemcart")
 public class ItemCartController {
 
     @Autowired
@@ -32,12 +34,12 @@ public class ItemCartController {
     }
 
     @PostMapping
-    public ItemCartDTO addItemToCart(@RequestBody ItemCartDTO itemCartDTO) {
+    public ItemCartDTO addItemToCart(@Valid @RequestBody ItemCartDTO itemCartDTO) {
         return itemCartService.addItemToCart(itemCartDTO);
     }
 
     @PutMapping("/{id}")
-    public ItemCartDTO updateItemCart(@PathVariable Integer id, @RequestBody ItemCartDTO itemCartDTO) {
+    public ItemCartDTO updateItemCart(@PathVariable Integer id, @Valid @RequestBody ItemCartDTO itemCartDTO) {
         return itemCartService.updateItemCart(id, itemCartDTO);
     }
 
@@ -45,5 +47,4 @@ public class ItemCartController {
     public void deleteItemCart(@PathVariable Integer id) {
         itemCartService.deleteItemCart(id);
     }
-
 }

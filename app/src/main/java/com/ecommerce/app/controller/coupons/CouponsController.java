@@ -18,7 +18,7 @@ import com.ecommerce.app.service.coupons.CouponsService;
 @RestController
 @RequestMapping("/api/coupons")
 public class CouponsController {
-    
+
     @Autowired
     private CouponsService couponsService;
 
@@ -32,6 +32,7 @@ public class CouponsController {
         return couponsService.getCouponById(id);
     }
 
+    // Para admin - cria cupom manualmente
     @PostMapping
     public CouponsDTO createCoupon(@RequestBody CouponsDTO couponsDTO) {
         return couponsService.createCoupon(couponsDTO);
@@ -47,4 +48,18 @@ public class CouponsController {
         couponsService.deleteCoupon(id);
     }
 
+    // Verifica a validade de um cupom
+    // Retorna um cupom válido para o carrinho, se houver
+    @GetMapping("/valid")
+    public CouponsDTO getValidCoupon() {
+        CouponsDTO coupon = couponsService.findValidCoupon();
+        return coupon != null ? coupon : null;
+    }
+
+
+    // Marca o cupom como usado após uma compra
+    @PostMapping("/mark-used/{codigo}")
+    public void markCouponAsUsed(@PathVariable String codigo) {
+        couponsService.markCouponAsUsed(codigo);
+    }
 }

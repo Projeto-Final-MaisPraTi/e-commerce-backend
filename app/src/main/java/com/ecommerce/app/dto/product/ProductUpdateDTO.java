@@ -14,8 +14,6 @@ public record ProductUpdateDTO(Integer id,
                                String cover,
                                List<String> images) {
     public ProductUpdateDTO(Product product, String cover, List<String> images) {
-        this(product.getId(), product.getNome(),
-                product.getPreco(), product.getCor(), product.getDescricao(),
-                product.getEstoque(), product.getCategoria(), cover, images);
+        this(product.getId(), product.getNome(), product.getPreco(), product.getCor(), product.getDescricao(), product.getEstoque(), product.getCategoria(), cover, images);
     }
 }

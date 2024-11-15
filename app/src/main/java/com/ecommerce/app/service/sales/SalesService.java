@@ -9,6 +9,7 @@ import com.ecommerce.app.model.sales.Sales;
 import com.ecommerce.app.model.salesItems.SalesItems;
 import com.ecommerce.app.model.user.User;
 import com.ecommerce.app.repository.sales.SalesRepository;
+import com.ecommerce.app.service.coupons.CouponsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,28 +33,25 @@ public class SalesService {
 
     public SalesDTO getSaleById(Integer id){
         Optional<Sales> sale = salesRepository.findById(id);
-
         return sale.map(this::convertToDTO).orElseThrow(() -> new RuntimeException("Venda não encontrada!"));
     }
 
-    public SalesDTO createSale(SalesDTO salesDTO, User user, Payment payment, Coupons coupons, SalesItemsDTO salesItemsDTO){
+    public SalesDTO createSale(SalesDTO salesDTO, User user, Payment payment, Coupons coupon, SalesItemsDTO salesItemsDTO){
         Sales sales = new Sales();
         sales.setTotal(salesDTO.getTotal());
         sales.setTypeSaleStatus(TypeSaleStatus.PENDENTE);
         sales.setUser(user);
         sales.setPayment(payment);
-        if(!coupons.getExpiracao()) {
-            sales.setCoupons(coupons);
-        }
 
+        // Associa o cupom recebido à venda, sem verificação adicional
+        sales.setCoupons(coupon);
         sales.setSalesItems((List<SalesItems>) salesItemsDTO);
 
         salesRepository.save(sales);
-
         return convertToDTO(sales);
     }
 
-    public SalesDTO updateSale(Integer id, SalesDTO salesDTO, User user, Payment payment, Coupons coupons, SalesItemsDTO salesItemsDTO) {
+    public SalesDTO updateSale(Integer id, SalesDTO salesDTO, User user, Payment payment, Coupons coupon, SalesItemsDTO salesItemsDTO) {
         Sales sales = salesRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Venda não encontrada!"));
 
@@ -61,14 +59,12 @@ public class SalesService {
         sales.setTypeSaleStatus(TypeSaleStatus.ENVIANDO);
         sales.setUser(user);
         sales.setPayment(payment);
-        if(!coupons.getExpiracao()) {
-            sales.setCoupons(coupons);
-        }
 
+        // Associa o cupom recebido à venda, sem verificação adicional
+        sales.setCoupons(coupon);
         sales.setSalesItems((List<SalesItems>) salesItemsDTO);
 
         salesRepository.save(sales);
-
         return convertToDTO(sales);
     }
 
@@ -78,7 +74,6 @@ public class SalesService {
 
         sales.setTypeSaleStatus(TypeSaleStatus.CANCELADO);
         salesRepository.save(sales);
-
         salesRepository.deleteById(id);
     }
 
@@ -89,7 +84,6 @@ public class SalesService {
         salesDTO.setTypeSaleStatus(sales.getTypeSaleStatus());
 
         return salesDTO;
-
     }
 
     public List<SalesDTO> getSalesByStatus(TypeSaleStatus status) {
@@ -99,7 +93,6 @@ public class SalesService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
-
 
     public void updatedSaleStatus(Integer id, TypeSaleStatus typeSaleStatus) {
         salesRepository
@@ -111,5 +104,4 @@ public class SalesService {
                         () -> new RuntimeException("Venda não encontrada!")
                 );
     }
-
 }

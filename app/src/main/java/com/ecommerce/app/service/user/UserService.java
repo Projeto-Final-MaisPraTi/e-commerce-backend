@@ -2,11 +2,9 @@ package com.ecommerce.app.service.user;
 
 import com.ecommerce.app.dto.user.RegisterRequest;
 import com.ecommerce.app.dto.user.UserDTO;
-import com.ecommerce.app.infra.enums.Role;
 import com.ecommerce.app.model.user.User;
 import com.ecommerce.app.repository.user.UserRepository;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -14,6 +14,4 @@ public interface SalesRepository extends JpaRepository<Sales, Integer>{
 
 //	void updatedSaleStatus(Long id, TypeSaleStatus typeSaleStatus);
 	List<Sales> findByTypeSaleStatus(TypeSaleStatus typeSaleStatus);
-
-
 }

@@ -1,6 +1,5 @@
 package com.ecommerce.app.repository.product;
 
-import com.ecommerce.app.dto.product.ProductDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

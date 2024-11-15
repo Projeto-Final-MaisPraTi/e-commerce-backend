@@ -4,11 +4,19 @@ import com.ecommerce.app.model.product.Product;
 
 import java.text.NumberFormat;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+
 public record ProductDTO(
         Integer id,
+        @NotBlank(message = "O nome do produto não pode estar em branco")
         String name,
+        @PositiveOrZero(message = "A nota deve ser positiva ou zero")
         int nota,
         Integer discount,
+        @NotNull(message = "O preço não pode estar em branco")
+        @PositiveOrZero(message = "O preço deve ser positivo")
         String price,
         String description,
         String priceDiscount,

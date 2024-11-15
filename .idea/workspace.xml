@@ -5,9 +5,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6bc105a7-2dd8-48aa-b531-736e7625527c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/infra/security/CustomAuthenticationProvider.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/config/CorsConfiguration.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/controller/auth/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/controller/auth/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/controller/coupons/CouponsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/controller/coupons/CouponsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/controller/product/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/controller/product/ProductController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/dto/product/ProductDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/dto/product/ProductDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/dto/product/ProductDetailsDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/dto/product/ProductDetailsDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/dto/product/ProductUpdateDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/dto/product/ProductUpdateDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/dto/user/UserDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/dto/user/UserDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/infra/cors/CorsConfiguration.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/infra/cors/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/infra/cors/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/infra/springdoc/SpringDocConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/infra/springdoc/SpringDocConfiguration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/model/product/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/model/product/Product.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/repository/coupons/CouponsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/repository/coupons/CouponsRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/repository/product/ProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/repository/product/ProductRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/repository/reviews/ReviewsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/repository/reviews/ReviewsRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/repository/sales/SalesRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/repository/sales/SalesRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/repository/user/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/repository/user/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/coupons/CouponsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/coupons/CouponsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/customUserDetails/CustomUserDetailsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/customUserDetails/CustomUserDetailsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/itemCart/ItemCartService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/itemCart/ItemCartService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/product/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/product/ProductService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/sales/SalesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/sales/SalesService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/user/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/user/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/user/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/user/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,8 +42,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Enum" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -58,19 +83,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Application.AppApplication.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;com.codeium.enabled&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;settings.editor.splitter.proportion&quot;: &quot;0.18839428&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Application.AppApplication.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "com.codeium.enabled": "true",
+    "git-widget-placeholder": "Merging develop",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "settings.editor.splitter.proportion": "0.18839428"
   }
-}</component>
+}]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

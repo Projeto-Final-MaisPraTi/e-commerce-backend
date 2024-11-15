@@ -18,4 +18,8 @@ public class SpringDocConfiguration {
                                 new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
                 .info(new Info().title("E-Commerce API").description("API para gerenciamento de e-commerce"));
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> erick
