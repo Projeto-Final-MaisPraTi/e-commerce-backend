@@ -63,14 +63,22 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http
 				.csrf(AbstractHttpConfigurer::disable)
-				.authorizeHttpRequests(authorize -> authorize
-						.requestMatchers("/auth/**").permitAll()
-						.requestMatchers("/admin/**").hasRole("ADMIN")
-						.requestMatchers(HttpMethod.GET, "/api/product/**").permitAll()
-						.requestMatchers("/api/product/**").hasRole("ADMIN")
-						.requestMatchers("/api/sales/**").permitAll()
-						.anyRequest().authenticated()
-				)
+				.authorizeHttpRequests(auth -> {
+					auth.requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMIN");
+					auth.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
+					auth.requestMatchers("/auth/**").permitAll();
+					auth.requestMatchers("/api/product/**").permitAll();
+					auth.requestMatchers(HttpMethod.GET, "/api/product/**").permitAll();
+					auth.requestMatchers(HttpMethod.POST, "/api/product/**").hasRole("ADMIN");
+					auth.requestMatchers(HttpMethod.PUT, "/api/product/**").hasRole("ADMIN");
+					auth.requestMatchers(HttpMethod.GET,"/api/images/**").permitAll();
+					auth.requestMatchers(HttpMethod.POST,"/api/images/**").hasRole("ADMIN");
+					auth.requestMatchers(HttpMethod.PUT,"/api/images/**").hasRole("ADMIN");
+					auth.requestMatchers("/api/sales").authenticated();
+					auth.requestMatchers("/api/itemcart").authenticated();
+					auth.anyRequest().authenticated();
+				})
+
 				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
 				.build();
 	}

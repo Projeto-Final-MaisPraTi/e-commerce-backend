@@ -65,9 +65,9 @@ public class CouponsService {
     }
 
     // Verifica a validade do cupom
-    public boolean isCouponValid(String codigo) {
-        Coupons coupon = couponsRepository.findByCodigo(codigo);
-        return coupon != null && coupon.getAtivo() && !coupon.getUsado() && coupon.getData_final().isAfter(LocalDate.now());
+    public CouponsDTO findValidCoupon() {
+        Optional<Coupons> coupon = couponsRepository.findFirstByAtivoTrueAndUsadoFalseAndData_finalAfter(LocalDate.now());
+        return coupon.map(this::convertToDTO).orElse(null);
     }
 
     // Marca o cupom como usado após a compra

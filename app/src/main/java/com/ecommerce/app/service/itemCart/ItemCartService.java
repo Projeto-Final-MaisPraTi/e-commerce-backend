@@ -94,11 +94,24 @@ public class ItemCartService {
         return ProductDetailsDTO.builder()
                 .id(product.getId())
                 .name(product.getNome())
-                .price(product.getPreco()) // Certifica-se de que é Double
-                .categoria(product.getCategoria())
+                .price(product.getPreco())
+                .category(product.getCategoria())
                 .rating(product.getNota())
                 .color(product.getCor())
-                .estoque(product.getEstoque())
+                .stock(product.getEstoque())  // Converte estoque para String
                 .build();
+    }
+
+
+    private Product convertToProductEntity(ProductDetailsDTO productDetailsDTO) {
+        Product product = new Product();
+        product.setId(productDetailsDTO.getId());
+        product.setNome(productDetailsDTO.getName());
+        product.setPreco(productDetailsDTO.getPrice());
+        product.setCategoria(productDetailsDTO.getCategory());
+        product.setNota(productDetailsDTO.getRating());
+        product.setCor(productDetailsDTO.getColor());
+        product.setEstoque(productDetailsDTO.getStock());
+        return product;
     }
 }

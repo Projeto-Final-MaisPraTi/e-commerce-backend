@@ -1,5 +1,6 @@
 package com.ecommerce.app.dto.product;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,20 +27,21 @@ public class ProductDetailsDTO {
 
     @NotNull(message = "O preço não pode estar em branco")
     @PositiveOrZero(message = "O preço deve ser positivo")
-    private Double price;
+    private String price;
 
     private String priceDiscount;
 
     @NotBlank(message = "A categoria não pode estar em branco")
-    private String categoria;
+    private String category;
 
     private String description;
 
     @NotNull(message = "O estoque não pode estar em branco")
     @PositiveOrZero(message = "O estoque deve ser positivo")
-    private Integer estoque;
+    private Integer stock;
 
     private Integer discount;
+    @Schema(example = "boolean")
 
     private Boolean flashSale;
 

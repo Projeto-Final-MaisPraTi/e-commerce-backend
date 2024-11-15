@@ -3,7 +3,6 @@ package com.ecommerce.app.controller.auth;
 import com.ecommerce.app.dto.user.AuthResponse;
 import com.ecommerce.app.dto.user.LoginRequest;
 import com.ecommerce.app.dto.user.RegisterRequest;
-import com.ecommerce.app.dto.user.UserDTO;
 import com.ecommerce.app.model.user.User;
 import com.ecommerce.app.repository.user.UserRepository;
 import com.ecommerce.app.service.user.AuthService;
@@ -14,7 +13,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +21,6 @@ import com.ecommerce.app.service.customUserDetails.CustomUserDetailsService;
 
 import jakarta.validation.Valid;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController

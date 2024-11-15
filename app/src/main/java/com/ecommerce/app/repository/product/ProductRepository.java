@@ -1,5 +1,7 @@
 package com.ecommerce.app.repository.product;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.ecommerce.app.model.product.Product;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -15,4 +17,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
 
     @Query("select p from Product p where p.categoria = :category")
     List<Product> findByCategory(String category);
+
+    @Query("select p from Product p where p.flashSale = true")
+    Page<Product> getProductsInFlashSales(Pageable pagination);
 }

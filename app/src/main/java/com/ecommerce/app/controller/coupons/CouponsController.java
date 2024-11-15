@@ -49,10 +49,13 @@ public class CouponsController {
     }
 
     // Verifica a validade de um cupom
-    @GetMapping("/validate/{codigo}")
-    public boolean validateCoupon(@PathVariable String codigo) {
-        return couponsService.isCouponValid(codigo);
+    // Retorna um cupom válido para o carrinho, se houver
+    @GetMapping("/valid")
+    public CouponsDTO getValidCoupon() {
+        CouponsDTO coupon = couponsService.findValidCoupon();
+        return coupon != null ? coupon : null;
     }
+
 
     // Marca o cupom como usado após uma compra
     @PostMapping("/mark-used/{codigo}")

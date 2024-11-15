@@ -9,12 +9,8 @@ import com.ecommerce.app.dto.user.RegisterRequest;
 import com.ecommerce.app.dto.user.AuthResponse;
 import com.ecommerce.app.infra.security.JwtTokenProvider;
 import com.ecommerce.app.model.user.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class AuthService {
