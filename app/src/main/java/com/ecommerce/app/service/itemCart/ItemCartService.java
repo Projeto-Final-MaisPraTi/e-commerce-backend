@@ -94,7 +94,7 @@ public class ItemCartService {
         return ProductDetailsDTO.builder()
                 .id(product.getId())
                 .name(product.getNome())
-                .price(product.getPreco())
+                .price(product.getPreco().toString())
                 .category(product.getCategoria())
                 .rating(product.getNota())
                 .color(product.getCor())
