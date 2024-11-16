@@ -5,6 +5,8 @@ import com.ecommerce.app.model.product.Product;
 import com.ecommerce.app.model.salesItems.SalesItems;
 import com.ecommerce.app.repository.salesItems.SalesItemsRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +31,14 @@ public class SalesItemsService {
         Optional<SalesItems> saleItem = salesItemsRepository.findById(id);
 
         return saleItem.map(this::convertToDTO).orElseThrow(() -> new RuntimeException("Item de venda não encontrado!"));
+    }
+
+    public Page<Object[]> getBestSallers(Pageable pageable) {
+        Page<Object[]> bestSallers = salesItemsRepository.getBestSallers(pageable);
+        if (bestSallers.isEmpty()) {
+            return null;
+        }
+        return bestSallers;
     }
 
     public SalesItemsDTO createSalesItem(SalesItemsDTO salesItemsDTO, Product product){

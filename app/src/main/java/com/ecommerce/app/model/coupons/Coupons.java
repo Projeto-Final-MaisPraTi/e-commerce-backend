@@ -29,7 +29,7 @@ public class Coupons {
 	private LocalDate data_inicial;
 
 	@Column(name = "final_date")
-	private LocalDate data_final;
+	private LocalDate dataFinal;
 
 	@Column(name = "active")
 	private Boolean ativo = true;

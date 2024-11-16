@@ -9,6 +9,7 @@ import com.ecommerce.app.model.user.User;
 import com.ecommerce.app.repository.itemCart.ItemCartRepository;
 import com.ecommerce.app.repository.product.ProductRepository;
 import com.ecommerce.app.repository.user.UserRepository;
+import com.ecommerce.app.utils.CurrencyUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -94,7 +95,7 @@ public class ItemCartService {
         return ProductDetailsDTO.builder()
                 .id(product.getId())
                 .name(product.getNome())
-                .price(product.getPreco())
+                .price(CurrencyUtils.formatValue(product.getPreco()))
                 .category(product.getCategoria())
                 .rating(product.getNota())
                 .color(product.getCor())
@@ -107,7 +108,9 @@ public class ItemCartService {
         Product product = new Product();
         product.setId(productDetailsDTO.getId());
         product.setNome(productDetailsDTO.getName());
-        product.setPreco(productDetailsDTO.getPrice());
+        if (productDetailsDTO.getPrice() != null) {
+            product.setPreco(Double.parseDouble(productDetailsDTO.getPrice()));
+        }
         product.setCategoria(productDetailsDTO.getCategory());
         product.setNota(productDetailsDTO.getRating());
         product.setCor(productDetailsDTO.getColor());

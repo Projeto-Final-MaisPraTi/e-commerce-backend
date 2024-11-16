@@ -11,6 +11,8 @@ import com.ecommerce.app.model.user.User;
 import com.ecommerce.app.repository.sales.SalesRepository;
 import com.ecommerce.app.service.coupons.CouponsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface CouponsRepository extends JpaRepository<Coupons, Integer>{
 	Coupons findByCodigo(String codigo);
-	Optional<Coupons> findFirstByAtivoTrueAndUsadoFalseAndData_finalAfter(LocalDate dataAtual);
+	Optional<Coupons> findFirstByAtivoTrueAndUsadoFalseAndDataFinalAfter(LocalDate dataAtual);
 
 }

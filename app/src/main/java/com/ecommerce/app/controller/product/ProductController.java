@@ -69,6 +69,22 @@ public class ProductController {
         return productDTOS != null ? ResponseEntity.ok(productDTOS) : ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/{id}/update")
+    public ResponseEntity<ProductUpdateDTO> getProductUpdateById(@PathVariable int id){
+        ProductUpdateDTO product = productService.productUpdateById(id);
+
+        return product != null ? ResponseEntity.ok(product) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/bestsellers")
+    public ResponseEntity<Page<ProductDTO>> getBestSellersProducts(@PageableDefault(size = 10)Pageable pagination) {
+        Page<ProductDTO> productDTOS = productService.getBestSellers(pagination);
+        if (productDTOS.isEmpty()) {
+            productDTOS = productService.getAllProducts(pagination);
+        }
+        return productDTOS != null ? ResponseEntity.ok(productDTOS) : ResponseEntity.notFound().build();
+    }
+
     @PostMapping
     public ProductDetailsDTO createProduct(@Valid @RequestBody ProductDetailsDTO productDTO){
         return productService.createProduct(productDTO);
@@ -91,12 +107,5 @@ public class ProductController {
     public ResponseEntity<Void> deleteProduct(@PathVariable int id){
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/{id}/update")
-    public ResponseEntity<ProductUpdateDTO> getProductUpdateById(@PathVariable int id){
-        ProductUpdateDTO product = productService.productUpdateById(id);
-
-        return product != null ? ResponseEntity.ok(product) : ResponseEntity.notFound().build();
     }
 }

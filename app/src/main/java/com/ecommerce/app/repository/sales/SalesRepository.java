@@ -3,6 +3,8 @@ package com.ecommerce.app.repository.sales;
 import java.util.List;
 
 import com.ecommerce.app.infra.enums.TypeSaleStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ecommerce.app.model.sales.Sales;

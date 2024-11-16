@@ -6,6 +6,8 @@ import com.ecommerce.app.dto.product.ProductDTO;
 import com.ecommerce.app.model.productImages.ProductImages;
 import com.ecommerce.app.repository.product.ProductRepository;
 import com.ecommerce.app.service.productImages.ImageProductService;
+import com.ecommerce.app.service.salesItems.SalesItemsService;
+import com.ecommerce.app.utils.CurrencyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +33,9 @@ public class ProductService {
     @Autowired
     private ImageProductService imageProductService;
 
+    @Autowired
+    private SalesItemsService salesItemsService;
+
     public Page<ProductDTO> getAllProducts(Pageable pagination){
         // retorna a lista de produtos convertidos e coletados
         return productRepository
@@ -50,7 +55,7 @@ public class ProductService {
         return product.map(this::convertToDTO).orElse(null);
     }
 
-    public ProductDTO getProductById2(int id) {
+    public ProductDTO getProductCardById(int id) {
         Optional<Product> product = productRepository.findById(id);
         if (product.isEmpty()) {
             return null;
@@ -118,21 +123,21 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-//    Método de formatação do valor
-    public String formatValue(Double price) {
-        if (price == null) return null;
-        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
-        return currencyFormat.format(price);
-    }
-
-//    Método para calcular o desconto formatado
-    public String calculateDiscount(Double price, Integer discount) {
-        if (price == null || discount == null || discount == 0) {
-            return null;
-        }
-        Double discountedPrice = price - (price * discount / 100);
-        return formatValue(discountedPrice);
-    }
+////    Método de formatação do valor
+//    public String formatValue(Double price) {
+//        if (price == null) return null;
+//        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+//        return currencyFormat.format(price);
+//    }
+//
+////    Método para calcular o desconto formatado
+//    public String calculateDiscount(Double price, Integer discount) {
+//        if (price == null || discount == null || discount == 0) {
+//            return null;
+//        }
+//        Double discountedPrice = price - (price * discount / 100);
+//        return formatValue(discountedPrice);
+//    }
 
     private ProductDetailsDTO convertToDTO(Product product) {
         ProductDetailsDTO productDTO = new ProductDetailsDTO();
@@ -143,9 +148,9 @@ public class ProductService {
         productDTO.setStock(product.getEstoque());
         productDTO.setRating(product.getNota());
         productDTO.setDiscount(product.getDiscount());
-        productDTO.setPrice(formatValue(product.getPreco())); // Formata o preço aqui
+        productDTO.setPrice(CurrencyUtils.formatValue(product.getPreco())); // Formata o preço aqui
         if (product.getDiscount() != null && product.getDiscount() != 0) {
-            productDTO.setPriceDiscount(calculateDiscount(product.getPreco(), product.getDiscount()));
+            productDTO.setPriceDiscount(CurrencyUtils.calculateDiscount(product.getPreco(), product.getDiscount()));
         }
         productDTO.setColor(product.getCor());
         productDTO.setImages(product.getImages().stream().map(ProductImages::getImagem).toList());
@@ -216,5 +221,14 @@ public class ProductService {
                 String cover = imageProductService.getCoverByProductId(productDTO.getId());
                 return new ProductDTO(productDTO, cover);
         });
+    }
+
+    public Page<ProductDTO> getBestSellers(Pageable pagination) {
+        Page<Object[]> result = salesItemsService.getBestSallers(pagination);
+        if (result == null || result.isEmpty()) {
+            return Page.empty(pagination);
+        }
+        return result.map(r ->
+                getProductCardById(((Number) r[0]).intValue()));
     }
 }

@@ -41,7 +41,7 @@ public class CouponsService {
         coupon.setCodigo(couponsDTO.getCodigo());
         coupon.setDesconto_porcentagem(couponsDTO.getDesconto());
         coupon.setData_inicial(LocalDate.now());
-        coupon.setData_final(LocalDate.now().plusDays(2)); // duração de 2 dias
+        coupon.setDataFinal(LocalDate.now().plusDays(2)); // duração de 2 dias
         coupon.setAtivo(true);
         coupon.setUsado(false);
 
@@ -66,7 +66,7 @@ public class CouponsService {
 
     // Verifica a validade do cupom
     public CouponsDTO findValidCoupon() {
-        Optional<Coupons> coupon = couponsRepository.findFirstByAtivoTrueAndUsadoFalseAndData_finalAfter(LocalDate.now());
+        Optional<Coupons> coupon = couponsRepository.findFirstByAtivoTrueAndUsadoFalseAndDataFinalAfter(LocalDate.now());
         return coupon.map(this::convertToDTO).orElse(null);
     }
 
@@ -87,7 +87,7 @@ public class CouponsService {
         coupon.setCodigo("DESCONTO" + UUID.randomUUID().toString().substring(0, 8));
         coupon.setDesconto_porcentagem((double) (5 + new Random().nextInt(11))); // 5% a 15%
         coupon.setData_inicial(LocalDate.now());
-        coupon.setData_final(LocalDate.now().plusDays(2)); // Cupom válido por 2 dias
+        coupon.setDataFinal(LocalDate.now().plusDays(2)); // Cupom válido por 2 dias
         coupon.setAtivo(true);
         coupon.setUsado(false);
         couponsRepository.save(coupon);
@@ -99,7 +99,7 @@ public class CouponsService {
                 .codigo(coupons.getCodigo())
                 .desconto(coupons.getDesconto_porcentagem())
                 .data_inicial(coupons.getData_inicial())
-                .data_final(coupons.getData_final())
+                .data_final(coupons.getDataFinal())
                 .expirado(!coupons.getAtivo() || coupons.getUsado())
                 .build();
     }
