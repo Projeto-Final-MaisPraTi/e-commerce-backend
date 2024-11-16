@@ -3,80 +3,70 @@ package com.ecommerce.app.controller.auth;
 import com.ecommerce.app.dto.user.AuthResponse;
 import com.ecommerce.app.dto.user.LoginRequest;
 import com.ecommerce.app.dto.user.RegisterRequest;
-import com.ecommerce.app.model.user.User;
-import com.ecommerce.app.repository.user.UserRepository;
+import com.ecommerce.app.infra.security.JwtTokenProvider;
 import com.ecommerce.app.service.user.AuthService;
-import com.ecommerce.app.service.user.UserService;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import com.ecommerce.app.infra.security.JwtTokenProvider;
-import com.ecommerce.app.service.customUserDetails.CustomUserDetailsService;
 
 import jakarta.validation.Valid;
 
-import java.util.Optional;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
-	private final AuthenticationManager authenticationManager;
-	private final JwtTokenProvider jwtTokenProvider;
-	private final CustomUserDetailsService customUserDetailsService;
-	private final UserService userService;
-	private final UserRepository userRepository;
 	private final AuthService authService;
+	private final JwtTokenProvider jwtTokenProvider;
 
-	public AuthController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, CustomUserDetailsService customUserDetailsService, UserService userService, UserRepository userRepository, AuthService authService) {
-		this.authenticationManager = authenticationManager;
+	@Autowired
+	public AuthController(AuthService authService, JwtTokenProvider jwtTokenProvider) {
+		this.authService = authService;
 		this.jwtTokenProvider = jwtTokenProvider;
-		this.customUserDetailsService = customUserDetailsService;
-        this.userService = userService;
-        this.userRepository = userRepository;
-        this.authService = authService;
-    }
-
-	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-		try {
-			String username = loginRequest.getEmail();
-			String password = loginRequest.getPassword();
-
-			Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-
-			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-			String token = jwtTokenProvider.generateToken(userDetails);
-			return ResponseEntity.ok(new AuthResponse(token));
-		} catch(AuthenticationException error) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas!");
-		}
 	}
 
 	@PostMapping("/register")
 	public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest registerRequest) {
-		Optional<User> existingUser = userRepository.findByEmail(registerRequest.getEmail());
-		if (existingUser.isPresent()) {
-			return ResponseEntity.badRequest().body("Usuário já existe!");
-		}
-
 		try {
 			AuthResponse response = authService.register(registerRequest);
 			return ResponseEntity.ok(response);
+		} catch (IllegalStateException e) {
+			return ResponseEntity.badRequest().body("Erro ao registrar: " + e.getMessage());
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Falha ao tentar registrar usuário: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno.");
 		}
 	}
 
-	@PostMapping("/logout")
-	public String logout(){
-		return "Para logar na sua conta novamente insira seus dados!";
+	@PostMapping("/login")
+	public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest) {
+		try {
+			AuthResponse response = authService.login(loginRequest);
+			return ResponseEntity.ok(response);
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas.");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno.");
+		}
+	}
+
+	@GetMapping("/decode")
+	public ResponseEntity<?> decodeToken(@RequestHeader("Authorization") String authHeader) {
+		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+			return ResponseEntity.badRequest().body("Token não fornecido ou inválido.");
+		}
+
+		String token = authHeader.substring(7);
+		try {
+			Map<String, Object> decodedClaims = jwtTokenProvider.extractAllClaims(token);
+			return ResponseEntity.ok(decodedClaims);
+		} catch (ExpiredJwtException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token expirado.");
+		} catch (JwtException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token inválido.");
+		}
 	}
 }

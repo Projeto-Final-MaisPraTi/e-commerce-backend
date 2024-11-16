@@ -107,7 +107,7 @@ public class ItemCartService {
         Product product = new Product();
         product.setId(productDetailsDTO.getId());
         product.setNome(productDetailsDTO.getName());
-        product.setPreco(productDetailsDTO.getPrice());
+        product.setPreco(Double.parseDouble(productDetailsDTO.getPrice()));
         product.setCategoria(productDetailsDTO.getCategory());
         product.setNota(productDetailsDTO.getRating());
         product.setCor(productDetailsDTO.getColor());
