@@ -105,17 +105,17 @@ public class ItemCartService {
     }
 
 
-    private Product convertToProductEntity(ProductDetailsDTO productDetailsDTO) {
-        Product product = new Product();
-        product.setId(productDetailsDTO.getId());
-        product.setNome(productDetailsDTO.getName());
-        if (productDetailsDTO.getPrice() != null) {
-            product.setPreco(productDetailsDTO.getPrice());
-        }
-        product.setCategoria(productDetailsDTO.getCategory());
-        product.setNota(productDetailsDTO.getRating());
-        product.setCor(productDetailsDTO.getColor());
-        product.setEstoque(productDetailsDTO.getStock());
-        return product;
-    }
+//    private Product convertToProductEntity(ProductDetailsDTO productDetailsDTO) {
+//        Product product = new Product();
+//        product.setId(productDetailsDTO.getId());
+//        product.setNome(productDetailsDTO.getName());
+//        if (productDetailsDTO.getPrice() != null) {
+//            product.setPreco(productDetailsDTO.getPrice());
+//        }
+//        product.setCategoria(productDetailsDTO.getCategory());
+//        product.setNota(productDetailsDTO.getRating());
+//        product.setCor(productDetailsDTO.getColor());
+//        product.setEstoque(productDetailsDTO.getStock());
+//        return product;
+//    }
 }

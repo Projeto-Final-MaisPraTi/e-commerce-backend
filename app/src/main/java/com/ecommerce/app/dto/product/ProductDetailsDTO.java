@@ -2,6 +2,7 @@ package com.ecommerce.app.dto.product;
 
 import com.ecommerce.app.model.product.Product;
 import com.ecommerce.app.model.productImages.ProductImages;
+import com.ecommerce.app.utils.CurrencyUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,8 +38,8 @@ public class ProductDetailsDTO {
     private int rating;
 
     @NotNull(message = "O preço não pode estar em branco")
-    @PositiveOrZero(message = "O preço deve ser positivo")
-    private Double price; // Certifique-se de que o tipo é Double
+//    @PositiveOrZero(message = "O preço deve ser positivo") É somente para vizualização
+    private String price; // Certifique-se de que o tipo é Double
 
     private String priceDiscount;
 
@@ -61,13 +62,14 @@ public class ProductDetailsDTO {
         this.id = product.getId();
         this.name = product.getNome();
         this.rating = product.getNota();
-        this.price = product.getPreco();
+        this.price = CurrencyUtils.formatValue(product.getPreco());
         this.category = product.getCategoria();
         this.description = product.getDescricao();
         this.stock = product.getEstoque();
         this.discount = product.getDiscount();
         this.flashSale = product.getFlashSale();
         this.color = product.getCor();
+        // Nem sempre a imagem de capa vai ser o indice 0
         this.images = product.getImages().stream().map(ProductImages::getImagem).collect(Collectors.toList());
     }
 }

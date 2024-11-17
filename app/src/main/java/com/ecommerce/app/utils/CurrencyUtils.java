@@ -5,14 +5,14 @@ import java.text.NumberFormat;
 public class CurrencyUtils {
 
     //    Método de formatação do valor
-    public static Double formatValue(Double price) {
+    public static String formatValue(Double price) {
         if (price == null) return null;
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
-        return Double.valueOf(currencyFormat.format(price));
+        return currencyFormat.format(price);
     }
 
     //    Método para calcular o desconto formatado
-    public static Double calculateDiscount(Double price, Integer discount) {
+    public static String calculateDiscount(Double price, Integer discount) {
         if (price == null || discount == null || discount == 0) {
             return null;
         }

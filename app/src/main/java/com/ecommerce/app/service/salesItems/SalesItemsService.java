@@ -6,6 +6,7 @@ import com.ecommerce.app.model.product.Product;
 import com.ecommerce.app.model.sales.Sales;
 import com.ecommerce.app.model.salesItems.SalesItems;
 import com.ecommerce.app.repository.salesItems.SalesItemsRepository;
+import com.ecommerce.app.utils.CurrencyUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -91,7 +92,7 @@ public class SalesItemsService {
         return ProductDetailsDTO.builder()
                 .id(product.getId())
                 .name(product.getNome())
-                .price(product.getPreco())
+                .price(CurrencyUtils.formatValue(product.getPreco()))
                 .category(product.getCategoria())
                 .rating(product.getNota())
                 .color(product.getCor())

@@ -89,8 +89,10 @@ public class ProductService {
         product.setEstoque(productDTO.getStock());
         product.setCategoria(productDTO.getCategory());
         product.setNota(productDTO.getRating());
-        product.setPreco(productDTO.getPrice());
+        product.setPreco(Double.parseDouble(productDTO.getPrice()));
         product.setCor(productDTO.getColor());
+        product.setDiscount(0);
+        product.setFlashSale(false);
         product.addImages(productDTO.getImages());
         product.getImages().get(0).setCapaProduto(true);
         productRepository.save(product);
@@ -182,7 +184,7 @@ public class ProductService {
             Product product = new Product();
             product.setNome(productDTO.getName());
             product.setDescricao(productDTO.getDescription());
-            product.setPreco(productDTO.getPrice());
+            product.setPreco(Double.parseDouble(productDTO.getPrice()));
             product.setNota(productDTO.getRating());
             product.setEstoque(productDTO.getStock());
             product.setCor(productDTO.getColor());

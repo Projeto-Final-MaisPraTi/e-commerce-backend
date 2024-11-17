@@ -17,7 +17,7 @@ public record ProductDTO(
         int nota,
         Integer discount,
         @NotNull(message = "O preço não pode estar em branco")
-        @PositiveOrZero(message = "O preço deve ser positivo")
+//        @PositiveOrZero(message = "O preço deve ser positivo") Não precisa por ser String
         String price,
         String description,
         String priceDiscount,
