@@ -1,4 +1,4 @@
-package com.ecommerce.app.dto.product;
+package com.ecommerce.app.utils;
 
 import com.ecommerce.app.model.product.Product;
 import org.springframework.data.jpa.domain.Specification;

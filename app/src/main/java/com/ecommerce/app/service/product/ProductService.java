@@ -1,12 +1,14 @@
 package com.ecommerce.app.service.product;
 
-import com.ecommerce.app.dto.product.ProductSpecifications;
+import com.ecommerce.app.utils.ProductSpecifications;
 import com.ecommerce.app.dto.product.ProductUpdateDTO;
 import com.ecommerce.app.dto.product.ProductDTO;
 import com.ecommerce.app.model.productImages.ProductImages;
 import com.ecommerce.app.repository.product.ProductRepository;
 import com.ecommerce.app.service.productImages.ImageProductService;
-import lombok.RequiredArgsConstructor;
+import com.ecommerce.app.service.salesItems.SalesItemsService;
+import com.ecommerce.app.utils.CurrencyUtils;
+import com.ecommerce.app.utils.CurrencyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,8 +34,12 @@ public class ProductService {
     @Autowired
     private ImageProductService imageProductService;
 
-    public Page<ProductDTO> getAllProducts(Pageable pageable) {
-        return productRepository.findAll(pageable)
+    @Autowired
+    private SalesItemsService salesItemsService;
+
+    public Page<ProductDTO> getAllProducts(Pageable pageable){
+        // retorna a lista de produtos convertidos e coletados
+        return productRepository.findAll(pageable) // pega todos os produto do bd
                 .map(product -> {
                     String cover = product.getImages().stream()
                             .filter(productImages -> Boolean.TRUE.equals(productImages.getCapaProduto()))
@@ -49,7 +55,7 @@ public class ProductService {
         return product.map(this::convertToDTO).orElse(null);
     }
 
-    public ProductDTO getProductById2(int id) {
+    public ProductDTO getProductCardById(int id) {
         Optional<Product> product = productRepository.findById(id);
         if (product.isEmpty()) {
             return null;
@@ -123,13 +129,16 @@ public class ProductService {
         productDTO.setStock(product.getEstoque());
         productDTO.setRating(product.getNota());
         productDTO.setDiscount(product.getDiscount());
-        productDTO.setPrice(product.getPreco());
+        productDTO.setPrice(CurrencyUtils.formatValue(product.getPreco())); // Formata o preço aqui
         if (product.getDiscount() != null && product.getDiscount() != 0) {
-            Double value = product.getPreco() - (product.getPreco() / 100) * product.getDiscount();
-            productDTO.setPriceDiscount(String.valueOf(value));
+            productDTO.setPriceDiscount(CurrencyUtils.calculateDiscount(product.getPreco(), product.getDiscount()));
         }
         productDTO.setColor(product.getCor());
-        productDTO.setImages(product.getImages().stream().map(ProductImages::getImagem).toList());
+        String cover = imageProductService.getCoverByProductId(product.getId());
+        List<String> images = imageProductService.getImagesByProductId(product.getId());
+        images.add(0, cover);
+        productDTO.setImages(images);
+
         return productDTO;
     }
 
@@ -187,12 +196,21 @@ public class ProductService {
         return simpleProduct;
     }
 
-public Page<ProductDTO> getProductsInFlashSales(Pageable pagination) {
-        Page<Product> produts = productRepository.getProductsInFlashSales(pagination);
+public Page<ProductDTO> getProductsInFlashSales(Pageable pageable) {
+        Page<Product> produts = productRepository.getProductsInFlashSales(pageable);
 
         return produts.map(productDTO -> {
                 String cover = imageProductService.getCoverByProductId(productDTO.getId());
                 return new ProductDTO(productDTO, cover);
         });
+    }
+
+    public Page<ProductDTO> getBestSellers(Pageable pageable) {
+        Page<Object[]> result = salesItemsService.getBestSallers(pageable);
+        if (result == null || result.isEmpty()) {
+            return Page.empty(pageable);
+        }
+        return result.map(r ->
+                getProductCardById(((Number) r[0]).intValue()));
     }
 }
