@@ -64,7 +64,7 @@ public class UserService implements UserDetailsService {
             if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
                 user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
             }
-            user.setRoles(userDTO.getTypeRole());
+            user.setRoles(userDTO.getRoles());
             userRepository.save(user);
 
             return convertToDTO(user);

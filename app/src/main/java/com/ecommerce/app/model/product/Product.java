@@ -69,6 +69,12 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<Reviews> reviews;
 
+    public Product() {}
+
+    public Product(Integer id) {
+        this.id = id;
+    }
+
     public void addImages(List<String> urls) {
         if (urls == null) return;
         for (String url : urls) {

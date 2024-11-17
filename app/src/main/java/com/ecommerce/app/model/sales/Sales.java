@@ -28,10 +28,6 @@ public class Sales {
 	@Column(name = "total", nullable = false)
 	private Double total;
 
-//	@ManyToOne
-//	@JoinColumn(name = "id_estado", nullable = false)
-//	private SaleStatus saleStatus; // "FINALIZADO", "ENVIANDO", "CANCELADO", "PENDENTE"
-
 	@Enumerated(EnumType.STRING)
 	@Column(name = "typeSaleStatus", nullable = false)
 	private TypeSaleStatus typeSaleStatus; // "FINALIZADO", "ENVIANDO", "CANCELADO", "PENDENTE"
@@ -50,5 +46,4 @@ public class Sales {
 
 	@OneToMany(mappedBy = "sales", cascade = CascadeType.ALL)
 	private List<SalesItems> salesItems;
-
 }

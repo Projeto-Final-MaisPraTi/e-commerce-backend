@@ -6,6 +6,7 @@ import com.ecommerce.app.dto.product.ProductDTO;
 import com.ecommerce.app.model.productImages.ProductImages;
 import com.ecommerce.app.repository.product.ProductRepository;
 import com.ecommerce.app.service.productImages.ImageProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,24 +26,22 @@ import jakarta.validation.Valid;
 @Service
 public class ProductService {
 
-    @Autowired // faz injeção de dependência automática
+    @Autowired
     private ProductRepository productRepository;
 
     @Autowired
     private ImageProductService imageProductService;
 
-    public Page<ProductDTO> getAllProducts(Pageable pagination){
-        // retorna a lista de produtos convertidos e coletados
-        return productRepository
-                .findAll(pagination) // pega todos os produto do bd
+    public Page<ProductDTO> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable)
                 .map(product -> {
-                            String cover = product.getImages().stream()
-                                    .filter(productImages -> Boolean.TRUE.equals(productImages.getCapaProduto()))
-                                    .map(ProductImages::getImagem)
-                                    .findFirst()
-                                    .orElse(null);
-                            return new ProductDTO(product, cover);
-                        });
+                    String cover = product.getImages().stream()
+                            .filter(productImages -> Boolean.TRUE.equals(productImages.getCapaProduto()))
+                            .map(ProductImages::getImagem)
+                            .findFirst()
+                            .orElse(null);
+                    return new ProductDTO(product, cover);
+                });
     }
 
     public ProductDetailsDTO getProductById(int id) {
@@ -84,10 +83,8 @@ public class ProductService {
         product.setEstoque(productDTO.getStock());
         product.setCategoria(productDTO.getCategory());
         product.setNota(productDTO.getRating());
-        product.setPreco(Double.parseDouble(productDTO.getPrice()));
+        product.setPreco(productDTO.getPrice());
         product.setCor(productDTO.getColor());
-        product.setDiscount(0);
-        product.setFlashSale(false);
         product.addImages(productDTO.getImages());
         product.getImages().get(0).setCapaProduto(true);
         productRepository.save(product);
@@ -95,13 +92,12 @@ public class ProductService {
         return convertToDTO(product);
     }
 
-    public ProductDetailsDTO updateProduct(@Valid ProductUpdateDTO productDTO) {
+    public ProductDetailsDTO updateProduct(ProductUpdateDTO productDTO) {
         Optional<Product> productOptional = productRepository.findById(productDTO.id());
         if (productOptional.isPresent()) {
             Product product = productOptional.get();
             product.update(productDTO);
             productRepository.save(product);
-
             return convertToDTO(product);
         }
         return null;
@@ -118,22 +114,6 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-//    Método de formatação do valor
-    public String formatValue(Double price) {
-        if (price == null) return null;
-        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
-        return currencyFormat.format(price);
-    }
-
-//    Método para calcular o desconto formatado
-    public String calculateDiscount(Double price, Integer discount) {
-        if (price == null || discount == null || discount == 0) {
-            return null;
-        }
-        Double discountedPrice = price - (price * discount / 100);
-        return formatValue(discountedPrice);
-    }
-
     private ProductDetailsDTO convertToDTO(Product product) {
         ProductDetailsDTO productDTO = new ProductDetailsDTO();
         productDTO.setId(product.getId());
@@ -143,20 +123,18 @@ public class ProductService {
         productDTO.setStock(product.getEstoque());
         productDTO.setRating(product.getNota());
         productDTO.setDiscount(product.getDiscount());
-        productDTO.setPrice(formatValue(product.getPreco())); // Formata o preço aqui
+        productDTO.setPrice(product.getPreco());
         if (product.getDiscount() != null && product.getDiscount() != 0) {
-            productDTO.setPriceDiscount(calculateDiscount(product.getPreco(), product.getDiscount()));
+            Double value = product.getPreco() - (product.getPreco() / 100) * product.getDiscount();
+            productDTO.setPriceDiscount(String.valueOf(value));
         }
         productDTO.setColor(product.getCor());
         productDTO.setImages(product.getImages().stream().map(ProductImages::getImagem).toList());
-
         return productDTO;
     }
 
-    public Page<ProductDTO> buildFilteredProducts(Map<String, String> filters, Pageable pagination) {
-        // sera que volta nulo ?
-        Page<Product> products = getFilteredProducts(filters, pagination);
-
+    public Page<ProductDTO> buildFilteredProducts(Map<String, String> filters, Pageable pageable) {
+        Page<Product> products = getFilteredProducts(filters, pageable);
         return products.map(product -> {
             String cover = product.getImages().stream()
                     .filter(productImages -> Boolean.TRUE.equals(productImages.getCapaProduto()))
@@ -167,7 +145,7 @@ public class ProductService {
         });
     }
 
-    private Page<Product> getFilteredProducts(Map<String, String> filters, Pageable pagination) {
+    private Page<Product> getFilteredProducts(Map<String, String> filters, Pageable pageable) {
         Specification<Product> specification = Specification.where(null);
 
         if (filters.containsKey("nome")) {
@@ -186,7 +164,7 @@ public class ProductService {
             specification = specification.and(ProductSpecifications.colorEqualsTo(filters.get("color")));
         }
 
-        return productRepository.findAll(specification, pagination);
+        return productRepository.findAll(specification, pageable);
     }
 
     public List<ProductDTO> createProducts(@Valid List<ProductDetailsDTO> productDTOs) {
@@ -195,7 +173,7 @@ public class ProductService {
             Product product = new Product();
             product.setNome(productDTO.getName());
             product.setDescricao(productDTO.getDescription());
-            product.setPreco(Double.parseDouble(productDTO.getPrice()));
+            product.setPreco(productDTO.getPrice());
             product.setNota(productDTO.getRating());
             product.setEstoque(productDTO.getStock());
             product.setCor(productDTO.getColor());
@@ -209,7 +187,7 @@ public class ProductService {
         return simpleProduct;
     }
 
-    public Page<ProductDTO> getProductsInFlashSales(Pageable pagination) {
+public Page<ProductDTO> getProductsInFlashSales(Pageable pagination) {
         Page<Product> produts = productRepository.getProductsInFlashSales(pagination);
 
         return produts.map(productDTO -> {

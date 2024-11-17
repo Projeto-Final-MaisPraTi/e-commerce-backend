@@ -56,10 +56,4 @@ public class SalesItemsController {
         salesItemsService.deleteSalesItem(id);
         return ResponseEntity.noContent().build();
     }
-
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<SalesItemsDTO>> getUserPurchaseHistory(@PathVariable Integer userId) {
-        List<SalesItemsDTO> userPurchaseHistory = salesItemsService.getUserPurchaseHistory(userId);
-        return ResponseEntity.ok(userPurchaseHistory);
-    }
 }

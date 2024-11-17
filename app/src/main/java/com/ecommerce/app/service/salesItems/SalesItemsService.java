@@ -1,7 +1,9 @@
 package com.ecommerce.app.service.salesItems;
 
+import com.ecommerce.app.dto.product.ProductDetailsDTO;
 import com.ecommerce.app.dto.salesItems.SalesItemsDTO;
 import com.ecommerce.app.model.product.Product;
+import com.ecommerce.app.model.sales.Sales;
 import com.ecommerce.app.model.salesItems.SalesItems;
 import com.ecommerce.app.repository.salesItems.SalesItemsRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +29,12 @@ public class SalesItemsService {
 
     public SalesItemsDTO getSalesItemById(Integer id){
         Optional<SalesItems> saleItem = salesItemsRepository.findById(id);
-
         return saleItem.map(this::convertToDTO).orElseThrow(() -> new RuntimeException("Item de venda não encontrado!"));
     }
 
-    public SalesItemsDTO createSalesItem(SalesItemsDTO salesItemsDTO, Product product){
+    public SalesItemsDTO createSalesItem(SalesItemsDTO salesItemsDTO, Sales sales, Product product){
         SalesItems salesItems = new SalesItems();
+        salesItems.setSales(sales); // Associar venda
         salesItems.setProduct(product);
         salesItems.setQuantidade(salesItemsDTO.getQuantidade());
         salesItems.setPreco(salesItemsDTO.getPreco());
@@ -42,33 +44,48 @@ public class SalesItemsService {
         return convertToDTO(salesItems);
     }
 
-    public SalesItemsDTO updateSalesItem(Integer id, SalesItemsDTO salesItemsDTO, Product product) {
+    public SalesItemsDTO updateSalesItem(Integer id, SalesItemsDTO salesItemsDTO, Sales sales, Product product) {
         SalesItems salesItems = salesItemsRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item de venda não encontrado!"));
-
+        salesItems.setSales(sales); // Associar venda
         salesItems.setProduct(product);
         salesItems.setQuantidade(salesItemsDTO.getQuantidade());
         salesItems.setPreco(salesItemsDTO.getPreco());
-
         salesItemsRepository.save(salesItems);
-
         return convertToDTO(salesItems);
     }
 
     public void deleteSalesItem(Integer id) {
         SalesItems salesItems = salesItemsRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item de venda não encontrado!"));
-
         salesItemsRepository.deleteById(id);
     }
 
-    private SalesItemsDTO convertToDTO(SalesItems salesItems){
-        SalesItemsDTO salesItemsDTO = new SalesItemsDTO();
-        salesItems.setQuantidade(salesItemsDTO.getQuantidade());
-        salesItems.setPreco(salesItemsDTO.getPreco());
-
-        return salesItemsDTO;
-
+    public List<SalesItemsDTO> getUserPurchaseHistory(Integer userId) {
+        List<SalesItems> salesItemsList = salesItemsRepository.findByUserId(userId);
+        return salesItemsList.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
+    private SalesItemsDTO convertToDTO(SalesItems salesItems) {
+        SalesItemsDTO salesItemsDTO = new SalesItemsDTO();
+        salesItemsDTO.setId(salesItems.getId());
+        salesItemsDTO.setProductDetailsDTO(convertToProductDTO(salesItems.getProduct()));
+        salesItemsDTO.setQuantidade(salesItems.getQuantidade());
+        salesItemsDTO.setPreco(salesItems.getPreco());
+        return salesItemsDTO;
+    }
+
+    private ProductDetailsDTO convertToProductDTO(Product product) {
+        return ProductDetailsDTO.builder()
+                .id(product.getId())
+                .name(product.getNome())
+                .price(product.getPreco())
+                .category(product.getCategoria())
+                .rating(product.getNota())
+                .color(product.getCor())
+                .stock(product.getEstoque())
+                .build();
+    }
 }

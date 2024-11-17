@@ -1,9 +1,17 @@
 package com.ecommerce.app.dto.payment;
 
+import com.ecommerce.app.model.payment.Payment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -56,4 +64,15 @@ public class PaymentDTO {
     @NotNull(message = "O valor da parcela não pode estar em branco")
     @PositiveOrZero(message = "O valor da parcela deve ser positivo")
     private Double valorParcela; // Valor de cada parcela
+
+    // Novo construtor
+    public PaymentDTO(Payment payment) {
+        this.id = payment.getId();
+        this.tipo = payment.getTipo();
+//        this.status = payment.getStatus();
+//        this.parcelas = payment.getParcelas();
+//        this.juros = payment.getJuros();
+        this.valor = payment.getValor();
+        this.valorParcela = payment.getValorParcela();
+    }
 }

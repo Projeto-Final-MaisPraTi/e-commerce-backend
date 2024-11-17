@@ -37,7 +37,6 @@ public class ItemCartService {
         return convertToDTO(itemCart);
     }
 
-    // Adicionar item ao carrinho
     public ItemCartDTO addItemToCart(ItemCartDTO itemCartDTO) {
         ItemCart itemCart = new ItemCart();
 
@@ -46,7 +45,6 @@ public class ItemCartService {
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
         itemCart.setProduct(product);
 
-        // Validar e definir quantidade
         itemCart.setQuantidade(itemCartDTO.getQuantidade());
 
         // Vincular o item ao usuário
@@ -86,6 +84,9 @@ public class ItemCartService {
                 .preco(itemCart.getProduct().getPreco() * itemCart.getQuantidade()) // Calcula o preço total
                 .userDTO(UserDTO.builder()
                         .id(itemCart.getUser().getId())
+                        .username(itemCart.getUser().getUsername())
+                        .email(itemCart.getUser().getEmail())
+                        .roles(itemCart.getUser().getRoles())
                         .build())
                 .build();
     }
@@ -94,24 +95,11 @@ public class ItemCartService {
         return ProductDetailsDTO.builder()
                 .id(product.getId())
                 .name(product.getNome())
-                .price(product.getPreco().toString())
+                .price(product.getPreco()) // Certifique-se de que o tipo corresponde
                 .category(product.getCategoria())
                 .rating(product.getNota())
                 .color(product.getCor())
-                .stock(product.getEstoque())  // Converte estoque para String
+                .stock(product.getEstoque())
                 .build();
-    }
-
-
-    private Product convertToProductEntity(ProductDetailsDTO productDetailsDTO) {
-        Product product = new Product();
-        product.setId(productDetailsDTO.getId());
-        product.setNome(productDetailsDTO.getName());
-        product.setPreco(Double.parseDouble(productDetailsDTO.getPrice()));
-        product.setCategoria(productDetailsDTO.getCategory());
-        product.setNota(productDetailsDTO.getRating());
-        product.setCor(productDetailsDTO.getColor());
-        product.setEstoque(productDetailsDTO.getStock());
-        return product;
     }
 }

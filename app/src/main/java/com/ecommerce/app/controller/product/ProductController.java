@@ -2,13 +2,10 @@ package com.ecommerce.app.controller.product;
 
 import com.ecommerce.app.dto.product.ProductUpdateDTO;
 import com.ecommerce.app.dto.product.ProductDTO;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,28 +15,23 @@ import com.ecommerce.app.dto.product.ProductDetailsDTO;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.RequestParam;
+
 @RestController
 @RequestMapping("/api/product")
 public class ProductController {
+
     @Autowired
     private ProductService productService;
 
-    @Operation(summary = "Buscar todos os produtos", description = "Retorna uma lista de todos os produtos da loja")
     @GetMapping
-    public Page<ProductDTO> getAllProducts(@PageableDefault(size = 10, sort = "nome") Pageable pagination){
-        return productService.getAllProducts(pagination);
+    public Page<ProductDTO> getAllProducts(Pageable pageable) {
+        return productService.getAllProducts(pageable);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductDetailsDTO> getProductById(@PathVariable int id){
         ProductDetailsDTO productDTO = productService.getProductById(id);
-
-        return productDTO != null ? ResponseEntity.ok(productDTO) : ResponseEntity.notFound().build();
-    }
-
-    @GetMapping("/flashsales")
-    public ResponseEntity<Page<ProductDTO>> getProductsInFlashSales(@PageableDefault(size = 10, sort = "nome") Pageable pagination){
-        Page<ProductDTO> productDTO = productService.getProductsInFlashSales(pagination);
 
         return productDTO != null ? ResponseEntity.ok(productDTO) : ResponseEntity.notFound().build();
     }
@@ -51,22 +43,10 @@ public class ProductController {
         return productDTO != null ? ResponseEntity.ok(productDTO) : ResponseEntity.notFound().build();
     }
 
-    @Operation(summary = "Busca podendo usar nenhum ou muitos filtros simultaneamente")
     @GetMapping("/search")
-    public ResponseEntity<Page<ProductDTO>> getProduct(
-            @Parameter(
-                    description = "Filtros de busca para os produtos\n",
-                    example = "{\"nome\":\"string\",\"categoria\":\"string\",\"minPrice\":\"value\",\"maxPrice\":\"value\",\"color\":\"string\"}"
-            )
-            @RequestParam Map<String, String> filters,
-            @PageableDefault(size = 10, sort = "nome") Pageable pagination){
-        // se estiver vazio
-        if (filters.isEmpty()) {
-            Page<ProductDTO> productDTOS = productService.getAllProducts(pagination);
-            return productDTOS != null ? ResponseEntity.ok(productDTOS) : ResponseEntity.notFound().build();
-        }
-        Page<ProductDTO> productDTOS = productService.buildFilteredProducts(filters, pagination);
-        return productDTOS != null ? ResponseEntity.ok(productDTOS) : ResponseEntity.notFound().build();
+    public ResponseEntity<Page<ProductDTO>> searchProducts(@RequestParam Map<String, String> filters, Pageable pageable){
+        Page<ProductDTO> products = filters.isEmpty() ? productService.getAllProducts(pageable) : productService.buildFilteredProducts(filters, pageable);
+        return products != null ? ResponseEntity.ok(products) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
@@ -76,8 +56,7 @@ public class ProductController {
 
     @PostMapping("/import")
     public List<ProductDTO> createProducts(@Valid @RequestBody List<ProductDetailsDTO> productDTO){
-        List<ProductDTO> productDTOS =  productService.createProducts(productDTO);
-        return productDTOS;
+        return productService.createProducts(productDTO);
     }
 
     @PutMapping("/update")

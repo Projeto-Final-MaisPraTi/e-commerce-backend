@@ -24,9 +24,9 @@ import com.ecommerce.app.service.sales.SalesService;
 @RestController
 @RequestMapping("/api/sales")
 public class SalesController {
-    
+
     @Autowired
-    private SalesService salesService;
+    private final SalesService salesService;
 
     public SalesController(SalesService salesService) {
         this.salesService = salesService;
@@ -43,15 +43,15 @@ public class SalesController {
     }
 
     @PostMapping
-    public ResponseEntity<SalesDTO> createSales(@RequestBody SalesDTO salesDTO, User user, Payment payment, Coupons coupons, SalesItemsDTO salesItemsDTO) {
-        SalesDTO newSales = salesService.createSale(salesDTO, user, payment, coupons, salesItemsDTO);
+    public ResponseEntity<SalesDTO> createSales(@RequestBody SalesDTO salesDTO, User user, Payment payment, Coupons coupons, @RequestBody List<SalesItemsDTO> salesItemsDTOList) {
+        SalesDTO newSales = salesService.createSale(salesDTO, user, payment, coupons, salesItemsDTOList);
         return ResponseEntity.status(201).body(newSales);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<SalesDTO> updateSales(
-            @PathVariable Integer id, @RequestBody SalesDTO salesDTO, User user, Payment payment, Coupons coupons, SalesItemsDTO salesItemsDTO) {
-        return ResponseEntity.ok(salesService.updateSale(id, salesDTO, user, payment, coupons, salesItemsDTO));
+            @PathVariable Integer id, @RequestBody SalesDTO salesDTO, User user, Payment payment, Coupons coupons, @RequestBody List<SalesItemsDTO> salesItemsDTOList) {
+        return ResponseEntity.ok(salesService.updateSale(id, salesDTO, user, payment, coupons, salesItemsDTOList));
     }
 
     @DeleteMapping("/{id}")
@@ -60,9 +60,8 @@ public class SalesController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{status}")
+    @GetMapping("/status/{status}")
     public List<SalesDTO> getSalesByStatus(@PathVariable TypeSaleStatus status) {
         return salesService.getSalesByStatus(status);
     }
-
 }
