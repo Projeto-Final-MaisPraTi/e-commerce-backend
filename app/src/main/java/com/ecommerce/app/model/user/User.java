@@ -14,6 +14,7 @@ import com.ecommerce.app.model.sales.Sales;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,6 +36,7 @@ public class User implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Setter
     @Getter
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
@@ -52,9 +54,5 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + this.roles.name()));
-    }
-
-    public void setRoles(Role roles) {
-        this.roles = Role.CLIENT;
     }
 }

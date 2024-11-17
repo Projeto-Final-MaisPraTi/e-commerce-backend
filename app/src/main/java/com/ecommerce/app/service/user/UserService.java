@@ -61,7 +61,6 @@ public class UserService implements UserDetailsService {
             User user = userOptional.get();
             user.setUsername(userDTO.getUsername());
             user.setEmail(userDTO.getEmail());
-            // Only update password if it is provided.
             if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
                 user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
             }
@@ -95,7 +94,7 @@ public class UserService implements UserDetailsService {
                 user.getUsername(),
                 user.getEmail(),
                 user.getRoles(),
-                user.getPassword() // Adicionado para updates, mas não é recomendado retornar senhas
+                user.getPassword()
         );
     }
 

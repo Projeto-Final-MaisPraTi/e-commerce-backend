@@ -5,7 +5,6 @@ import org.springframework.stereotype.Repository;
 
 import com.ecommerce.app.model.user.User;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository

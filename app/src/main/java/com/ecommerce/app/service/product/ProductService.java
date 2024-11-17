@@ -123,22 +123,6 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-////    Método de formatação do valor
-//    public String formatValue(Double price) {
-//        if (price == null) return null;
-//        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
-//        return currencyFormat.format(price);
-//    }
-//
-////    Método para calcular o desconto formatado
-//    public String calculateDiscount(Double price, Integer discount) {
-//        if (price == null || discount == null || discount == 0) {
-//            return null;
-//        }
-//        Double discountedPrice = price - (price * discount / 100);
-//        return formatValue(discountedPrice);
-//    }
-
     private ProductDetailsDTO convertToDTO(Product product) {
         ProductDetailsDTO productDTO = new ProductDetailsDTO();
         productDTO.setId(product.getId());
@@ -153,7 +137,10 @@ public class ProductService {
             productDTO.setPriceDiscount(CurrencyUtils.calculateDiscount(product.getPreco(), product.getDiscount()));
         }
         productDTO.setColor(product.getCor());
-        productDTO.setImages(product.getImages().stream().map(ProductImages::getImagem).toList());
+        String cover = imageProductService.getCoverByProductId(product.getId());
+        List<String> images = imageProductService.getImagesByProductId(product.getId());
+        images.add(0, cover);
+        productDTO.setImages(images);
 
         return productDTO;
     }
