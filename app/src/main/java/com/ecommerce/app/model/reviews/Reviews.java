@@ -32,5 +32,4 @@ public class Reviews {
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
-	
 }

@@ -13,7 +13,7 @@ import com.ecommerce.app.service.reviews.ReviewsService;
 @RestController
 @RequestMapping("/api/reviews")
 public class ReviewsController {
-    
+
     @Autowired
     private ReviewsService reviewsService;
 
@@ -22,24 +22,18 @@ public class ReviewsController {
         return reviewsService.getAllReviews();
     }
 
-    @GetMapping("/{id}")
-    public ReviewsDTO getReviewById(@PathVariable Integer id) {
-        return reviewsService.getReviewById(id);
+    @GetMapping("/{productId}")
+    public List<ReviewsDTO> getReviewsByProductId(@PathVariable Integer productId) {
+        return reviewsService.getReviewsByProductId(productId);
     }
 
     @PostMapping
-    public ReviewsDTO createReview(@RequestBody ReviewsDTO reviewsDTO, Product product, User user) {
-        return reviewsService.createReview(reviewsDTO, product, user);
-    }
-
-    @PutMapping("/{id}")
-    public ReviewsDTO updateReview(@PathVariable Integer id, @RequestBody ReviewsDTO reviewsDTO, Product product, User user) {
-        return reviewsService.updateReview(id, reviewsDTO, product, user);
+    public ReviewsDTO createOrUpdateReview(@RequestBody ReviewsDTO reviewsDTO) {
+        return reviewsService.createOrUpdateReview(reviewsDTO);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteReviews(@PathVariable Integer id) {
+    public void deleteReview(@PathVariable Integer id) {
         reviewsService.deleteReview(id);
     }
-
 }

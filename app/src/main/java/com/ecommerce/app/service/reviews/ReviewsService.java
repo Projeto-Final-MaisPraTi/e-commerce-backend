@@ -6,6 +6,7 @@ import com.ecommerce.app.model.reviews.Reviews;
 import com.ecommerce.app.model.user.User;
 import com.ecommerce.app.repository.product.ProductRepository;
 import com.ecommerce.app.repository.reviews.ReviewsRepository;
+import com.ecommerce.app.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ public class ReviewsService {
 
     private final ReviewsRepository reviewsRepository;
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
     public List<ReviewsDTO> getAllReviews() {
         return reviewsRepository
@@ -28,36 +30,33 @@ public class ReviewsService {
                 .collect(Collectors.toList());
     }
 
-    public ReviewsDTO getReviewById(Integer id) {
-        Optional<Reviews> reviews = reviewsRepository.findById(id);
-
-        return reviews.map(this::convertToDTO).orElseThrow(() -> new RuntimeException("Review não encontrada!"));
+    public List<ReviewsDTO> getReviewsByProductId(Integer productId) {
+        return reviewsRepository.findByProductId(productId)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
-    public ReviewsDTO createReview(ReviewsDTO reviewsDTO, Product product, User user) {
-        Reviews reviewProd = reviewsRepository.findById(reviewsDTO.getId_produto())
-                .orElseThrow(() -> new RuntimeException("Review não encontrada!"));
+    public ReviewsDTO createOrUpdateReview(ReviewsDTO reviewsDTO) {
+        Product product = productRepository.findById(reviewsDTO.getProductId())
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado!"));
+        User user = userRepository.findById(reviewsDTO.getUserId())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado!"));
 
-        Reviews reviews = new Reviews();
-        reviews.setAvaliacao(reviewsDTO.getAvaliacao());
-        reviews.setProduct(product);
-        reviews.setUser(user);
+        Optional<Reviews> existingReview = reviewsRepository.findByProductIdAndUserId(reviewsDTO.getProductId(), reviewsDTO.getUserId());
+        Reviews reviews;
 
-        reviewsRepository.save(reviews);
-
-        return convertToDTO(reviews);
-    }
-
-    public ReviewsDTO updateReview(Integer id, ReviewsDTO reviewsDTO, Product product, User user) {
-        Reviews reviews = reviewsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Review não encontrada!"));
-
-        reviews.setAvaliacao(reviewsDTO.getAvaliacao());
-        reviews.setProduct(product);
-        reviews.setUser(user);
+        if (existingReview.isPresent()) {
+            reviews = existingReview.get();
+            reviews.setAvaliacao(reviewsDTO.getAvaliacao());
+        } else {
+            reviews = new Reviews();
+            reviews.setAvaliacao(reviewsDTO.getAvaliacao());
+            reviews.setProduct(product);
+            reviews.setUser(user);
+        }
 
         reviewsRepository.save(reviews);
-
         return convertToDTO(reviews);
     }
 
@@ -70,10 +69,12 @@ public class ReviewsService {
 
     private ReviewsDTO convertToDTO(Reviews reviews) {
         ReviewsDTO reviewsDTO = new ReviewsDTO();
-        reviewsDTO.setId(reviewsDTO.getId());
-        reviewsDTO.setAvaliacao(reviewsDTO.getAvaliacao());
+        reviewsDTO.setId(reviews.getId());
+        reviewsDTO.setAvaliacao(reviews.getAvaliacao());
+        reviewsDTO.setProductId(reviews.getProduct().getId());
+        reviewsDTO.setUserId(reviews.getUser().getId());
+        reviewsDTO.setUsername(reviews.getUser().getUsername());
 
         return reviewsDTO;
     }
-    
 }
