@@ -53,6 +53,9 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + this.roles.name()));
+        String role = "ROLE_" + this.roles.name();
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
+        Collection<GrantedAuthority> authorities = List.of(authority);
+        return authorities;
     }
 }

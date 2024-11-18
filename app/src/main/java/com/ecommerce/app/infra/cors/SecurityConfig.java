@@ -65,18 +65,18 @@ public class SecurityConfig {
 		return http
 				.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(auth -> {
-					auth.requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMIN");
-					auth.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
-					auth.requestMatchers("/auth/**").permitAll();
-					auth.requestMatchers("/api/product/**").permitAll();
-					auth.requestMatchers(HttpMethod.GET, "/api/product/**").permitAll();
 					auth.requestMatchers(HttpMethod.POST, "/api/product/**").hasRole("ADMIN");
 					auth.requestMatchers(HttpMethod.PUT, "/api/product/**").hasRole("ADMIN");
-					auth.requestMatchers(HttpMethod.GET,"/api/images/**").permitAll();
 					auth.requestMatchers(HttpMethod.POST,"/api/images/**").hasRole("ADMIN");
+//					auth.requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMIN");
 					auth.requestMatchers(HttpMethod.PUT,"/api/images/**").hasRole("ADMIN");
 					auth.requestMatchers("/api/sales").authenticated();
 					auth.requestMatchers("/api/itemcart").authenticated();
+					auth.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
+					auth.requestMatchers("/auth/**").permitAll();
+//					auth.requestMatchers("/api/product/**").permitAll();
+					auth.requestMatchers(HttpMethod.GET, "/api/product/**").permitAll();
+					auth.requestMatchers(HttpMethod.GET,"/api/images/**").permitAll();
 					auth.requestMatchers("/api/address").authenticated();
 					auth.requestMatchers("/api/payments").authenticated();
 					auth.anyRequest().authenticated();

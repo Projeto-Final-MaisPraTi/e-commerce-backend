@@ -1,5 +1,6 @@
 package com.ecommerce.app.service.customUserDetails;
 
+import com.ecommerce.app.infra.security.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.ecommerce.app.model.user.User;
 import com.ecommerce.app.repository.user.UserRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -27,6 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (user.isEmpty()) {
             throw new UsernameNotFoundException("Usuário não encontrado: " + email);
         }
-        return user.get(); // Retorna a instância de User, que implementa UserDetails
+        CustomUserDetails userDetails = new CustomUserDetails(user.get());
+        return userDetails; // Retorna a instância de User, que implementa UserDetails
     }
 }

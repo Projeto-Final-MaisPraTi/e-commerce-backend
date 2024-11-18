@@ -82,6 +82,8 @@ public class ProductController {
     )
     @GetMapping("/{id}/details")
     public ResponseEntity<ProductDetailsDTO> getProductDetailsById(@PathVariable int id){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(authentication.getPrincipal());
         ProductDetailsDTO productDTO = productService.getProductById(id);
 
         return productDTO != null ? ResponseEntity.ok(productDTO) : ResponseEntity.notFound().build();
@@ -153,6 +155,7 @@ public class ProductController {
     )
     @PostMapping
     public ResponseEntity<ProductDetailsDTO> createProduct(@Valid @RequestBody ProductDetailsDTO productDTO){
+
         ProductDetailsDTO product = productService.createProduct(productDTO);
         URI location =  URI.create("/api/product/" + product.getId());
         return ResponseEntity.created(location).body(product);
@@ -168,9 +171,15 @@ public class ProductController {
             }
     )
     @PostMapping("/import")
-    public List<ProductDTO> createProducts(@Valid @RequestBody List<ProductDetailsDTO> productDTO){
+    public List<ProductDTO> createProducts(@RequestBody List<ProductDetailsDTO> productDTO){
         List<ProductDTO> productDTOS =  productService.createProducts(productDTO);
         return productDTOS;
+    }
+
+    @GetMapping("/export")
+    public List<ProductDetailsDTO> exportProduct() {
+        List<ProductDetailsDTO> products = productService.exportAllProducts();
+        return products;
     }
 
     @Operation(
