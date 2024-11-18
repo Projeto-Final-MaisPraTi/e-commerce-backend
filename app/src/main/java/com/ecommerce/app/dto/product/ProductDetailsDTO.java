@@ -34,7 +34,7 @@ public class ProductDetailsDTO {
     @NotBlank(message = "O nome do produto não pode estar em branco")
     private String name;
 
-    @PositiveOrZero(message = "A classificação deve ser positiva ou zero")
+//    @PositiveOrZero(message = "A classificação deve ser positiva ou zero")
     private int rating;
 
     @NotNull(message = "O preço não pode estar em branco")

@@ -192,6 +192,7 @@ public class ProductService {
             product.setDiscount(productDTO.getDiscount());
             product.setFlashSale(productDTO.getFlashSale());
             product.addImages(productDTO.getImages());
+            product.getImages().get(0).setCapaProduto(true);
             productRepository.save(product);
             simpleProduct.add(new ProductDTO(product));
         }
@@ -214,5 +215,10 @@ public Page<ProductDTO> getProductsInFlashSales(Pageable pageable) {
         }
         return result.map(r ->
                 getProductCardById(((Number) r[0]).intValue()));
+    }
+
+    public List<ProductDetailsDTO> exportAllProducts() {
+        List<Product> products = productRepository.findAll();
+        return products.stream().map(this::convertToDTO).toList();
     }
 }
