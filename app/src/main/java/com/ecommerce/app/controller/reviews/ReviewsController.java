@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import com.ecommerce.app.dto.reviews.ReviewsDTO;
 import com.ecommerce.app.service.reviews.ReviewsService;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/reviews")
 public class ReviewsController {

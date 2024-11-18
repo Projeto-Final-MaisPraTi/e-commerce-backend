@@ -11,6 +11,7 @@ import com.ecommerce.app.service.user.UserService;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {

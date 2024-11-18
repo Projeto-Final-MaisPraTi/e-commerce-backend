@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.ecommerce.app.dto.productImage.ProductImagesDTO;
 import com.ecommerce.app.service.productImages.ProductImagesService;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/product-images")
 public class ProductImagesController {

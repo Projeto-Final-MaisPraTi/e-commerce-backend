@@ -9,6 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -76,9 +77,11 @@ public class SecurityConfig {
 					auth.requestMatchers(HttpMethod.PUT,"/api/images/**").hasRole("ADMIN");
 					auth.requestMatchers("/api/sales").authenticated();
 					auth.requestMatchers("/api/itemcart").authenticated();
+					auth.requestMatchers("/api/address").authenticated();
+					auth.requestMatchers("/api/payments").authenticated();
 					auth.anyRequest().authenticated();
 				})
-
+				.cors(Customizer.withDefaults())
 				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
 				.build();
 	}
@@ -88,7 +91,7 @@ public class SecurityConfig {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		CorsConfiguration config = new CorsConfiguration();
 		config.setAllowCredentials(true);
-		config.addAllowedOriginPattern("*");
+		config.addAllowedOriginPattern("http://localhost:5173");
 		config.addAllowedHeader("*");
 		config.addAllowedMethod("*");
 		source.registerCorsConfiguration("/**", config);
