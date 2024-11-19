@@ -2,13 +2,14 @@ package com.ecommerce.app.infra.security;
 
 import com.ecommerce.app.infra.enums.Role;
 import com.ecommerce.app.model.user.User;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
-
+@Data
 public class CustomUserDetails implements UserDetails {
     private Integer id;
 

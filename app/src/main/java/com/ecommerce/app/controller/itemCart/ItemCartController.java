@@ -1,6 +1,8 @@
 package com.ecommerce.app.controller.itemCart;
 
 import java.util.List;
+
+import com.ecommerce.app.dto.itemCart.ItemCartDetailsDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +20,8 @@ public class ItemCartController {
     private ItemCartService itemCartService;
 
     @GetMapping
-    public List<ItemCartDTO> getAllCartItems() {
-        return itemCartService.getAllCartItems();
+    public List<ItemCartDetailsDTO> getAllCartItemsByUser() {
+        return itemCartService.getAllCartItemsByUser();
     }
 
     @GetMapping("/{id}")

@@ -47,7 +47,7 @@ public class Address {
 	@Column(name = "zipcode", nullable = false)
 	private String cep;
 
-	@ManyToOne
+	@ManyToOne()
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 }
