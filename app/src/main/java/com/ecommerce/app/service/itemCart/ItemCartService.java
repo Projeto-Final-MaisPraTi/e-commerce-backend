@@ -41,14 +41,12 @@ public class ItemCartService {
     public ItemCartDTO addItemToCart(ItemCartDTO itemCartDTO) {
         ItemCart itemCart = new ItemCart();
 
-        // Buscar e validar o produto
         Product product = productRepository.findById(itemCartDTO.getProductDetailsDTO().getId())
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
         itemCart.setProduct(product);
 
         itemCart.setQuantidade(itemCartDTO.getQuantidade());
 
-        // Vincular o item ao usuário
         User user = userRepository.findById(itemCartDTO.getUserDTO().getId())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
         itemCart.setUser(user);
@@ -61,12 +59,10 @@ public class ItemCartService {
         ItemCart itemCart = itemCartRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item de carrinho não encontrado!"));
 
-        // Buscar e validar o produto
         Product product = productRepository.findById(itemCartDTO.getProductDetailsDTO().getId())
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
         itemCart.setProduct(product);
 
-        // Validar e definir quantidade
         itemCart.setQuantidade(itemCartDTO.getQuantidade());
 
         itemCartRepository.save(itemCart);

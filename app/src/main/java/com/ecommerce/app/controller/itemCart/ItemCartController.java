@@ -9,9 +9,9 @@ import com.ecommerce.app.service.itemCart.ItemCartService;
 
 import jakarta.validation.Valid;
 
-@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/itemcart")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ItemCartController {
 
     @Autowired

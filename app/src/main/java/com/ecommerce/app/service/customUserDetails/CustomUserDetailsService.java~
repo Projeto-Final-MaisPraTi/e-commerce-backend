@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
+//public class CustomUserDetailsService implements UserDetailsService {
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
@@ -24,8 +25,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + email));
-        return new CustomUserDetails(user);
+        Optional<User> user = userRepository.findByEmail(email); // Mudou para buscar por email
+        if (user.isEmpty()) {
+            throw new UsernameNotFoundException("Usuário não encontrado: " + email);
+        }
+        CustomUserDetails userDetails = new CustomUserDetails(user.get());
+        return userDetails; // Retorna a instância de User, que implementa UserDetails
     }
 }

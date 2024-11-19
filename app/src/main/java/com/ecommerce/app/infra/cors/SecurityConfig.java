@@ -77,6 +77,7 @@ public class SecurityConfig {
 //					auth.requestMatchers("/api/product/**").permitAll();
 					auth.requestMatchers(HttpMethod.GET, "/api/product/**").permitAll();
 					auth.requestMatchers(HttpMethod.GET,"/api/images/**").permitAll();
+					auth.requestMatchers(HttpMethod.POST, "/auth/decode").permitAll();
 					auth.requestMatchers("/api/address").authenticated();
 					auth.requestMatchers("/api/payments").authenticated();
 					auth.anyRequest().authenticated();
