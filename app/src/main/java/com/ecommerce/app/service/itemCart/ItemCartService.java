@@ -1,8 +1,11 @@
 package com.ecommerce.app.service.itemCart;
 
 import com.ecommerce.app.dto.itemCart.ItemCartDTO;
+import com.ecommerce.app.dto.itemCart.ItemCartDetailsDTO;
+import com.ecommerce.app.dto.product.ProductDTO;
 import com.ecommerce.app.dto.product.ProductDetailsDTO;
 import com.ecommerce.app.dto.user.UserDTO;
+import com.ecommerce.app.infra.security.CustomUserDetails;
 import com.ecommerce.app.model.itemCart.ItemCart;
 import com.ecommerce.app.model.product.Product;
 import com.ecommerce.app.model.user.User;
@@ -10,10 +13,16 @@ import com.ecommerce.app.repository.itemCart.ItemCartRepository;
 import com.ecommerce.app.repository.product.ProductRepository;
 import com.ecommerce.app.repository.user.UserRepository;
 import com.ecommerce.app.utils.CurrencyUtils;
+import com.ecommerce.app.utils.UserContextUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,22 +41,50 @@ public class ItemCartService {
                 .collect(Collectors.toList());
     }
 
+    public List<ItemCartDetailsDTO> getAllCartItemsByUser() {
+
+        Optional<Integer> idUser = UserContextUtils.getAuthenticatedUserId();
+        if (idUser.isEmpty()) {
+            throw new RuntimeException("Usuario não autenticado");
+        }
+        List<ItemCart> itemCarts = itemCartRepository.findByUserId(idUser.get());
+        return itemCarts.stream().map(item ->
+                        new ItemCartDetailsDTO(
+                                item.getId(),
+                                new ProductDTO(item.getProduct(), item.getProduct().getImages().get(0).getImagem()),
+                                item.getQuantidade(),
+                                (item.getProduct().getPreco() * item.getQuantidade()),
+                                item.getProduct().getDiscount())
+                ).collect(Collectors.toList());
+    }
+
     public ItemCartDTO getCartItemById(Integer id) {
         ItemCart itemCart = itemCartRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item de carrinho não encontrado"));
         return convertToDTO(itemCart);
     }
 
+    @Transactional
     public ItemCartDTO addItemToCart(ItemCartDTO itemCartDTO) {
+
+        Optional<Integer> userId = UserContextUtils.getAuthenticatedUserId();
+        if(userId.isEmpty()) {
+            throw new RuntimeException("Usuario não autenticado");
+        }
+
         ItemCart itemCart = new ItemCart();
 
+        // Buscar e validar o produto
         Product product = productRepository.findById(itemCartDTO.getProductDetailsDTO().getId())
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
         itemCart.setProduct(product);
 
         itemCart.setQuantidade(itemCartDTO.getQuantidade());
 
-        User user = userRepository.findById(itemCartDTO.getUserDTO().getId())
+        // Vincular o item ao usuário
+
+
+        User user = userRepository.findById(userId.get())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
         itemCart.setUser(user);
 
@@ -59,10 +96,12 @@ public class ItemCartService {
         ItemCart itemCart = itemCartRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item de carrinho não encontrado!"));
 
+        // Buscar e validar o produto
         Product product = productRepository.findById(itemCartDTO.getProductDetailsDTO().getId())
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
         itemCart.setProduct(product);
 
+        // Validar e definir quantidade
         itemCart.setQuantidade(itemCartDTO.getQuantidade());
 
         itemCartRepository.save(itemCart);
