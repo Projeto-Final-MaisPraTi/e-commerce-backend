@@ -36,7 +36,7 @@ public class JwtTokenProvider {
     }
 
     public String generateToken(UserDetails userDetails) {
-        User user = userService.findByEmail(userDetails.getUsername());
+        User user = userService.findByEmail(((User)userDetails).getEmail());
         Map<String, Object> claims = Map.of(
                 "id", user.getId(),
                 "role", user.getRoles().name(),

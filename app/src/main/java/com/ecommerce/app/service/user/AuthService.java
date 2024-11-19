@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -50,8 +51,11 @@ public class AuthService {
 
     public AuthResponse login(LoginRequest loginRequest) {
         // Verificar se o usuário existe no banco de dados
-        User user = userRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Optional<User> optionalUser = userRepository.findByEmail(loginRequest.getEmail());
+        if (optionalUser.isEmpty()) {
+            throw new RuntimeException("Usuário não encontrado");
+        }
+        User user = optionalUser.get();
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             throw new RuntimeException("Senha incorreta");
