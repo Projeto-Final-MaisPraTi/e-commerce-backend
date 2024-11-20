@@ -23,11 +23,8 @@ public class ItemCartDetailsDTO {
     @NotNull(message = "A quantidade não pode estar em branco")
     @Min(value = 1, message = "A quantidade deve ser pelo menos 1")
     @Max(value = 100, message = "A quantidade máxima permitida é 100")
-    private Integer quantidade;
+    private Integer quantity;
 
     private Double preco; // Valor total do produto multiplicado pela quantidade
     private Integer descount;
-
-//    @NotNull(message = "O usuário não pode estar em branco")
-//    private UserDTO userDTO;
 }

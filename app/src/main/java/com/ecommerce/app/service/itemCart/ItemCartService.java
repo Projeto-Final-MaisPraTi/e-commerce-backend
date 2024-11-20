@@ -51,7 +51,9 @@ public class ItemCartService {
         return itemCarts.stream().map(item ->
                         new ItemCartDetailsDTO(
                                 item.getId(),
-                                new ProductDTO(item.getProduct(), item.getProduct().getImages().get(0).getImagem()),
+                                new ProductDTO(
+                                        item.getProduct(),
+                                        item.getProduct().getImages().get(0).getImagem()),
                                 item.getQuantidade(),
                                 (item.getProduct().getPreco() * item.getQuantidade()),
                                 item.getProduct().getDiscount())
@@ -137,6 +139,21 @@ public class ItemCartService {
                 .color(product.getCor())
                 .stock(product.getEstoque())
                 .build();
+    }
+
+    @Transactional
+    public ItemCartDetailsDTO updateQuantity(Integer id, Integer quantity) {
+        ItemCart itemCart = itemCartRepository.getReferenceById(id);
+        itemCart.setQuantidade(quantity);
+        itemCartRepository.save(itemCart);
+        return new ItemCartDetailsDTO(
+                itemCart.getId(),
+                new ProductDTO(
+                        itemCart.getProduct(),
+                        itemCart.getProduct().getImages().get(0).getImagem()),
+                itemCart.getQuantidade(),
+                (itemCart.getProduct().getPreco() * itemCart.getQuantidade()),
+                itemCart.getProduct().getDiscount());
     }
 
 
