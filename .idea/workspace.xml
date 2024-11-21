@@ -6,8 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="47b8f2f2-d732-4f0f-8882-f7a427bb2132" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/controller/user/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/controller/user/UserController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/infra/cors/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/infra/cors/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/model/reviews/Reviews.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/model/reviews/Reviews.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/user/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ecommerce/app/service/user/UserService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

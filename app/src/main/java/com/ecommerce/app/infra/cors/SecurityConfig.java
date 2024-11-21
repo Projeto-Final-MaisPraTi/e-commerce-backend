@@ -80,6 +80,8 @@ public class SecurityConfig {
 					auth.requestMatchers(HttpMethod.POST, "/auth/decode").permitAll();
 					auth.requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll();
 					auth.requestMatchers(HttpMethod.POST, "/api/reviews").authenticated();
+					auth.requestMatchers(HttpMethod.GET, "/users/profile").authenticated();
+					auth.requestMatchers(HttpMethod.PUT, "/users/update").authenticated();
 					auth.requestMatchers("/api/address").authenticated();
 					auth.requestMatchers("/api/payments").authenticated();
 					auth.anyRequest().authenticated();

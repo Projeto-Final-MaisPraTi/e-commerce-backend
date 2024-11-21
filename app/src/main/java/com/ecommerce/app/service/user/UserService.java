@@ -5,6 +5,7 @@ import com.ecommerce.app.dto.user.UserDTO;
 import com.ecommerce.app.model.user.User;
 import com.ecommerce.app.repository.user.UserRepository;
 
+import com.ecommerce.app.utils.UserContextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,6 +39,19 @@ public class UserService implements UserDetailsService {
         return user.map(this::convertToDTO).orElse(null);
     }
 
+    public UserDTO getAuthenticatedUserProfile() throws AccountNotFoundException {
+        Optional<Integer> userIdOpt = UserContextUtils.getAuthenticatedUserId();
+        if (userIdOpt.isEmpty()) {
+            throw new RuntimeException("Usuário não autenticado");  // Lança erro caso não esteja autenticado
+        }
+
+        Integer userId = userIdOpt.get();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AccountNotFoundException("Usuário não encontrado"));
+
+        return convertToDTO(user);
+    }
+
     public User createUser(RegisterRequest registerRequest) {
         Optional<User> existingUser = userRepository.findByEmail(registerRequest.getEmail());
         if (existingUser.isPresent()) {
@@ -59,12 +74,16 @@ public class UserService implements UserDetailsService {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
+            if (userDTO.getUsername() != null && !userDTO.getUsername().isEmpty()) {
             user.setUsername(userDTO.getUsername());
+            }
+            if (userDTO.getEmail() != null && !userDTO.getEmail().isEmpty()) {
             user.setEmail(userDTO.getEmail());
+            }
             if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
                 user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
             }
-            user.setRoles(userDTO.getRoles());
+//            user.setRoles(userDTO.getRoles());
             userRepository.save(user);
 
             return convertToDTO(user);
