@@ -52,9 +52,9 @@ public class UserController {
         return ResponseEntity.ok(userDTO);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Integer id, @RequestBody UserDTO userDTO) {
-        UserDTO updateUser = userService.updateUser(id, userDTO);
+    @PutMapping("/update")
+    public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO) {
+        UserDTO updateUser = userService.updateUser(userDTO);
         return updateUser != null ? ResponseEntity.ok(updateUser) : ResponseEntity.notFound().build();
     }
 

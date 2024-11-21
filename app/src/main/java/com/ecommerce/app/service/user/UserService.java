@@ -70,8 +70,12 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
-    public UserDTO updateUser(Integer id, UserDTO userDTO) {
-        Optional<User> userOptional = userRepository.findById(id);
+    public UserDTO updateUser(UserDTO userDTO) {
+        Optional<Integer> optionalID = UserContextUtils.getAuthenticatedUserId();
+        if (optionalID.isEmpty()) {
+            throw new RuntimeException("Usuário não está autenticado");
+        }
+        Optional<User> userOptional = userRepository.findById(optionalID.get());
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (userDTO.getUsername() != null && !userDTO.getUsername().isEmpty()) {
@@ -83,7 +87,6 @@ public class UserService implements UserDetailsService {
             if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
                 user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
             }
-//            user.setRoles(userDTO.getRoles());
             userRepository.save(user);
 
             return convertToDTO(user);
