@@ -1,5 +1,6 @@
 package com.ecommerce.app.model.sales;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.ecommerce.app.infra.enums.TypeSaleStatus;
@@ -52,5 +53,7 @@ public class Sales {
 	@JoinColumn(name = "address_id")
 	private Address address;
 
-	private boolean activeOrder;
+	private LocalDate date;
+
+	private Boolean activeOrder;
 }

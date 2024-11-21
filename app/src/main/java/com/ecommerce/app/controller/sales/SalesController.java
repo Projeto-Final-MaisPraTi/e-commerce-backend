@@ -31,6 +31,11 @@ public class SalesController {
         return salesService.getAllSales();
     }
 
+    @GetMapping("/user")
+    public List<SalesDTO> getAllSalesUser() {
+        return salesService.getAllSalesByUser();
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<SalesDTO> getSalesById(@PathVariable Integer id) {
         return ResponseEntity.ok(salesService.getSaleById(id));
@@ -40,6 +45,13 @@ public class SalesController {
     public ResponseEntity<SalesDTO> createSales(@RequestBody SalesDTO salesDTO) {
         SalesDTO newSales = salesService.createSale(salesDTO);
         return ResponseEntity.status(201).body(newSales);
+    }
+
+    @PutMapping("/{id}/disable")
+    public ResponseEntity<SalesDTO> disableSale(@PathVariable Integer id) {
+        SalesDTO salesDTO = salesService.disableSaleById(id);
+
+        return ResponseEntity.ok(salesDTO);
     }
 
     @PutMapping("/{id}")

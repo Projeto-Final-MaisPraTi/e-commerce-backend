@@ -24,7 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -72,10 +74,12 @@ public class SalesService {
 
         Sales sales = new Sales();
         sales.setTotal(salesDTO.getTotal());
-        sales.setTypeSaleStatus(TypeSaleStatus.PENDENTE);
+        sales.setTypeSaleStatus(TypeSaleStatus.REALIZADO);
         sales.setUser(user);
         sales.setCoupons(null);
         sales.setPayment(null);
+        sales.setActiveOrder(true);
+        sales.setDate(LocalDate.now());
         Address address = addressRepository.findById(salesDTO.getAddressId()).get();
         sales.setAddress(address);
         salesRepository.save(sales);
@@ -162,5 +166,33 @@ public class SalesService {
                 }).orElseThrow(
                         () -> new RuntimeException("Venda não encontrada!")
                 );
+    }
+
+    @Transactional
+    public SalesDTO disableSaleById(Integer id) {
+        Optional<Sales> salesOptional = salesRepository.findById(id);
+        if (salesOptional.isEmpty()) {
+            throw new RuntimeException("Venda não encontrada");
+        }
+        Sales sales = salesOptional.get();
+        sales.setActiveOrder(false);
+        sales.setTypeSaleStatus(TypeSaleStatus.CANCELADO);
+        salesRepository.save(sales);
+
+        return new SalesDTO(sales);
+    }
+
+    public List<SalesDTO> getAllSalesByUser() {
+        Optional<Integer> optionalId = UserContextUtils.getAuthenticatedUserId();
+        if (optionalId.isEmpty()) {
+            throw new RuntimeException("Usuário não autenticado");
+        }
+        List<Sales> sales = salesRepository.findByUserId(optionalId.get());
+        if (sales.isEmpty()) {
+            throw new RuntimeException("Nenhuma venda encontrada para o usuário");
+        }
+        List<SalesDTO> salesDTOS = sales.stream()
+                .map(SalesDTO::new).collect(Collectors.toList());
+        return salesDTOS;
     }
 }
