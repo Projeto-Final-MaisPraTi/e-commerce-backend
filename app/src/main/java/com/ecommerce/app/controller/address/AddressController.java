@@ -4,6 +4,7 @@ import com.ecommerce.app.dto.address.AddressDTO;
 import com.ecommerce.app.service.address.AddressService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,14 +27,23 @@ public class AddressController {
         return addressService.getAddressById(id);
     }
 
+    @GetMapping("/user")
+    public ResponseEntity<AddressDTO> getAddressByUser() {
+        AddressDTO addressDTO = addressService.getAddressByUser();
+        if (addressDTO == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(addressDTO);
+    }
+
     @PostMapping
     public AddressDTO createAddress(@Valid @RequestBody AddressDTO addressDTO) {
         return addressService.createAddress(addressDTO);
     }
 
-    @PutMapping("/{id}")
-    public AddressDTO updateAddress(@PathVariable Integer id, @Valid @RequestBody AddressDTO addressDTO) {
-        return addressService.updateAddress(id, addressDTO);
+    @PutMapping
+    public AddressDTO updateAddress(@Valid @RequestBody AddressDTO addressDTO) {
+        return addressService.updateAddress(addressDTO);
     }
 
     @DeleteMapping("/{id}")

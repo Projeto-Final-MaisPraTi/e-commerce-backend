@@ -51,7 +51,9 @@ public class ItemCartService {
         return itemCarts.stream().map(item ->
                         new ItemCartDetailsDTO(
                                 item.getId(),
-                                new ProductDTO(item.getProduct(), item.getProduct().getImages().get(0).getImagem()),
+                                new ProductDTO(
+                                        item.getProduct(),
+                                        item.getProduct().getImages().get(0).getImagem()),
                                 item.getQuantidade(),
                                 (item.getProduct().getPreco() * item.getQuantidade()),
                                 item.getProduct().getDiscount())
@@ -72,21 +74,29 @@ public class ItemCartService {
             throw new RuntimeException("Usuario não autenticado");
         }
 
-        ItemCart itemCart = new ItemCart();
+        Optional<ItemCart> existItemCartInUser = itemCartRepository.findByUserIdAndProductId(userId.get(), itemCartDTO.getProductDetailsDTO().getId());
+        ItemCart itemCart;
+        if (existItemCartInUser.isPresent()) {
+            itemCart = existItemCartInUser.get();
+            itemCart.setQuantidade(itemCart.getQuantidade() + 1);
+        } else {
 
-        // Buscar e validar o produto
-        Product product = productRepository.findById(itemCartDTO.getProductDetailsDTO().getId())
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
-        itemCart.setProduct(product);
+            itemCart = new ItemCart();
 
-        itemCart.setQuantidade(itemCartDTO.getQuantidade());
+            // Buscar e validar o produto
+            Product product = productRepository.findById(itemCartDTO.getProductDetailsDTO().getId())
+                    .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+            itemCart.setProduct(product);
 
-        // Vincular o item ao usuário
+            itemCart.setQuantidade(itemCartDTO.getQuantidade());
+
+            // Vincular o item ao usuário
 
 
-        User user = userRepository.findById(userId.get())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        itemCart.setUser(user);
+            User user = userRepository.findById(userId.get())
+                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+            itemCart.setUser(user);
+        }
 
         itemCartRepository.save(itemCart);
         return convertToDTO(itemCart);
@@ -137,6 +147,21 @@ public class ItemCartService {
                 .color(product.getCor())
                 .stock(product.getEstoque())
                 .build();
+    }
+
+    @Transactional
+    public ItemCartDetailsDTO updateQuantity(Integer id, Integer quantity) {
+        ItemCart itemCart = itemCartRepository.getReferenceById(id);
+        itemCart.setQuantidade(quantity);
+        itemCartRepository.save(itemCart);
+        return new ItemCartDetailsDTO(
+                itemCart.getId(),
+                new ProductDTO(
+                        itemCart.getProduct(),
+                        itemCart.getProduct().getImages().get(0).getImagem()),
+                itemCart.getQuantidade(),
+                (itemCart.getProduct().getPreco() * itemCart.getQuantidade()),
+                itemCart.getProduct().getDiscount());
     }
 
 

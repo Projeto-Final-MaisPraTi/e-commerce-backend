@@ -37,8 +37,8 @@ public class SalesController {
     }
 
     @PostMapping
-    public ResponseEntity<SalesDTO> createSales(@RequestBody SalesDTO salesDTO, User user, Payment payment, Coupons coupons, @RequestBody List<SalesItemsDTO> salesItemsDTOList) {
-        SalesDTO newSales = salesService.createSale(salesDTO, user, payment, coupons, salesItemsDTOList);
+    public ResponseEntity<SalesDTO> createSales(@RequestBody SalesDTO salesDTO) {
+        SalesDTO newSales = salesService.createSale(salesDTO);
         return ResponseEntity.status(201).body(newSales);
     }
 

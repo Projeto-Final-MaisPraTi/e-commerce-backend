@@ -2,6 +2,8 @@ package com.ecommerce.app.controller.salesItems;
 
 import java.util.List;
 
+import com.ecommerce.app.dto.itemCart.ItemCartDetailsDTO;
+import com.ecommerce.app.dto.sales.SaleDTO;
 import com.ecommerce.app.model.product.Product;
 import com.ecommerce.app.model.sales.Sales;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +37,10 @@ public class SalesItemsController {
     }
 
     @PostMapping
-    public ResponseEntity<SalesItemsDTO> createSalesItem(@Valid @RequestBody SalesItemsDTO salesItemsDTO, Sales sales, Product product) {
-        return ResponseEntity.ok(salesItemsService.createSalesItem(salesItemsDTO, sales, product));
+    public ResponseEntity<List<SalesItemsDTO>> createSalesItem(@Valid @RequestBody SaleDTO saleDTO) {
+        List<SalesItemsDTO> salesItemsDTO = salesItemsService.createSalesItem(saleDTO);
+        salesItemsService.deleteItensInCart(saleDTO.getItemsCart());
+        return ResponseEntity.ok(salesItemsDTO);
     }
 
     @PutMapping("/{id}")

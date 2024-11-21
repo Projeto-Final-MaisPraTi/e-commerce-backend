@@ -8,16 +8,6 @@ import lombok.NoArgsConstructor;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.PositiveOrZero;
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.PositiveOrZero;
 
 @Data
@@ -27,35 +17,12 @@ import jakarta.validation.constraints.PositiveOrZero;
 public class PaymentDTO {
     private Integer id;
 
+    private Integer idSale;
+
     @NotBlank(message = "O tipo de pagamento não pode estar em branco")
     private String tipo; // "DINHEIRO", "CARTÃO"
 
-    @NotBlank(message = "O nome do dono não pode estar em branco")
-    private String nomeDoDono;
-
-    @NotBlank(message = "O número do cartão não pode estar em branco")
-    @Pattern(regexp = "\\d{16}", message = "O número do cartão deve ter 16 dígitos")
-    private String numeroCartao;
-
-    @NotBlank(message = "A validade não pode estar em branco")
-    @Pattern(regexp = "(0[1-9]|1[0-2])/\\d{2}", message = "A validade deve estar no formato MM/AA")
-    private String validade;
-
-    @NotBlank(message = "O CVC não pode estar em branco")
-    @Pattern(regexp = "\\d{3}", message = "O CVC deve ter 3 dígitos")
-    private String cvc;
-
-    @NotBlank(message = "O status não pode estar em branco")
     private String status; // "SUCESSO", "FALHA"
-
-    @NotNull(message = "O número de parcelas não pode estar em branco")
-    @Min(value = 1, message = "O número de parcelas deve ser pelo menos 1")
-    @Max(value = 12, message = "O número máximo de parcelas é 12")
-    private Integer parcelas; // Número de parcelas
-
-    @NotNull(message = "O valor do juros não pode estar em branco")
-    @PositiveOrZero(message = "O valor do juros não pode ser negativo")
-    private Double juros; // Juros
 
     @NotNull(message = "O valor não pode estar em branco")
     @PositiveOrZero(message = "O valor deve ser positivo")
@@ -65,14 +32,21 @@ public class PaymentDTO {
     @PositiveOrZero(message = "O valor da parcela deve ser positivo")
     private Double valorParcela; // Valor de cada parcela
 
+    private CardDetailsDTO cardDetails;
+
     // Novo construtor
     public PaymentDTO(Payment payment) {
-        this.id = payment.getId();
-        this.tipo = payment.getTipo();
-//        this.status = payment.getStatus();
-//        this.parcelas = payment.getParcelas();
-//        this.juros = payment.getJuros();
-        this.valor = payment.getValor();
-        this.valorParcela = payment.getValorParcela();
+        if (payment.getId() != null) {
+            this.id = payment.getId();
+        }
+        if (payment.getTipo() != null) {
+            this.tipo = payment.getTipo();
+        }
+        if (payment.getValor() != null) {
+            this.valor = payment.getValor();
+        }
+        if (payment.getValorParcela() != null) {
+            this.valorParcela = payment.getValorParcela();
+        }
     }
 }

@@ -19,12 +19,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SalesDTO {
-    private Integer id;
+public class SaleDTO {
+    private Integer idSale;
     private Double total;
-    private Integer addressId;
-    private PaymentDTO payment;
-    private CouponsDTO coupons;
-    private List<ItemCartDetailsDTO> salesItems;
-    private TypeSaleStatus typeSaleStatus;
+    private List<ItemCartDetailsDTO> itemsCart;
 }

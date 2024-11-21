@@ -71,7 +71,7 @@ public class SecurityConfig {
 //					auth.requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMIN");
 					auth.requestMatchers(HttpMethod.PUT,"/api/images/**").hasRole("ADMIN");
 					auth.requestMatchers("/api/sales").authenticated();
-					auth.requestMatchers("/api/itemcart").authenticated();
+					auth.requestMatchers("/api/itemcart/**").authenticated();
 					auth.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
 					auth.requestMatchers("/auth/**").permitAll();
 //					auth.requestMatchers("/api/product/**").permitAll();
