@@ -7,15 +7,20 @@ import com.ecommerce.app.dto.sales.SalesDTO;
 import com.ecommerce.app.dto.salesItems.SalesItemsDTO;
 import com.ecommerce.app.dto.user.UserDTO;
 import com.ecommerce.app.infra.enums.TypeSaleStatus;
+import com.ecommerce.app.model.address.Address;
 import com.ecommerce.app.model.coupons.Coupons;
 import com.ecommerce.app.model.payment.Payment;
 import com.ecommerce.app.model.product.Product;
 import com.ecommerce.app.model.sales.Sales;
 import com.ecommerce.app.model.salesItems.SalesItems;
 import com.ecommerce.app.model.user.User;
+import com.ecommerce.app.repository.address.AddressRepository;
 import com.ecommerce.app.repository.sales.SalesRepository;
+import com.ecommerce.app.repository.user.UserRepository;
 import com.ecommerce.app.service.coupons.CouponsService;
+import com.ecommerce.app.utils.UserContextUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,7 +33,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SalesService {
 
-    private final SalesRepository salesRepository;
+    @Autowired
+    private SalesRepository salesRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private AddressRepository addressRepository;
 
     public List<SalesDTO> getAllSales(){
         return salesRepository
@@ -51,14 +63,21 @@ public class SalesService {
                 .collect(Collectors.toList());
     }
 
-    public SalesDTO createSale(SalesDTO salesDTO, User user, Payment payment, Coupons coupon, List<SalesItemsDTO> salesItemsDTOList) {
+    public SalesDTO createSale(SalesDTO salesDTO) {
+        Optional<Integer> optionalId = UserContextUtils.getAuthenticatedUserId();
+        if (optionalId.isEmpty()) {
+            throw new RuntimeException("Usuário não esta autenticado");
+        }
+        User user = userRepository.findById(optionalId.get()).get();
+
         Sales sales = new Sales();
         sales.setTotal(salesDTO.getTotal());
         sales.setTypeSaleStatus(TypeSaleStatus.PENDENTE);
         sales.setUser(user);
-        sales.setPayment(payment);
-        sales.setCoupons(coupon);
-        sales.setSalesItems(convertSalesItemsDTOListToSalesItemsList(salesItemsDTOList));
+        sales.setCoupons(null);
+        sales.setPayment(null);
+        Address address = addressRepository.findById(salesDTO.getAddressId()).get();
+        sales.setAddress(address);
         salesRepository.save(sales);
         return convertToDTO(sales);
     }
@@ -89,12 +108,16 @@ public class SalesService {
         salesDTO.setId(sales.getId());
         salesDTO.setTotal(sales.getTotal());
         salesDTO.setTypeSaleStatus(sales.getTypeSaleStatus());
-        salesDTO.setUser(new UserDTO(sales.getUser())); // Utilize o novo construtor
-        salesDTO.setPayment(new PaymentDTO(sales.getPayment())); // Utilize o novo construtor
-        salesDTO.setCoupons(new CouponsDTO(sales.getCoupons())); // Utilize o novo construtor
-        salesDTO.setSalesItems(sales.getSalesItems().stream()
-                .map(this::convertSalesItemToDTO)
-                .collect(Collectors.toList()));
+//        salesDTO.setUser(new UserDTO(sales.getUser())); // Utilize o novo construtor
+        if (sales.getPayment() != null ) {
+            salesDTO.setPayment(new PaymentDTO(sales.getPayment())); // Utilize o novo construtor
+        }
+        if (sales.getCoupons() != null) {
+            salesDTO.setCoupons(new CouponsDTO(sales.getCoupons())); // Utilize o novo construtor
+        }
+//        salesDTO.setSalesItems(sales.getSalesItems().stream()
+//                .map(this::convertSalesItemToDTO)
+//                .collect(Collectors.toList()));
         return salesDTO;
     }
 

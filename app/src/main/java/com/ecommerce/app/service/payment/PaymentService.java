@@ -2,8 +2,11 @@ package com.ecommerce.app.service.payment;
 
 import com.ecommerce.app.dto.payment.PaymentDTO;
 import com.ecommerce.app.model.payment.Payment;
+import com.ecommerce.app.model.sales.Sales;
 import com.ecommerce.app.repository.payment.PaymentRepository;
+import com.ecommerce.app.repository.sales.SalesRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +18,9 @@ import java.util.stream.Collectors;
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
+
+    @Autowired
+    private SalesRepository salesRepository;
 
     public List<PaymentDTO> getAllPayment() {
         return paymentRepository
@@ -31,34 +37,31 @@ public class PaymentService {
     }
 
     public PaymentDTO processPayment(PaymentDTO paymentDTO) {
-        if ("DINHEIRO".equalsIgnoreCase(paymentDTO.getTipo())) {
-            Payment payment = new Payment();
-            payment.setTipo(paymentDTO.getTipo());
-            payment.setValor(paymentDTO.getValor());
-            paymentRepository.save(payment);
-            paymentDTO.setStatus("REALIZADO");
-            return paymentDTO;
-        } else if ("CARTÃO".equalsIgnoreCase(paymentDTO.getTipo())) {
+        Payment payment = new Payment();
+        payment.setTipo(paymentDTO.getTipo());
+        payment.setValor(paymentDTO.getValor());
+        if ("card".equalsIgnoreCase(paymentDTO.getTipo())) {
             if (validarCartao(paymentDTO)) {
-                Payment payment = new Payment();
-                payment.setTipo(paymentDTO.getTipo());
-                payment.setValor(paymentDTO.getValor());
-
                 // Processar parcelamento
                 processarParcelamento(paymentDTO);
 
                 payment.setValorParcela(paymentDTO.getValorParcela());
-                paymentRepository.save(payment);
 
-                paymentDTO.setId(payment.getId());
-                paymentDTO.setStatus("REALIZADO");
-                return paymentDTO;
             } else {
                 throw new RuntimeException("Dados do cartão inválidos!");
             }
-        } else {
-            throw new RuntimeException("Tipo de pagamento inválido!");
         }
+//        else {
+//            throw new RuntimeException("Tipo de pagamento inválido!");
+//        }
+        paymentRepository.save(payment);
+        System.out.println(payment);
+        Sales sale = salesRepository.findById(paymentDTO.getIdSale()).get();
+        sale.setPayment(payment);
+        salesRepository.save(sale);
+        paymentDTO.setId(payment.getId());
+        paymentDTO.setStatus("REALIZADO");
+        return paymentDTO;
     }
 
     public PaymentDTO updatePayment(Integer id, PaymentDTO paymentDTO) {
@@ -78,10 +81,10 @@ public class PaymentService {
     }
 
     private boolean validarCartao(PaymentDTO paymentDTO) {
-        return validateName(paymentDTO.getNomeDoDono()) &&
-                validateCardNumber(paymentDTO.getNumeroCartao()) &&
-                validateExpiryDate(paymentDTO.getValidade()) &&
-                validateCVV(paymentDTO.getCvc());
+        return validateName(paymentDTO.getCardDetails().getNomeDoDono()) &&
+                validateCardNumber(paymentDTO.getCardDetails().getNumeroCartao()) &&
+                validateExpiryDate(paymentDTO.getCardDetails().getValidade()) &&
+                validateCVV(paymentDTO.getCardDetails().getCvc());
     }
 
     private boolean validateName(String name) {
@@ -101,9 +104,9 @@ public class PaymentService {
     }
 
     private void processarParcelamento(PaymentDTO paymentDTO) {
-        if (paymentDTO.getParcelas() != null && paymentDTO.getParcelas() > 1) {
-            double totalComJuros = paymentDTO.getValor() * (1 + (paymentDTO.getJuros() / 100));
-            double valorParcela = totalComJuros / paymentDTO.getParcelas();
+        if (paymentDTO.getCardDetails().getParcelas() != null && paymentDTO.getCardDetails().getParcelas() > 1) {
+//            double totalComJuros = paymentDTO.getValor() * (1 + (paymentDTO.getJuros() / 100));
+            double valorParcela = paymentDTO.getValor() / paymentDTO.getCardDetails().getParcelas();
             paymentDTO.setValorParcela(valorParcela);
         }
     }

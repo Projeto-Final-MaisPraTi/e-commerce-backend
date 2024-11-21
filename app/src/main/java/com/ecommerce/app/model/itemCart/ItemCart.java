@@ -16,10 +16,12 @@ import lombok.Data;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Max;
+import lombok.ToString;
 
 @Entity
 @Data
 @Table(name = "cart_itens")
+@ToString(exclude = {"user", "product"})
 public class ItemCart {
 
 	@Id

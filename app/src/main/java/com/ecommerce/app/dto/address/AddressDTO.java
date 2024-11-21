@@ -33,8 +33,8 @@ public class AddressDTO {
 	@Pattern(regexp = "\\d{5}-\\d{3}", message = "O CEP deve estar no formato 99999-999")
 	private String cep;
 
-	@NotNull(message = "O usuário não pode estar em branco")
-	private User user;
+//	@NotNull(message = "O usuário não pode estar em branco")
+	private Integer userId;
 
 	public AddressDTO(Address address) {
 		this.id = address.getId();
@@ -43,6 +43,6 @@ public class AddressDTO {
 		this.cidade = address.getCidade();
 		this.uf = address.getUf();
 		this.cep = address.getCep();
-		this.user = address.getUser();
+		this.userId = address.getUser().getId();
 	}
 }

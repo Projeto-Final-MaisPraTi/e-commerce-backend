@@ -15,10 +15,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.Pattern;
+import lombok.ToString;
 
 @Entity
 @Data
 @Table(name = "addresses")
+@ToString(exclude = {"user"})
 public class Address {
 
 	@Id

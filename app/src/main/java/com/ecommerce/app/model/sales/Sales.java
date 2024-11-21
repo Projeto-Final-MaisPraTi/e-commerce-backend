@@ -3,6 +3,7 @@ package com.ecommerce.app.model.sales;
 import java.util.List;
 
 import com.ecommerce.app.infra.enums.TypeSaleStatus;
+import com.ecommerce.app.model.address.Address;
 import com.ecommerce.app.model.coupons.Coupons;
 import com.ecommerce.app.model.payment.Payment;
 import com.ecommerce.app.model.salesItems.SalesItems;
@@ -37,7 +38,7 @@ public class Sales {
 	private User user;
 
 	@ManyToOne
-	@JoinColumn(name = "payment_id", nullable = false)
+	@JoinColumn(name = "payment_id")
 	private Payment payment; // "DINHEIRO", "CARTÃO"
 
 	@ManyToOne
@@ -46,4 +47,8 @@ public class Sales {
 
 	@OneToMany(mappedBy = "sales", cascade = CascadeType.ALL)
 	private List<SalesItems> salesItems;
+
+	@ManyToOne
+	@JoinColumn(name = "address_id")
+	private Address address;
 }
